@@ -11,7 +11,7 @@ import org.cs3.prolog.pif.PrologInterfaceException;
 public class PrologConnection {
 
 	// FIXME: automatically find directory
-	private final static File directory = new File("X:\\dev\\prolog_java\\PrologGui\\src\\prolog"); 
+	private final static File directory = new File("X:\\dev\\quetee\\pdt2swing\\PrologGui\\src\\prolog"); 
 	private PrologInterface pif;
 	
 	public PrologConnection() {
@@ -26,7 +26,6 @@ public class PrologConnection {
 			if (loadFile != null) {
 				consultData(loadFile);
 			}
-//			consultData("c:/users/fabian/workspaces/default/prologdatabase/src/data/demo_entries.pl");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
