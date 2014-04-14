@@ -39,7 +39,9 @@ public class OneToManyPanel extends JPanel {
 		JButton btAdd = new JButton("Add");
 		btAdd.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent evt) {
-				prolog.addValue(tfAdd.getText());
+				if (!tfAdd.getText().trim().isEmpty()) {
+					prolog.addValue(tfAdd.getText());
+				}
 			}
 		});
 		addPanel.add(btAdd, BorderLayout.EAST);

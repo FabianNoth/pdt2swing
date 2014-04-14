@@ -32,7 +32,9 @@ public abstract class PrologFactHandler implements IdListener {
 	private String functor;
 	private PrologArgument[] args;
 	private String[] argNames;
-	protected String[] argsWithId;
+	private Object[] argNamesWithBoundId;
+	protected String currentId;
+//	protected String[] argsWithId;
 	
 	public PrologFactHandler(PrologConnection con, String name, File outputFile, boolean isMainPredicate, PrologGoal goal) {
 		this.pif = con.getPif();
@@ -43,12 +45,11 @@ public abstract class PrologFactHandler implements IdListener {
 		this.isMainPredicate = isMainPredicate;
 		
 		String prologFilename = Util.prologFileName(outputFile);
-		String arity = Integer.toString(args.length + 1);
+		String arity = Integer.toString(args.length);
 		outputQuery = QueryUtils.bT(PERSIST_DATA, functor, arity, Util.quoteAtomIfNeeded(prologFilename));
-		argsWithId = new String[args.length + 1];
-		argsWithId[0] = "ID";
+		argNamesWithBoundId = new Object[argNames.length];
 		for (int i=0; i<args.length; i++) {
-			argsWithId[i+1] = argNames[i];
+			argNamesWithBoundId[i] = argNames[i];
 		}
 	}
 
@@ -60,13 +61,20 @@ public abstract class PrologFactHandler implements IdListener {
 		return argNames;
 	}
 	
+	public String getQuery() {
+		argNamesWithBoundId[0] = currentId;
+		return QueryUtils.buildTerm(functor, argNamesWithBoundId);
+	}
+	
 	public String getFunctor() {
 		return functor;
 	}
 	
 	@Override
 	public void setId(String id) {
-		argsWithId[0] = id;
+		currentId = id;
+//		argsWithId[0] = id;
+//		argNames[0] = id;
 		showData();
 	}
 	
@@ -102,6 +110,10 @@ public abstract class PrologFactHandler implements IdListener {
 	
 	public String getName() {
 		return name;
+	}
+	
+	public int getArity() {
+		return argNames.length;
 	}
 
 }

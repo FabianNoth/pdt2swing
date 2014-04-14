@@ -39,10 +39,11 @@ public class PrologSingleFactHandler extends PrologFactHandler {
 
 	@Override
 	public void showData() {
-		String query = QueryUtils.bT(getFunctor(), (Object[]) argsWithId);
-		System.out.println(query);
+//		String query = QueryUtils.bT(getFunctor(), (Object[]) argsWithId);
+		System.out.println(getQuery());
 		try {
-			result = pif.queryOnce(query);
+			result = pif.queryOnce(getQuery());
+			result.put("ID", currentId);
 			if (editPanel != null) {
 				editPanel.setData(result);
 			}
@@ -69,7 +70,7 @@ public class PrologSingleFactHandler extends PrologFactHandler {
 		// build assert query
 //		String retractQuery = getRetractQuery();
 		// get goal for assertion, use current id
-		String goal = getGoalWithData(textFields, argsWithId[0]);
+		String goal = getGoalWithData(textFields, currentId);
 		
 		try {
 			pif.queryOnce(QueryUtils.bT(UPDATE_FACT, goal));
@@ -112,11 +113,12 @@ public class PrologSingleFactHandler extends PrologFactHandler {
 
 	
 	private String getGoalWithData(HashMap<String, JComponent> textFields, String id) {
-		String[] assertArgs = new String[argsWithId.length];
+		String[] argNames = getArgNames();
+		String[] assertArgs = new String[argNames.length];
 		assertArgs[0] = id;
 		
-		for (int i=1; i<argsWithId.length; i++) {
-			JComponent tf = textFields.get(argsWithId[i]);
+		for (int i=1; i<argNames.length; i++) {
+			JComponent tf = textFields.get(argNames[i]);
 			if (tf == null) {
 				if (getArgs()[i-1].getType() == PrologArgument.NUMBER) {
 					assertArgs[i] = "0";
@@ -146,10 +148,11 @@ public class PrologSingleFactHandler extends PrologFactHandler {
 	}
 	
 	private String getSimpleGoal() {
-		String[] retractArgs = new String[argsWithId.length];
-		retractArgs[0] = argsWithId[0];
 		
-		for (int i=1; i<argsWithId.length; i++) {
+		String[] retractArgs = new String[getArity()];
+		retractArgs[0] = currentId;
+		
+		for (int i=1; i<getArity(); i++) {
 			retractArgs[i] = "_";
 		}
 		

@@ -81,6 +81,10 @@ public class EditPanel extends JPanel {
 				((JTextField) component).setColumns(10);
 			}
 			
+			if (arg.getType() == PrologArgument.ID) {
+				component.setEnabled(false);
+			}
+			
 			GridBagConstraints gbc_component = new GridBagConstraints();
 			gbc_component.insets = new Insets(0, 0, 5, 0);
 			gbc_component.fill = GridBagConstraints.HORIZONTAL;

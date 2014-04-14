@@ -6,6 +6,7 @@
 	% relations
 	add_relation/1,
 	remove_relation/1,
+	check_for_existing_value/2, 
 	% persistence
 	persist_data/3
 ]).
@@ -23,6 +24,7 @@
 :- multifile remove_data_hook/1.
 :- multifile update_data_hook/1.
 :- multifile output_data_hook/2.
+:- multifile check_for_existing_value_hook/2.
 
 %% add_fact(Goal, AddedId)
 %
@@ -35,7 +37,7 @@ add_fact(Goal, AddedId) :-
 add_fact(Goal, AddedId) :-	% default
 	Goal =.. [Functor, AddedId | _],
 	new_id(Functor, AddedId),
-	assert(Goal).
+	assert(user:Goal).
 
 %% add_relation(Goal)
 %
@@ -47,9 +49,9 @@ add_relation(Goal) :-
 	
 add_relation(Goal) :-	% default
 	ground(Goal),
-	( call(Goal)
+	( call(user:Goal)
 	-> true
-	;  assert(Goal)).
+	;  assert(user:Goal)).
 
 	
 %% remove_fact(Goal)
@@ -62,7 +64,7 @@ remove_fact(Goal) :-
 	
 remove_fact(Goal) :-	% default
 	get_unbound_goal(Goal, NewGoal),
-	retractall(NewGoal).
+	retractall(user:NewGoal).
 	
 %% remove_relation(Goal)
 %
@@ -73,7 +75,7 @@ remove_relation(Goal) :-
 	!.
 	
 remove_relation(Goal) :-	% default
-	retractall(Goal).
+	retractall(user:Goal).
 	
 %% update_fact(Goal)
 %
@@ -85,8 +87,8 @@ update_fact(Goal) :-
 	
 update_fact(Goal) :-	% default
 	get_unbound_goal(Goal, NewGoal),
-	retractall(NewGoal),
-	assert(Goal).
+	retractall(user:NewGoal),
+	assert(user:Goal).
 
 %% persist_data(Functor, Arity, File)
 %
@@ -107,7 +109,15 @@ output_data(Functor, Arity) :-
 	!.
 	
 output_data(Functor, Arity) :-	% default
-	listing(Functor/Arity).
+	listing(user:Functor/Arity).
+	
+	
+%% check_for_existing_value(Functor, Value)
+% 
+check_for_existing_value(Functor, Value) :-
+	check_for_existing_value_hook(Functor, Value),
+	!.
+
 
 %
 %:- multifile assert_hook/1.

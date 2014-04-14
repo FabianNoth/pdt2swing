@@ -34,13 +34,12 @@ public class PrologMultipleFactHandler extends PrologFactHandler {
 
 	@Override
 	public void showData() {
-		String query = QueryUtils.bT(getFunctor(), (Object[]) argsWithId);
 		try {
-			List<Map<String, Object>> results = pif.queryAll(query);
+			List<Map<String, Object>> results = pif.queryAll(getQuery());
 			if (editPanel != null) {
 				List<String> entries = new ArrayList<String>();
 				for (Map<String, Object> m : results) {
-					String entry = m.get(argsWithId[1]).toString();
+					String entry = m.get(getArgNames()[1]).toString();
 					entries.add(entry);
 				}
 				
@@ -66,7 +65,7 @@ public class PrologMultipleFactHandler extends PrologFactHandler {
 				}
 			}
 			
-			String assertQuery = QueryUtils.bT(getFunctor(), argsWithId[0], assertValue);
+			String assertQuery = QueryUtils.bT(getFunctor(), currentId, assertValue);
 			System.out.println(assertQuery);
 			try {
 				pif.queryOnce(QueryUtils.bT(ADD_RELATION, assertQuery));
@@ -87,7 +86,7 @@ public class PrologMultipleFactHandler extends PrologFactHandler {
 	}
 
 	public void removeValue(String value) {
-		String retractQuery = QueryUtils.bT(getFunctor(), argsWithId[0], value);
+		String retractQuery = QueryUtils.bT(getFunctor(), currentId, value);
 		System.out.println(retractQuery);
 		try {
 			pif.queryOnce(QueryUtils.bT(REMOVE_RELATION, retractQuery));
