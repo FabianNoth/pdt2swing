@@ -2,6 +2,8 @@ package pdt.gui.data;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 import org.cs3.prolog.common.QueryUtils;
 import org.cs3.prolog.common.Util;
@@ -10,8 +12,7 @@ import org.cs3.prolog.pif.PrologInterfaceException;
 
 public class PrologConnection {
 
-	// FIXME: automatically find directory
-	private final static File directory = new File("X:\\dev\\quetee\\pdt2swing\\PrologGui\\src\\prolog"); 
+	private File directory; 
 	private PrologInterface pif;
 	
 	public PrologConnection() {
@@ -19,14 +20,16 @@ public class PrologConnection {
 	}
 	
 	public PrologConnection(File loadFile) {
+		URL res = ClassLoader.getSystemClassLoader().getResource("prolog");
 		try {
+			directory = new File(res.toURI()); 
 			pif = Util.newStandalonePrologInterface();
-			consultData(new File(directory, "output.pl"));
-			consultData(new File(directory, "data_handling.pl"));
+			consultData(new File(directory, "gui_hooks.pl"));
+//			consultData(new File(directory, "data_handling.pl"));
 			if (loadFile != null) {
 				consultData(loadFile);
 			}
-		} catch (IOException e) {
+		} catch (IOException | URISyntaxException e) {
 			e.printStackTrace();
 		}
 	}
