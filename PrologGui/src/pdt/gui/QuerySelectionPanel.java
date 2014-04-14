@@ -12,7 +12,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import pdt.gui.data.PrologData;
+import pdt.gui.data.PrologTableData;
 import pdt.gui.data.QuerySelectionProvider;
 
 /**
@@ -49,7 +49,7 @@ public class QuerySelectionPanel extends JPanel {
 						// if a query node was selected
 						QueryNode queryNode = (QueryNode) lastPathComponent;
 						// get the data for the selected query
-						PrologData data = new PrologData(visualizer.getPrologConnection(), queryNode.getGoal());
+						PrologTableData data = new PrologTableData(visualizer.getPrologConnection(), queryNode.getGoal());
 						// display it
 						visualizer.changePrologData(data);
 					}

@@ -17,7 +17,7 @@ import javax.swing.border.EmptyBorder;
 import pdt.gui.data.IdListener;
 import pdt.gui.data.InvisibleFactHandler;
 import pdt.gui.data.PrologConnection;
-import pdt.gui.data.PrologData;
+import pdt.gui.data.PrologTableData;
 import pdt.gui.data.PrologFactHandler;
 import pdt.gui.data.PrologMultipleFactHandler;
 import pdt.gui.data.PrologSingleFactHandler;
@@ -29,7 +29,7 @@ public class PrologGui implements PrologDataVisualizer {
 	private PrologTablePanel tablePanel;
 	private PrologConnection con;
 	
-	public PrologGui(PrologConnection con, PrologData prolog, QuerySelectionProvider selectionCreator, File imgDir, ActionListener imgListener, PrologFactHandler... factHandler) {
+	public PrologGui(PrologConnection con, PrologTableData prolog, QuerySelectionProvider selectionCreator, File imgDir, ActionListener imgListener, PrologFactHandler... factHandler) {
 		this.con = con;
 		
 		for (PrologFactHandler handler : factHandler) {
@@ -51,7 +51,7 @@ public class PrologGui implements PrologDataVisualizer {
      * this method should be invoked from the
      * event-dispatching thread.
      */
-    private void createAndShowGUI(PrologData prolog, QuerySelectionProvider selectionCreator, File imgDir, ActionListener imgListener, PrologFactHandler... editFacts) {
+    private void createAndShowGUI(PrologTableData prolog, QuerySelectionProvider selectionCreator, File imgDir, ActionListener imgListener, PrologFactHandler... editFacts) {
         //Create and set up the window.
         JFrame frame = new JFrame("Prolog Data Demo");
         frame.addWindowListener(new WindowAdapter() {
@@ -126,7 +126,7 @@ public class PrologGui implements PrologDataVisualizer {
 	}
 
 	@Override
-	public void changePrologData(PrologData data) {
+	public void changePrologData(PrologTableData data) {
 		tablePanel.setTableModel(data);
 	}
 

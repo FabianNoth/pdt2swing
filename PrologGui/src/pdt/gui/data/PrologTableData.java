@@ -12,7 +12,7 @@ import org.cs3.prolog.pif.PrologInterfaceException;
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologGoal;
 
-public class PrologData extends AbstractTableModel {
+public class PrologTableData extends AbstractTableModel {
 
 	// TODO: give type for args (String, int, int with limits)
 	//       make gui element depentend on that type (JSpinner for ints)
@@ -30,7 +30,7 @@ public class PrologData extends AbstractTableModel {
 
 	private String query;
 
-	public PrologData(PrologConnection con, PrologGoal goal) {
+	public PrologTableData(PrologConnection con, PrologGoal goal) {
 		this.goal = goal;
 		
 //		this.args = args;
@@ -127,8 +127,8 @@ public class PrologData extends AbstractTableModel {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof PrologData) {
-			PrologData compData = (PrologData) obj;
+		if (obj instanceof PrologTableData) {
+			PrologTableData compData = (PrologTableData) obj;
 			return (getQuery().equals(compData.getQuery()));
 		}
 		return false;

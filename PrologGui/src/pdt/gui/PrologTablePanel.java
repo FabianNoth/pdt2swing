@@ -10,15 +10,15 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import pdt.gui.data.PrologData;
+import pdt.gui.data.PrologTableData;
 
 public class PrologTablePanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private PrologData prologTableModel;
+	private PrologTableData prologTableModel;
 	private JTable table;
 	
-	public PrologTablePanel(final PrologDataVisualizer parent, PrologData prologData) {
+	public PrologTablePanel(final PrologDataVisualizer parent, PrologTableData prologData) {
 	        super(new GridLayout(1,0));
 	        
 	        prologTableModel = prologData;
@@ -51,7 +51,7 @@ public class PrologTablePanel extends JPanel {
 	        add(scrollPane);
 	    }
 	
-	public void setTableModel(PrologData prologTableModel) {
+	public void setTableModel(PrologTableData prologTableModel) {
 		if (!this.prologTableModel.equals(prologTableModel)) {
 			System.out.println("data differs, so change table");
 			String id = getSelectedId();
