@@ -67,12 +67,14 @@ public class PrologSingleFactHandler extends PrologFactHandler {
 
 	public void updateFromPanel(HashMap<String, JComponent> textFields) {
 		// build assert query
-		String retractQuery = getRetractQuery();
-		String assertQuery = getAssertQuery(textFields, argsWithId[0]);
+//		String retractQuery = getRetractQuery();
+		// get goal for assertion, use current id
+		String goal = getGoalWithData(textFields, argsWithId[0]);
 		
 		try {
-			pif.queryOnce("retractall(" + retractQuery + ")");
-			pif.queryOnce("assert(" + assertQuery + ")");
+			pif.queryOnce(QueryUtils.bT(UPDATE_FACT, goal));
+//			pif.queryOnce("retractall(" + retractQuery + ")");
+//			pif.queryOnce("assert(" + assertQuery + ")");
 		} catch (PrologInterfaceException e) {
 			e.printStackTrace();
 		}
@@ -81,10 +83,11 @@ public class PrologSingleFactHandler extends PrologFactHandler {
 	}
 	
 	public void saveAsNew(HashMap<String, JComponent> textFields) {
-		String assertQuery = getAssertQuery(textFields, "_");
+		// get goal for assertion, use empty ID
+		String goal = getGoalWithData(textFields, "_");
 		String id = null;
 		try {
-			Map<String, Object> result = pif.queryOnce("assert_as_new(" + assertQuery + ", ID)");
+			Map<String, Object> result = pif.queryOnce(QueryUtils.bT(ADD_FACT, goal, "ID"));
 			if (result.get("ID") != null) {
 				id = result.get("ID").toString();
 			}
@@ -96,10 +99,10 @@ public class PrologSingleFactHandler extends PrologFactHandler {
 	}
 	
 	public void delete() {
-		String retractQuery = getRetractQuery();
+		String goal = getSimpleGoal();
 
 		try {
-			pif.queryOnce("retract_with_derived(" + retractQuery + ")");
+			pif.queryOnce(QueryUtils.bT(REMOVE_FACT, goal));
 		} catch (PrologInterfaceException e) {
 			e.printStackTrace();
 		}
@@ -108,7 +111,7 @@ public class PrologSingleFactHandler extends PrologFactHandler {
 	}
 
 	
-	private String getAssertQuery(HashMap<String, JComponent> textFields, String id) {
+	private String getGoalWithData(HashMap<String, JComponent> textFields, String id) {
 		String[] assertArgs = new String[argsWithId.length];
 		assertArgs[0] = id;
 		
@@ -142,7 +145,7 @@ public class PrologSingleFactHandler extends PrologFactHandler {
 		return QueryUtils.bT(getFunctor(), (Object[]) assertArgs);
 	}
 	
-	private String getRetractQuery() {
+	private String getSimpleGoal() {
 		String[] retractArgs = new String[argsWithId.length];
 		retractArgs[0] = argsWithId[0];
 		

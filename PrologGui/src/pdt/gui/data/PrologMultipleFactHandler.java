@@ -55,7 +55,7 @@ public class PrologMultipleFactHandler extends PrologFactHandler {
 		String assertValue = Util.quoteAtomIfNeeded(newValue);
 		
 		try {
-			Map<String, Object> check = pif.queryOnce("check_for_existing_value(" + getFunctor() + ","  + assertValue + ")");
+			Map<String, Object> check = pif.queryOnce(QueryUtils.bT(CHECK_FOR_VALUE, getFunctor(), assertValue));
 			if (check == null) {
 				// TODO Value doesn't exist, ask if user wants to add value (might be a typo)
 				System.out.println("doesn't exist, won't add");
@@ -69,7 +69,7 @@ public class PrologMultipleFactHandler extends PrologFactHandler {
 			String assertQuery = QueryUtils.bT(getFunctor(), argsWithId[0], assertValue);
 			System.out.println(assertQuery);
 			try {
-				pif.queryOnce("assert_if_not_exists(" + assertQuery + ")");
+				pif.queryOnce(QueryUtils.bT(ADD_RELATION, assertQuery));
 			} catch (PrologInterfaceException e) {
 				e.printStackTrace();
 			}
@@ -90,7 +90,7 @@ public class PrologMultipleFactHandler extends PrologFactHandler {
 		String retractQuery = QueryUtils.bT(getFunctor(), argsWithId[0], value);
 		System.out.println(retractQuery);
 		try {
-			pif.queryOnce("retractall(" + retractQuery + ")");
+			pif.queryOnce(QueryUtils.bT(REMOVE_RELATION, retractQuery));
 		} catch (PrologInterfaceException e) {
 			e.printStackTrace();
 		}

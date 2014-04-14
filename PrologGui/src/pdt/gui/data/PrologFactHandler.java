@@ -12,6 +12,16 @@ import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologGoal;
 
 public abstract class PrologFactHandler implements IdListener {
+	
+	protected static final String ADD_FACT = "add_fact";
+	protected static final String ADD_RELATION = "add_relation";
+	protected static final String REMOVE_FACT = "remove_fact";
+	protected static final String REMOVE_RELATION = "remove_relation";
+	protected static final String UPDATE_FACT = "update_fact";
+	// DISCUSSION: there is no updating for relations
+	protected static final String PERSIST_DATA = "persist_data";
+	// CHECK_FOR_VALUE = check if value might be added as relation
+	protected static final String CHECK_FOR_VALUE = "check_for_existing_value";
 
 	protected PrologInterface pif;
 	private PrologDataVisualizer visualizer;
@@ -33,11 +43,8 @@ public abstract class PrologFactHandler implements IdListener {
 		this.isMainPredicate = isMainPredicate;
 		
 		String prologFilename = Util.prologFileName(outputFile);
-		String outputPredicateFunctor = "output_to_file";
-		if (isMainPredicate) {
-			outputPredicateFunctor = "output_to_file_plus_id";
-		}
-		outputQuery = QueryUtils.bT(outputPredicateFunctor, Util.quoteAtomIfNeeded(prologFilename), functor + "/" + (args.length + 1));
+		String arity = Integer.toString(args.length + 1);
+		outputQuery = QueryUtils.bT(PERSIST_DATA, functor, arity, Util.quoteAtomIfNeeded(prologFilename));
 		argsWithId = new String[args.length + 1];
 		argsWithId[0] = "ID";
 		for (int i=0; i<args.length; i++) {
