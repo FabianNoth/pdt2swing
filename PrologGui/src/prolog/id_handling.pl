@@ -3,7 +3,8 @@
 	output_id/1
 ]).
 
-:- dynamic(current_id/2).
+:- dynamic current_id/2.
+:- multifile current_id/2.
 
 %% new_id(Functor, Id)
 %
