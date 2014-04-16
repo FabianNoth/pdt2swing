@@ -2,6 +2,7 @@ package pdt.gui;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import pdt.gui.data.PrologGuiBundle;
 import pdt.prolog.elements.PrologGoal;
 
 public class QueryNode extends DefaultMutableTreeNode {
@@ -9,21 +10,26 @@ public class QueryNode extends DefaultMutableTreeNode {
 	private static final long serialVersionUID = 1L;
 	
 	private String name;
-	private PrologGoal goal;
+	private PrologGuiBundle bundle;
+//	private PrologGoal goal;
 
-	public QueryNode(String name, PrologGoal goal) {
+	public QueryNode(String name, PrologGuiBundle bundle) {
 		super(name);
 		this.name = name;
-		this.goal = goal;
+		this.bundle = bundle;
+//		this.goal = goal;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public PrologGoal getGoal() {
-		return goal;
+	public PrologGuiBundle getBundle() {
+		return bundle;
 	}
-	
+//	public PrologGoal getGoal() {
+//		return goal;
+//	}
+//	
 	
 }

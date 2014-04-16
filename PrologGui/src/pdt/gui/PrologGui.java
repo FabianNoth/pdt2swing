@@ -2,11 +2,10 @@ package pdt.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.JFrame;
@@ -17,31 +16,33 @@ import javax.swing.border.EmptyBorder;
 import pdt.gui.data.IdListener;
 import pdt.gui.data.InvisibleFactHandler;
 import pdt.gui.data.PrologConnection;
-import pdt.gui.data.PrologTableData;
 import pdt.gui.data.PrologFactHandler;
+import pdt.gui.data.PrologGuiBundle;
 import pdt.gui.data.PrologMultipleFactHandler;
 import pdt.gui.data.PrologSingleFactHandler;
-import pdt.gui.data.QuerySelectionProvider;
+import pdt.gui.data.PrologTableData;
+import pdt.gui.data.BundleProvider;
 
 public class PrologGui implements PrologDataVisualizer {
-	
-	private final Set<IdListener> listeners = new HashSet<IdListener>();
+
+	private final Set<IdListener> activeListeners = new HashSet<IdListener>();
 	private PrologTablePanel tablePanel;
 	private PrologConnection con;
+	private JFrame frame;
+	private QuerySelectionPanel querySelectionPanel;
 	
-	public PrologGui(PrologConnection con, PrologTableData prolog, QuerySelectionProvider selectionCreator, File imgDir, ActionListener imgListener, PrologFactHandler... factHandler) {
+	private BundleProvider bundleProvider;
+	
+	public PrologGui(PrologConnection con, BundleProvider bundleProvider) {
 		this.con = con;
+		this.bundleProvider = bundleProvider;
 		
-		for (PrologFactHandler handler : factHandler) {
-			handler.setVisualizer(this);
-		}
-		
-        createAndShowGUI(prolog, selectionCreator, imgDir, imgListener, factHandler);
+        createAndShowGUI();
 	}
 	
 	@Override
 	public void changePrologId(String id) {
-		for(IdListener l : listeners) {
+		for(IdListener l : activeListeners) {
 			l.setId(id);
 		}
 	}
@@ -51,30 +52,50 @@ public class PrologGui implements PrologDataVisualizer {
      * this method should be invoked from the
      * event-dispatching thread.
      */
-    private void createAndShowGUI(PrologTableData prolog, QuerySelectionProvider selectionCreator, File imgDir, ActionListener imgListener, PrologFactHandler... editFacts) {
-        //Create and set up the window.
-        JFrame frame = new JFrame("Prolog Data Demo");
+    private void createAndShowGUI() {
+        frame = new JFrame("Prolog Data Demo");
         frame.addWindowListener(new WindowAdapter() {
         	@Override
 			public void windowClosing(WindowEvent evt) {
-				for(IdListener l : listeners) {
-					l.persistFacts();
-				}
+        		bundleProvider.persistFacts();
+//				for(IdListener l : allListeners) {
+//					l.persistFacts();
+//				}
 			}
 		});
         
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        querySelectionPanel = new QuerySelectionPanel(this, bundleProvider);
+        
+        setBundle(bundleProvider.getDefault());
+        
+        //Display the window.
+        frame.pack();
+        frame.setVisible(true);
+    }
 
-        JPanel contentPane = new JPanel();
+    
+    private JPanel createEmptyContentPane() {
+    	JPanel contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(10, 10, 10, 10) );
         contentPane.setLayout(new BorderLayout(10, 10));
         contentPane.setOpaque(true);
-        
-        tablePanel = new PrologTablePanel(this, prolog);
-        QuerySelectionPanel querySelectionPanel = new QuerySelectionPanel(this, selectionCreator);
-
-        contentPane.add(tablePanel, BorderLayout.CENTER);
         contentPane.add(querySelectionPanel, BorderLayout.WEST);
+        frame.setContentPane(contentPane);
+        return contentPane;
+    }
+    
+	@Override
+	public void setBundle(PrologGuiBundle bundle) {
+		activeListeners.clear();
+		for (PrologFactHandler handler : bundle.getFactHandlers()) {
+			handler.setVisualizer(this);
+		}
+		
+		tablePanel = new PrologTablePanel(this, bundle.getTableData());
+
+		JPanel contentPane = createEmptyContentPane();
+        contentPane.add(tablePanel, BorderLayout.CENTER);
         
         JPanel eastPanel = new JPanel();
         eastPanel.setLayout(new BorderLayout());
@@ -82,36 +103,37 @@ public class PrologGui implements PrologDataVisualizer {
         eastPanel.setMinimumSize(new Dimension(300, 100));
 		contentPane.add(eastPanel, BorderLayout.EAST);
         
-        if (editFacts.length == 1) {
-        	eastPanel.add(getPanel(editFacts[0]), BorderLayout.CENTER);
-        	listeners.add(editFacts[0]);
-        } else if (editFacts.length > 1) {
+		List<PrologFactHandler> factHandlers = bundle.getFactHandlers();
+        if (factHandlers.size() == 1) {
+        	eastPanel.add(getPanel(factHandlers.get(0)), BorderLayout.CENTER);
+        	addToListeners(factHandlers.get(0));
+        } else if (factHandlers.size() > 1) {
         	// tabbed pane
         	JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         	eastPanel.add(tabbedPane, BorderLayout.CENTER);
     		
-        	for(int i=0; i<editFacts.length; i++) {
-        		if (!(editFacts[i] instanceof InvisibleFactHandler)) {
-        			tabbedPane.addTab(editFacts[i].getName(), null, getPanel(editFacts[i]), null);
+        	for(int i=0; i<factHandlers.size(); i++) {
+        		if (!(factHandlers.get(i) instanceof InvisibleFactHandler)) {
+        			tabbedPane.addTab(factHandlers.get(i).getName(), null, getPanel(factHandlers.get(i)), null);
         		}
-        		listeners.add(editFacts[i]);
+            	addToListeners(factHandlers.get(i));
         	}
         }
         
-        if (imgDir != null) {
-			ImagePanel imagePanel = new ImagePanel(imgDir, imgListener);
-			listeners.add(imagePanel);
+        if (bundle.getImgDir() != null) {
+			ImagePanel imagePanel = new ImagePanel(bundle.getImgDir(), bundle.getImgListener());
+        	addToListeners(imagePanel);
 			eastPanel.add(imagePanel, BorderLayout.NORTH);
         }
-        
-        frame.setContentPane(contentPane);
-
-        //Display the window.
+		tablePanel.updateTableModel(null);
         frame.pack();
-        frame.setVisible(true);
-    }
+	}
 
-    private JPanel getPanel(PrologFactHandler prologFactHandler) {
+	private void addToListeners(IdListener listener) {
+		activeListeners.add(listener);
+	}
+
+	private JPanel getPanel(PrologFactHandler prologFactHandler) {
     	if (prologFactHandler instanceof PrologMultipleFactHandler) {
     		return new OneToManyPanel((PrologMultipleFactHandler) prologFactHandler);
     	} else if (prologFactHandler instanceof PrologSingleFactHandler) {

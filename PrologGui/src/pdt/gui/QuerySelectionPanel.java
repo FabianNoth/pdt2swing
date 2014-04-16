@@ -12,8 +12,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import pdt.gui.data.PrologTableData;
-import pdt.gui.data.QuerySelectionProvider;
+import pdt.gui.data.BundleProvider;
 
 /**
  *
@@ -32,7 +31,7 @@ public class QuerySelectionPanel extends JPanel {
 	 * @param visualizer The PrologDataVisualizer which will display the data of the query
 	 * @param selectionCreator The QuerySelectionProvider which provides all the possible queries
 	 */
-	public QuerySelectionPanel(final PrologDataVisualizer visualizer, QuerySelectionProvider selectionCreator) {
+	public QuerySelectionPanel(final PrologDataVisualizer visualizer, BundleProvider selectionCreator) {
 		setLayout(new BorderLayout(5, 5));
 		
 		// create the tree element
@@ -48,10 +47,12 @@ public class QuerySelectionPanel extends JPanel {
 					if (lastPathComponent instanceof QueryNode) {
 						// if a query node was selected
 						QueryNode queryNode = (QueryNode) lastPathComponent;
-						// get the data for the selected query
-						PrologTableData data = new PrologTableData(visualizer.getPrologConnection(), queryNode.getGoal());
-						// display it
-						visualizer.changePrologData(data);
+//						// get the data for the selected query
+//						PrologTableData data = new PrologTableData(visualizer.getPrologConnection(), queryNode.getGoal());
+//						// display it
+//						visualizer.changePrologData(data);
+						
+						visualizer.setBundle(queryNode.getBundle());
 					}
 				}
 			}
