@@ -22,6 +22,7 @@ public abstract class PrologFactHandler implements IdListener {
 	protected static final String PERSIST_DATA = "persist_data";
 	// CHECK_FOR_VALUE = check if value might be added as relation
 	protected static final String CHECK_FOR_VALUE = "check_for_existing_value";
+	protected static final String AUTO_COMPLETION = "auto_completion";
 
 	protected PrologInterface pif;
 	private PrologDataVisualizer visualizer;

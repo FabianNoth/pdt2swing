@@ -17,7 +17,8 @@ import pdt.prolog.elements.PrologGoal;
 public class PrologMultipleFactHandler extends PrologFactHandler {
 
 	private OneToManyPanel editPanel;
-	private boolean autoCompletion;
+	private List<String> autoCompletionList;
+	private String functor;
 	
 	public PrologMultipleFactHandler(PrologConnection con, String name, File outputFile, PrologGoal goal) {
 		this(con, name, outputFile, goal, false);
@@ -25,11 +26,26 @@ public class PrologMultipleFactHandler extends PrologFactHandler {
 	
 	public PrologMultipleFactHandler(PrologConnection con, String name, File outputFile, PrologGoal goal, boolean autoCompletion) {
 		super(con, name, outputFile, false, goal);
-		this.autoCompletion = autoCompletion;
+		this.functor = goal.getFunctor();
+		if (autoCompletion) {
+			updateAutoCompletion();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void updateAutoCompletion() {
+		autoCompletionList = new ArrayList<String>();
+		try {
+			Map<String, Object> results = pif.queryOnce(QueryUtils.bT(AUTO_COMPLETION, functor, "Result"));
+			autoCompletionList = (List<String>) results.get("Result");
+			System.out.println(autoCompletionList);
+		} catch (PrologInterfaceException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public boolean isAutoCompletion() {
-		return autoCompletion;
+		return autoCompletionList != null;
 	}
 
 	@Override
@@ -54,14 +70,14 @@ public class PrologMultipleFactHandler extends PrologFactHandler {
 		String assertValue = Util.quoteAtomIfNeeded(newValue);
 		
 		try {
+			boolean updateAutoCompletionFlag = false;
 			Map<String, Object> check = pif.queryOnce(QueryUtils.bT(CHECK_FOR_VALUE, getFunctor(), assertValue));
 			if (check == null) {
-				// TODO Value doesn't exist, ask if user wants to add value (might be a typo)
-				System.out.println("doesn't exist, won't add");
-				
 				int answer = JOptionPane.showConfirmDialog(editPanel, "Eintrag mit dem Wert \"" + newValue + "\" existiert nicht. Soll er hinzugefügt werden?", "Neuen Eintrag hinzufügen", JOptionPane.YES_NO_OPTION);
 				if (answer == JOptionPane.NO_OPTION) {
 					return;
+				} else if (answer == JOptionPane.YES_OPTION) {
+					updateAutoCompletionFlag = true;
 				}
 			}
 			
@@ -71,6 +87,11 @@ public class PrologMultipleFactHandler extends PrologFactHandler {
 				pif.queryOnce(QueryUtils.bT(ADD_RELATION, assertQuery));
 			} catch (PrologInterfaceException e) {
 				e.printStackTrace();
+			}
+			
+
+			if (updateAutoCompletionFlag) {
+				updateAutoCompletion();
 			}
 			
 			// update table
@@ -96,6 +117,10 @@ public class PrologMultipleFactHandler extends PrologFactHandler {
 		
 		// update table
 		updateVisualizer();
+	}
+
+	public List<String> getAutoCompletionList() {
+		return autoCompletionList;
 	}
 
 	

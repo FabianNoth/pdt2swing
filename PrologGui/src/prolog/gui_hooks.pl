@@ -6,7 +6,8 @@
 	% relations
 	add_relation/1,
 	remove_relation/1,
-	check_for_existing_value/2, 
+	check_for_existing_value/2,
+	auto_completion/2,
 	% persistence
 	persist_data/3
 ]).
@@ -25,6 +26,13 @@
 :- multifile update_data_hook/1.
 :- multifile output_data_hook/2.
 :- multifile check_for_existing_value_hook/2.
+:- multifile auto_completion_hook/2.
+
+%% auto_completion(Key, Values)
+%
+auto_completion(Key, Values) :-
+	findall(V, auto_completion_hook(Key, V), Unsorted),
+	sort(Unsorted, Values).
 
 %% add_fact(Goal, AddedId)
 %

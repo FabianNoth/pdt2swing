@@ -15,6 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
+
 import pdt.gui.data.PrologMultipleFactHandler;
 
 public class OneToManyPanel extends JPanel {
@@ -23,8 +25,10 @@ public class OneToManyPanel extends JPanel {
 	private DefaultListModel<String> listModel;
 	private boolean useAutoCompletion;
 	private JTextField tfAdd;
+	private PrologMultipleFactHandler prolog;
 
 	public OneToManyPanel(final PrologMultipleFactHandler prolog) {
+		this.prolog = prolog;
 		prolog.setEditPanel(this);
 		useAutoCompletion = prolog.isAutoCompletion();
 		
@@ -32,18 +36,20 @@ public class OneToManyPanel extends JPanel {
 		JPanel addPanel = new JPanel();
 		addPanel.setLayout(new BorderLayout());
 		add(addPanel, BorderLayout.NORTH);
-		
 		tfAdd = new JTextField();
-		addPanel.add(tfAdd, BorderLayout.CENTER);
 		
-		JButton btAdd = new JButton("Add");
-		btAdd.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent evt) {
+		ActionListener actionListener = new ActionListener() {
+			@Override public void actionPerformed(ActionEvent e) {
 				if (!tfAdd.getText().trim().isEmpty()) {
 					prolog.addValue(tfAdd.getText());
 				}
 			}
-		});
+		};
+		
+		tfAdd.addActionListener(actionListener);
+		addPanel.add(tfAdd, BorderLayout.CENTER);
+		JButton btAdd = new JButton("Add");
+		btAdd.addActionListener(actionListener);
 		addPanel.add(btAdd, BorderLayout.EAST);
 		
 		final JList<String> list = new JList<String>();
@@ -64,7 +70,9 @@ public class OneToManyPanel extends JPanel {
 	}
 
 	public void setData(List<String> entries) {
-		if (!useAutoCompletion) {
+		if (useAutoCompletion) {
+			AutoCompleteDecorator.decorate(tfAdd, prolog.getAutoCompletionList(), false);
+		} else {
 			tfAdd.setText("");
 		}
 		listModel.clear();
@@ -72,5 +80,5 @@ public class OneToManyPanel extends JPanel {
 			listModel.addElement(s);
 		}
 	}
-	
+
 }
