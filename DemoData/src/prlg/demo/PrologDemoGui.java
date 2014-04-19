@@ -45,7 +45,7 @@ private PrologGuiBundle createSerienBundle(File dataDir, PrologConnection con) {
 		PrologGoal seriesGoal = new PrologGoal("fsdb_serie",
 				PrologArgument.createId(),
 				PrologArgument.createAtom("Name"),
-				PrologArgument.createAtom("Herkunftsland"),
+				PrologArgument.createFixedAtom("Herkunftsland", "USA", "Deutschland", "Groﬂbritannien"),
 				PrologArgument.createNumber("Staffeln"),
 				PrologArgument.createNumber("Episoden")
 		);
