@@ -69,3 +69,7 @@ gui_hooks:output_data_hook(fsdb_tags, 2) :-
 :- multifile gui_hooks:check_for_existing_value_hook/2.
 gui_hooks:check_for_existing_value_hook(fsdb_tags, Value) :-
 	user:fsdb_category(_, Value).
+	
+:- multifile gui_hooks:auto_completion_hook/2.
+gui_hooks:auto_completion_hook(fsdb_tags, Value) :-
+	user:fsdb_category(_, Value).
