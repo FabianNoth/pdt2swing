@@ -4,9 +4,10 @@ public class PrologArgument {
 
 	public static final int ID = 0;
 	public static final int ATOM = 1;
-	public static final int NUMBER = 2;
-	public static final int BOOLEAN = 3;
-	public static final int NUMBER_LIMIT = 4;
+	public static final int ATOM_FIXED = 2;
+	public static final int NUMBER = 3;
+	public static final int BOOLEAN = 4;
+	public static final int NUMBER_LIMIT = 5;
 	
 	private String name;
 	private int type;
@@ -28,9 +29,13 @@ public class PrologArgument {
 	public static PrologArgument createBoolean(String name) {
 		return new PrologArgument(name, BOOLEAN);
 	}
-	
+
 	public static PrologArgument createLimitedNumber(String name, int limitMin, int limitMax) {
 		return new PrologNumberRangeArgument(name, limitMin, limitMax);
+	}
+	
+	public static PrologArgument createFixedAtom(String name, String... values) {
+		return new PrologFixedAtom(name, values);
 	}
 	
 	// constructor

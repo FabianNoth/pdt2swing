@@ -8,7 +8,9 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -19,6 +21,7 @@ import javax.swing.SpinnerNumberModel;
 
 import pdt.gui.data.PrologSingleFactHandler;
 import pdt.prolog.elements.PrologArgument;
+import pdt.prolog.elements.PrologFixedAtom;
 import pdt.prolog.elements.PrologNumberRangeArgument;
 
 public class EditPanel extends JPanel {
@@ -75,7 +78,14 @@ public class EditPanel extends JPanel {
 			if (arg instanceof PrologNumberRangeArgument) {
 				PrologNumberRangeArgument numberArg = (PrologNumberRangeArgument) arg;
 				component = new JSpinner(new SpinnerNumberModel(numberArg.getLimitMin(), numberArg.getLimitMin(), numberArg.getLimitMax(), 1));
-				
+			} else if (arg instanceof PrologFixedAtom) {
+				PrologFixedAtom fixedAtom = (PrologFixedAtom) arg;
+		
+				DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
+				for(String value : fixedAtom.getValues()) {
+					model.addElement(value);
+				}
+				component = new JComboBox<>(model);
 			} else {
 				component = new JTextField();
 				((JTextField) component).setColumns(10);
