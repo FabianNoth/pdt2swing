@@ -24,7 +24,7 @@ import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologFixedAtom;
 import pdt.prolog.elements.PrologNumberRangeArgument;
 
-public class EditPanel extends JPanel {
+public class FactPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private final HashMap<String, JComponent> textFields = new HashMap<>();
@@ -32,7 +32,7 @@ public class EditPanel extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public EditPanel(final PrologSingleFactHandler prolog) {
+	public FactPanel(final PrologSingleFactHandler prolog) {
 
 		Map<String, ActionListener> additionalActions = prolog.getAdditionalActions();
 		prolog.setEditPanel(this);
@@ -139,7 +139,7 @@ public class EditPanel extends JPanel {
 			JButton btDelete = new JButton("Delete");
 			btDelete.addActionListener(new ActionListener() {
 				@Override public void actionPerformed(ActionEvent evt) {
-					int answer = JOptionPane.showConfirmDialog(EditPanel.this, "Soll der Eintrag wirklich gelöscht werden?", "Eintrag löschen", JOptionPane.YES_NO_OPTION);
+					int answer = JOptionPane.showConfirmDialog(FactPanel.this, "Soll der Eintrag wirklich gelöscht werden?", "Eintrag löschen", JOptionPane.YES_NO_OPTION);
 					if (answer == JOptionPane.YES_OPTION) {
 						prolog.delete();
 					}

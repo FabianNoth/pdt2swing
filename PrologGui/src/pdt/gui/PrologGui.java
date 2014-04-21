@@ -135,9 +135,9 @@ public class PrologGui implements PrologDataVisualizer {
 
 	private JPanel getPanel(PrologFactHandler prologFactHandler) {
     	if (prologFactHandler instanceof PrologMultipleFactHandler) {
-    		return new OneToManyPanel((PrologMultipleFactHandler) prologFactHandler);
+    		return new RelationPanel((PrologMultipleFactHandler) prologFactHandler);
     	} else if (prologFactHandler instanceof PrologSingleFactHandler) {
-    		return new EditPanel((PrologSingleFactHandler) prologFactHandler);
+    		return new FactPanel((PrologSingleFactHandler) prologFactHandler);
     	}
     	return new JPanel();
 	}

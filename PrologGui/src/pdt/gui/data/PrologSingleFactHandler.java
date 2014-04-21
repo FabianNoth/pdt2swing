@@ -13,14 +13,14 @@ import javax.swing.JTextField;
 import org.cs3.prolog.common.QueryUtils;
 import org.cs3.prolog.pif.PrologInterfaceException;
 
-import pdt.gui.EditPanel;
+import pdt.gui.FactPanel;
 import pdt.gui.utils.PrologUtils;
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologGoal;
 
 public class PrologSingleFactHandler extends PrologFactHandler {
 
-	private EditPanel editPanel;
+	private FactPanel editPanel;
 	private Map<String, Object> result;
 	private String mainElementName;
 	private final Map<String, ActionListener> additionalActions = new TreeMap<String, ActionListener>();
@@ -33,7 +33,7 @@ public class PrologSingleFactHandler extends PrologFactHandler {
 		this.mainElementName = mainElementName;
 	}
 	
-	public void setEditPanel(EditPanel editPanel) {
+	public void setEditPanel(FactPanel editPanel) {
 		this.editPanel = editPanel;
 	}
 

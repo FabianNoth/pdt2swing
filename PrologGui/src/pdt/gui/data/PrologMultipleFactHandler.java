@@ -11,12 +11,12 @@ import org.cs3.prolog.common.QueryUtils;
 import org.cs3.prolog.common.Util;
 import org.cs3.prolog.pif.PrologInterfaceException;
 
-import pdt.gui.OneToManyPanel;
+import pdt.gui.RelationPanel;
 import pdt.prolog.elements.PrologGoal;
 
 public class PrologMultipleFactHandler extends PrologFactHandler {
 
-	private OneToManyPanel editPanel;
+	private RelationPanel editPanel;
 	private List<String> autoCompletionList;
 	private String functor;
 	
@@ -102,7 +102,7 @@ public class PrologMultipleFactHandler extends PrologFactHandler {
 		}
 	}
 	
-	public void setEditPanel(OneToManyPanel editPanel) {
+	public void setEditPanel(RelationPanel editPanel) {
 		this.editPanel = editPanel;
 	}
 

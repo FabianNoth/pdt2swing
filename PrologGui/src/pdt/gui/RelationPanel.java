@@ -19,7 +19,7 @@ import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import pdt.gui.data.PrologMultipleFactHandler;
 
-public class OneToManyPanel extends JPanel {
+public class RelationPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private DefaultListModel<String> listModel;
@@ -27,7 +27,7 @@ public class OneToManyPanel extends JPanel {
 	private JTextField tfAdd;
 	private PrologMultipleFactHandler prolog;
 
-	public OneToManyPanel(final PrologMultipleFactHandler prolog) {
+	public RelationPanel(final PrologMultipleFactHandler prolog) {
 		this.prolog = prolog;
 		prolog.setEditPanel(this);
 		useAutoCompletion = prolog.isAutoCompletion();
@@ -57,7 +57,7 @@ public class OneToManyPanel extends JPanel {
 			@Override public void keyReleased(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_DELETE) {
 					String s = list.getSelectedValue();
-					int answer = JOptionPane.showConfirmDialog(OneToManyPanel.this, "Soll der Eintrag \"" + s + "\" wirklich gelöscht werden?", "Eintrag löschen", JOptionPane.YES_NO_OPTION);
+					int answer = JOptionPane.showConfirmDialog(RelationPanel.this, "Soll der Eintrag \"" + s + "\" wirklich gelöscht werden?", "Eintrag löschen", JOptionPane.YES_NO_OPTION);
 					if (answer == JOptionPane.YES_OPTION) {
 						prolog.removeValue(s);
 					}
