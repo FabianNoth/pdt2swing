@@ -5,8 +5,8 @@ import java.io.File;
 import pdt.gui.PrologGui;
 import pdt.gui.data.PrologConnection;
 import pdt.gui.data.PrologGuiBundle;
-import pdt.gui.data.PrologMultipleFactHandler;
-import pdt.gui.data.PrologSingleFactHandler;
+import pdt.gui.data.PrologRelationHandler;
+import pdt.gui.data.PrologFactHandler;
 import pdt.gui.data.PrologTableData;
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologGoal;
@@ -54,9 +54,9 @@ private PrologGuiBundle createSerienBundle(File dataDir, PrologConnection con) {
 		PrologGoal tagGoal = new PrologGoal("fsdb_tags", PrologArgument.createId(), PrologArgument.createAtom("Tag"));
 		
 		PrologTableData tableData = new PrologTableData(con, tableGoal);
-		final PrologSingleFactHandler seriesData = new PrologSingleFactHandler(con, "Data", seriesFile, true, seriesGoal);
-		final PrologSingleFactHandler ratingData = new PrologSingleFactHandler(con, "Rating", ratingFile, false, ratingGoal);
-		final PrologMultipleFactHandler tagData = new PrologMultipleFactHandler(con, "Tags", tagFile, tagGoal, true);
+		final PrologFactHandler seriesData = new PrologFactHandler(con, "Data", seriesFile, true, seriesGoal);
+		final PrologFactHandler ratingData = new PrologFactHandler(con, "Rating", ratingFile, false, ratingGoal);
+		final PrologRelationHandler tagData = new PrologRelationHandler(con, "Tags", tagFile, tagGoal, true);
 		
 		PrologGuiBundle bundle = new PrologGuiBundle(tableData, seriesData, ratingData, tagData);
 		return bundle;
@@ -72,7 +72,7 @@ private PrologGuiBundle createKategorieBundle(File dataDir, PrologConnection con
 	);
 	
 	PrologTableData tableData = new PrologTableData(con, tableGoal);
-	final PrologSingleFactHandler categoryData = new PrologSingleFactHandler(con, "Data", catFile, true, tableGoal);
+	final PrologFactHandler categoryData = new PrologFactHandler(con, "Data", catFile, true, tableGoal);
 	
 	PrologGuiBundle bundle = new PrologGuiBundle(tableData, categoryData);
 	return bundle;

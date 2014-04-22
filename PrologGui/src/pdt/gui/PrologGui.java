@@ -18,8 +18,8 @@ import pdt.gui.data.InvisibleFactHandler;
 import pdt.gui.data.PrologConnection;
 import pdt.gui.data.PrologDataHandler;
 import pdt.gui.data.PrologGuiBundle;
-import pdt.gui.data.PrologMultipleFactHandler;
-import pdt.gui.data.PrologSingleFactHandler;
+import pdt.gui.data.PrologRelationHandler;
+import pdt.gui.data.PrologFactHandler;
 import pdt.gui.data.PrologTableData;
 import pdt.gui.data.BundleProvider;
 
@@ -134,10 +134,10 @@ public class PrologGui implements PrologDataVisualizer {
 	}
 
 	private JPanel getPanel(PrologDataHandler prologFactHandler) {
-    	if (prologFactHandler instanceof PrologMultipleFactHandler) {
-    		return new RelationPanel((PrologMultipleFactHandler) prologFactHandler);
-    	} else if (prologFactHandler instanceof PrologSingleFactHandler) {
-    		return new FactPanel((PrologSingleFactHandler) prologFactHandler);
+    	if (prologFactHandler instanceof PrologRelationHandler) {
+    		return new RelationPanel((PrologRelationHandler) prologFactHandler);
+    	} else if (prologFactHandler instanceof PrologFactHandler) {
+    		return new FactPanel((PrologFactHandler) prologFactHandler);
     	}
     	return new JPanel();
 	}

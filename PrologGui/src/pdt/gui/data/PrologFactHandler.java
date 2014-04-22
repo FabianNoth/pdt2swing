@@ -18,14 +18,14 @@ import pdt.gui.utils.PrologUtils;
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologGoal;
 
-public class PrologSingleFactHandler extends PrologDataHandler {
+public class PrologFactHandler extends PrologDataHandler {
 
 	private FactPanel editPanel;
 	private Map<String, Object> result;
 	private String mainElementName;
 	private final Map<String, ActionListener> additionalActions = new TreeMap<String, ActionListener>();
 	
-	public PrologSingleFactHandler(PrologConnection con, String name, File outputFile, boolean isMainPredicate, PrologGoal goal) {
+	public PrologFactHandler(PrologConnection con, String name, File outputFile, boolean isMainPredicate, PrologGoal goal) {
 		super(con, name, outputFile, isMainPredicate, goal);
 	}
 	

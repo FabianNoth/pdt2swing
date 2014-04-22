@@ -19,7 +19,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
-import pdt.gui.data.PrologSingleFactHandler;
+import pdt.gui.data.PrologFactHandler;
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologFixedAtom;
 import pdt.prolog.elements.PrologNumberRangeArgument;
@@ -32,7 +32,7 @@ public class FactPanel extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public FactPanel(final PrologSingleFactHandler prolog) {
+	public FactPanel(final PrologFactHandler prolog) {
 
 		Map<String, ActionListener> additionalActions = prolog.getAdditionalActions();
 		prolog.setEditPanel(this);

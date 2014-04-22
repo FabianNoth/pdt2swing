@@ -17,7 +17,7 @@ import javax.swing.JTextField;
 
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
-import pdt.gui.data.PrologMultipleFactHandler;
+import pdt.gui.data.PrologRelationHandler;
 
 public class RelationPanel extends JPanel {
 
@@ -25,9 +25,9 @@ public class RelationPanel extends JPanel {
 	private DefaultListModel<String> listModel;
 	private boolean useAutoCompletion;
 	private JTextField tfAdd;
-	private PrologMultipleFactHandler prolog;
+	private PrologRelationHandler prolog;
 
-	public RelationPanel(final PrologMultipleFactHandler prolog) {
+	public RelationPanel(final PrologRelationHandler prolog) {
 		this.prolog = prolog;
 		prolog.setEditPanel(this);
 		useAutoCompletion = prolog.isAutoCompletion();

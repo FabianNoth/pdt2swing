@@ -14,17 +14,17 @@ import org.cs3.prolog.pif.PrologInterfaceException;
 import pdt.gui.RelationPanel;
 import pdt.prolog.elements.PrologGoal;
 
-public class PrologMultipleFactHandler extends PrologDataHandler {
+public class PrologRelationHandler extends PrologDataHandler {
 
 	private RelationPanel editPanel;
 	private List<String> autoCompletionList;
 	private String functor;
 	
-	public PrologMultipleFactHandler(PrologConnection con, String name, File outputFile, PrologGoal goal) {
+	public PrologRelationHandler(PrologConnection con, String name, File outputFile, PrologGoal goal) {
 		this(con, name, outputFile, goal, false);
 	}
 	
-	public PrologMultipleFactHandler(PrologConnection con, String name, File outputFile, PrologGoal goal, boolean autoCompletion) {
+	public PrologRelationHandler(PrologConnection con, String name, File outputFile, PrologGoal goal, boolean autoCompletion) {
 		super(con, name, outputFile, false, goal);
 		this.functor = goal.getFunctor();
 		if (autoCompletion) {
