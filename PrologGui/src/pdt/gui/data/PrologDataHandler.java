@@ -36,6 +36,11 @@ public abstract class PrologDataHandler implements IdListener {
 	private Object[] argNamesWithBoundId;
 	protected String currentId;
 //	protected String[] argsWithId;
+
+	public PrologDataHandler(PrologConnection con, String name) {
+		this.pif = con.getPif();
+		this.name = name;
+	}
 	
 	public PrologDataHandler(PrologConnection con, String name, File outputFile, boolean isMainPredicate, PrologGoal goal) {
 		this.pif = con.getPif();

@@ -22,6 +22,7 @@ import pdt.gui.data.PrologRelationHandler;
 import pdt.gui.data.PrologFactHandler;
 import pdt.gui.data.PrologTableData;
 import pdt.gui.data.BundleProvider;
+import pdt.gui.data.PrologTextFileHandler;
 
 public class PrologGui implements PrologDataVisualizer {
 
@@ -138,6 +139,8 @@ public class PrologGui implements PrologDataVisualizer {
     		return new RelationPanel((PrologRelationHandler) prologFactHandler);
     	} else if (prologFactHandler instanceof PrologFactHandler) {
     		return new FactPanel((PrologFactHandler) prologFactHandler);
+    	} else if (prologFactHandler instanceof PrologTextFileHandler) {
+    		return new TextFilePanel((PrologTextFileHandler) prologFactHandler);
     	}
     	return new JPanel();
 	}
