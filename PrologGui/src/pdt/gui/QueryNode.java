@@ -3,7 +3,6 @@ package pdt.gui;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import pdt.gui.data.PrologGuiBundle;
-import pdt.prolog.elements.PrologGoal;
 
 public class QueryNode extends DefaultMutableTreeNode {
 

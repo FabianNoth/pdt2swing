@@ -11,6 +11,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import pdt.gui.data.PrologTableData;
+import pdt.gui.utils.SimpleLogger;
 
 public class PrologTablePanel extends JPanel {
 
@@ -53,7 +54,7 @@ public class PrologTablePanel extends JPanel {
 	
 	public void setTableModel(PrologTableData prologTableModel) {
 		if (!this.prologTableModel.equals(prologTableModel)) {
-			System.out.println("data differs, so change table");
+			SimpleLogger.println("data differs, so change table");
 			String id = getSelectedId();
 			this.prologTableModel = prologTableModel;
 			table.setModel(prologTableModel);

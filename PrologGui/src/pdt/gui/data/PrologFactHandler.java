@@ -17,6 +17,7 @@ import org.cs3.prolog.pif.PrologInterfaceException;
 
 import pdt.gui.FactPanel;
 import pdt.gui.utils.PrologUtils;
+import pdt.gui.utils.SimpleLogger;
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologGoal;
 
@@ -47,8 +48,7 @@ public class PrologFactHandler extends PrologDataHandler {
 
 	@Override
 	public void showData() {
-//		String query = QueryUtils.bT(getFunctor(), (Object[]) argsWithId);
-		System.out.println(getQuery());
+		SimpleLogger.println(getQuery());
 		try {
 			result = pif.queryOnce(getQuery());
 			result.put("ID", currentId);

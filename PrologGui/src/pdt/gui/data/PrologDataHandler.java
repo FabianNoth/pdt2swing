@@ -8,6 +8,7 @@ import org.cs3.prolog.pif.PrologInterface;
 import org.cs3.prolog.pif.PrologInterfaceException;
 
 import pdt.gui.PrologDataVisualizer;
+import pdt.gui.utils.SimpleLogger;
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologGoal;
 
@@ -103,7 +104,7 @@ public abstract class PrologDataHandler implements IdListener {
 	
 	@Override
 	public void persistFacts() {
-		System.out.println(outputQuery);
+		SimpleLogger.println("outputQuery: " + outputQuery );
 		try {
 			pif.queryOnce(outputQuery);
 		} catch (PrologInterfaceException e) {
