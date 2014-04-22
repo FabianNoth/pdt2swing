@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -86,6 +87,8 @@ public class FactPanel extends JPanel {
 					model.addElement(value);
 				}
 				component = new JComboBox<>(model);
+			} else if (arg.getType() == PrologArgument.BOOLEAN) {
+				component = new JCheckBox();
 			} else {
 				component = new JTextField();
 				((JTextField) component).setColumns(10);
@@ -194,6 +197,10 @@ public class FactPanel extends JPanel {
 			((JTextField) tf).setText(value);
 		} else if (tf instanceof JSpinner) {
 			((JSpinner) tf).setValue(Integer.parseInt(value));
+		} else if (tf instanceof JComboBox<?>) {
+			((JComboBox<?>) tf).setSelectedItem(value);
+		} else if (tf instanceof JCheckBox) {
+			((JCheckBox) tf).setSelected(value.equalsIgnoreCase("true"));
 		}
 	}
 	
@@ -205,6 +212,14 @@ public class FactPanel extends JPanel {
 				result = ((JTextField) tf).getText();
 			} else if (tf instanceof JSpinner) {
 				result = ((JSpinner) tf).getValue().toString();
+			} else if (tf instanceof JComboBox<?>) {
+				result = ((JComboBox<?>) tf).getSelectedItem().toString();
+			} else if (tf instanceof JCheckBox) {
+				if (((JCheckBox) tf).isSelected()) {
+					result = "true";
+				} else {
+					result = "false";
+				}
 			}
 		}
 		return result;

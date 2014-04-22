@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JSpinner;
@@ -140,6 +141,12 @@ public class PrologFactHandler extends PrologDataHandler {
 					text = ((JComboBox<?>) tf).getSelectedItem().toString();
 				} else if (tf instanceof JSpinner) {
 					text = ((JSpinner) tf).getValue().toString();
+				} else if (tf instanceof JCheckBox) {
+					if (((JCheckBox) tf).isSelected()) {
+						text = "true";
+					} else {
+						text = "false";
+					}
 				}
 				if (text.isEmpty()) {
 					if (getArgs()[i-1].getType() == PrologArgument.NUMBER) {
