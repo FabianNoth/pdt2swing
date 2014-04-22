@@ -16,7 +16,7 @@ import javax.swing.border.EmptyBorder;
 import pdt.gui.data.IdListener;
 import pdt.gui.data.InvisibleFactHandler;
 import pdt.gui.data.PrologConnection;
-import pdt.gui.data.PrologFactHandler;
+import pdt.gui.data.PrologDataHandler;
 import pdt.gui.data.PrologGuiBundle;
 import pdt.gui.data.PrologMultipleFactHandler;
 import pdt.gui.data.PrologSingleFactHandler;
@@ -88,7 +88,7 @@ public class PrologGui implements PrologDataVisualizer {
 	@Override
 	public void setBundle(PrologGuiBundle bundle) {
 		activeListeners.clear();
-		for (PrologFactHandler handler : bundle.getFactHandlers()) {
+		for (PrologDataHandler handler : bundle.getFactHandlers()) {
 			handler.setVisualizer(this);
 		}
 		
@@ -103,7 +103,7 @@ public class PrologGui implements PrologDataVisualizer {
         eastPanel.setMinimumSize(new Dimension(300, 100));
 		contentPane.add(eastPanel, BorderLayout.EAST);
         
-		List<PrologFactHandler> factHandlers = bundle.getFactHandlers();
+		List<PrologDataHandler> factHandlers = bundle.getFactHandlers();
         if (factHandlers.size() == 1) {
         	eastPanel.add(getPanel(factHandlers.get(0)), BorderLayout.CENTER);
         	addToListeners(factHandlers.get(0));
@@ -133,7 +133,7 @@ public class PrologGui implements PrologDataVisualizer {
 		activeListeners.add(listener);
 	}
 
-	private JPanel getPanel(PrologFactHandler prologFactHandler) {
+	private JPanel getPanel(PrologDataHandler prologFactHandler) {
     	if (prologFactHandler instanceof PrologMultipleFactHandler) {
     		return new RelationPanel((PrologMultipleFactHandler) prologFactHandler);
     	} else if (prologFactHandler instanceof PrologSingleFactHandler) {

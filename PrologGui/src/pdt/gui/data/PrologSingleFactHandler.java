@@ -18,7 +18,7 @@ import pdt.gui.utils.PrologUtils;
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologGoal;
 
-public class PrologSingleFactHandler extends PrologFactHandler {
+public class PrologSingleFactHandler extends PrologDataHandler {
 
 	private FactPanel editPanel;
 	private Map<String, Object> result;

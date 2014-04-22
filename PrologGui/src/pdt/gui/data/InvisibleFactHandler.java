@@ -4,7 +4,7 @@ import java.io.File;
 
 import pdt.prolog.elements.PrologGoal;
 
-public class InvisibleFactHandler extends PrologFactHandler {
+public class InvisibleFactHandler extends PrologDataHandler {
 	
 	public InvisibleFactHandler(PrologConnection con, String name, File outputFile, PrologGoal goal) {
 		this(con, name, outputFile, false, goal);

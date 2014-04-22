@@ -14,7 +14,7 @@ import org.cs3.prolog.pif.PrologInterfaceException;
 import pdt.gui.RelationPanel;
 import pdt.prolog.elements.PrologGoal;
 
-public class PrologMultipleFactHandler extends PrologFactHandler {
+public class PrologMultipleFactHandler extends PrologDataHandler {
 
 	private RelationPanel editPanel;
 	private List<String> autoCompletionList;

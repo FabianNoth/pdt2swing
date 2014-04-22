@@ -11,7 +11,7 @@ import pdt.gui.PrologDataVisualizer;
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologGoal;
 
-public abstract class PrologFactHandler implements IdListener {
+public abstract class PrologDataHandler implements IdListener {
 	
 	protected static final String ADD_FACT = "add_fact";
 	protected static final String ADD_RELATION = "add_relation";
@@ -37,7 +37,7 @@ public abstract class PrologFactHandler implements IdListener {
 	protected String currentId;
 //	protected String[] argsWithId;
 	
-	public PrologFactHandler(PrologConnection con, String name, File outputFile, boolean isMainPredicate, PrologGoal goal) {
+	public PrologDataHandler(PrologConnection con, String name, File outputFile, boolean isMainPredicate, PrologGoal goal) {
 		this.pif = con.getPif();
 		this.name = name;
 		this.args = goal.getArgs();

@@ -17,7 +17,7 @@ public abstract class BundleProvider {
 	public abstract PrologGuiBundle getDefault();
 	
 	public void addListener(PrologGuiBundle bundle) {
-		for (PrologFactHandler f : bundle.getFactHandlers()) {
+		for (PrologDataHandler f : bundle.getFactHandlers()) {
 			addListener(f);
 		}
 	}
