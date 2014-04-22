@@ -20,8 +20,8 @@ public class PrologTextFileHandler extends PrologDataHandler {
 	
 	private final Map<String, ActionListener> additionalActions = new TreeMap<String, ActionListener>();
 	
-	public PrologTextFileHandler(PrologConnection con, String name, File outputDir) {
-		super(con, name);
+	protected PrologTextFileHandler(String name, File outputDir) {
+		super(name);
 		this.outputDir = outputDir;
 	}
 	

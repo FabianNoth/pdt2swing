@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -28,7 +29,13 @@ public class PrologFactHandler extends PrologDataHandler {
 	public PrologFactHandler(PrologConnection con, String name, File outputFile, boolean isMainPredicate, PrologGoal goal) {
 		super(con, name, outputFile, isMainPredicate, goal);
 	}
-	
+
+	public PrologTextFileHandler createTextFileHandler(String title) {
+		File textOutputDir = new File(outputFile.getParentFile(), getFunctor());
+		PrologTextFileHandler textData = new PrologTextFileHandler(title, textOutputDir);
+		return textData;
+	}
+
 	public void setMainElementName(String mainElementName) {
 		this.mainElementName = mainElementName;
 	}
@@ -129,6 +136,8 @@ public class PrologFactHandler extends PrologDataHandler {
 				String text = null;
 				if (tf instanceof JTextField) {
 					text = ((JTextField) tf).getText();
+				} else if (tf instanceof JComboBox<?>) {
+					text = ((JComboBox<?>) tf).getSelectedItem().toString();
 				} else if (tf instanceof JSpinner) {
 					text = ((JSpinner) tf).getValue().toString();
 				}

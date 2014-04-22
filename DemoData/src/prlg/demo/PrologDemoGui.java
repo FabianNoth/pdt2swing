@@ -4,9 +4,9 @@ import java.io.File;
 
 import pdt.gui.PrologGui;
 import pdt.gui.data.PrologConnection;
+import pdt.gui.data.PrologFactHandler;
 import pdt.gui.data.PrologGuiBundle;
 import pdt.gui.data.PrologRelationHandler;
-import pdt.gui.data.PrologFactHandler;
 import pdt.gui.data.PrologTableData;
 import pdt.gui.data.PrologTextFileHandler;
 import pdt.prolog.elements.PrologArgument;
@@ -33,7 +33,6 @@ private PrologGuiBundle createSerienBundle(File dataDir, PrologConnection con) {
 		File seriesFile = new File(dataDir, "fsdb_serie.pl");
 		File ratingFile = new File(dataDir, "fsdb_serie_rating.pl");
 		File tagFile = new File(dataDir, "fsdb_tags.pl");
-		File textOutputDir = new File(dataDir, "fsdb_serie");
 		
 		PrologGoal tableGoal = new PrologGoal("fsdb_serie",
 				PrologArgument.createId(),
@@ -57,7 +56,7 @@ private PrologGuiBundle createSerienBundle(File dataDir, PrologConnection con) {
 		
 		PrologTableData tableData = new PrologTableData(con, tableGoal);
 		final PrologFactHandler seriesData = new PrologFactHandler(con, "Data", seriesFile, true, seriesGoal);
-		final PrologTextFileHandler textData = new PrologTextFileHandler(con, "Zusammenfassung", textOutputDir);
+		final PrologTextFileHandler textData = seriesData.createTextFileHandler("Zusammenfassung");
 		final PrologFactHandler ratingData = new PrologFactHandler(con, "Rating", ratingFile, false, ratingGoal);
 		final PrologRelationHandler tagData = new PrologRelationHandler(con, "Tags", tagFile, tagGoal, true);
 		
