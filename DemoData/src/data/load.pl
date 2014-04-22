@@ -9,13 +9,13 @@
 %:- multifile output_data_hook/2.
 %:- multifile check_for_existing_value_hook/2.
 
-fsdb_serie(Id, Title, Nation, Seasons, Episodes, Rating) :-
-	user:fsdb_serie_data(Id, Title, Nation),
+fsdb_serie_display(Id, Title, Nation, Seasons, Episodes, Rating) :-
+	user:fsdb_serie_data(Id, Title, Nation, _),
 	user:fsdb_serie_stats(Id, Seasons, Episodes),
 	user:fsdb_serie_rating(Id, Rating).
 	
-fsdb_serie(Id, Title, Nation, Seasons, Episodes) :-
-	user:fsdb_serie_data(Id, Title, Nation),
+fsdb_serie(Id, Title, Nation, Seasons, Episodes, Epic) :-
+	user:fsdb_serie_data(Id, Title, Nation, Epic),
 	user:fsdb_serie_stats(Id, Seasons, Episodes).
 	
 fsdb_tags(Id, Tag) :-
@@ -23,9 +23,9 @@ fsdb_tags(Id, Tag) :-
 	user:fsdb_category(TagId, Tag).
 
 :- multifile gui_hooks:add_data_hook/2.
-gui_hooks:add_data_hook(fsdb_serie(AddedId, Title, Nation, Seasons, Episodes), AddedId) :-
+gui_hooks:add_data_hook(fsdb_serie(AddedId, Title, Nation, Seasons, Episodes, Epic), AddedId) :-
 	id_handling:new_id(fsdb_serie, AddedId),
-	assert(user:fsdb_serie_data(AddedId, Title, Nation)),
+	assert(user:fsdb_serie_data(AddedId, Title, Nation, Epic)),
 	assert(user:fsdb_serie_stats(AddedId, Seasons, Episodes)),
 	assert(user:fsdb_serie_rating(AddedId, 0)).
 	
@@ -41,8 +41,8 @@ gui_hooks:add_data_hook(fsdb_tags(Id, Tag), _) :-
 	
 :- multifile gui_hooks:remove_data_hook/1.
 
-gui_hooks:remove_data_hook(fsdb_serie(Id, _, _, _, _)) :-
-	retractall(user:fsdb_serie_data(Id, _, _)),
+gui_hooks:remove_data_hook(fsdb_serie(Id, _, _, _, _, _)) :-
+	retractall(user:fsdb_serie_data(Id, _, _, _)),
 	retractall(user:fsdb_serie_stats(Id, _, _)),
 	retractall(user:fsdb_serie_rating(Id, _)).
 
@@ -52,15 +52,15 @@ gui_hooks:remove_data_hook(fsdb_tags(Id, Tag)) :-
 	
 :- multifile gui_hooks:update_data_hook/1.
 
-gui_hooks:update_data_hook(fsdb_serie(Id, Title, Nation, Seasons, Episodes)) :-
-	retractall(user:fsdb_serie_data(Id, _, _)),
+gui_hooks:update_data_hook(fsdb_serie(Id, Title, Nation, Seasons, Episodes, Epic)) :-
+	retractall(user:fsdb_serie_data(Id, _, _, _)),
 	retractall(user:fsdb_serie_stats(Id, _, _)),
-	assert(user:fsdb_serie_data(Id, Title, Nation)),
+	assert(user:fsdb_serie_data(Id, Title, Nation, Epic)),
 	assert(user:fsdb_serie_stats(Id, Seasons, Episodes)).
 
 :- multifile gui_hooks:output_data_hook/2.
-gui_hooks:output_data_hook(fsdb_serie, 5) :-
-	listing(user:fsdb_serie_data/3),
+gui_hooks:output_data_hook(fsdb_serie, 6) :-
+	listing(user:fsdb_serie_data/4),
 	listing(user:fsdb_serie_stats/3).
 	
 gui_hooks:output_data_hook(fsdb_tags, 2) :-

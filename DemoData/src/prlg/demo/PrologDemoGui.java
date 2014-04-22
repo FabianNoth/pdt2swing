@@ -34,7 +34,7 @@ private PrologGuiBundle createSerienBundle(File dataDir, PrologConnection con) {
 		File ratingFile = new File(dataDir, "fsdb_serie_rating.pl");
 		File tagFile = new File(dataDir, "fsdb_tags.pl");
 		
-		PrologGoal tableGoal = new PrologGoal("fsdb_serie",
+		PrologGoal tableGoal = new PrologGoal("fsdb_serie_display",
 				PrologArgument.createId(),
 				PrologArgument.createAtom("Name"),
 				PrologArgument.createAtom("Herkunftsland"),
@@ -48,7 +48,8 @@ private PrologGuiBundle createSerienBundle(File dataDir, PrologConnection con) {
 				PrologArgument.createAtom("Name"),
 				PrologArgument.createFixedAtom("Herkunftsland", "USA", "Deutschland", "Groﬂbritannien"),
 				PrologArgument.createNumber("Staffeln"),
-				PrologArgument.createNumber("Episoden")
+				PrologArgument.createNumber("Episoden"),
+				PrologArgument.createBoolean("Epic")
 		);
 
 		PrologGoal ratingGoal = new PrologGoal("fsdb_serie_rating", PrologArgument.createId(), PrologArgument.createLimitedNumber("Rating", 0, 10));
