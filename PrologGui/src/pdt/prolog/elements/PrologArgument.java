@@ -34,6 +34,10 @@ public class PrologArgument {
 		return new PrologNumberRangeArgument(name, limitMin, limitMax);
 	}
 	
+	public static PrologArgument createLimitedNumber(String name, int limitMin, int limitMax, boolean canBeUnsure) {
+		return new PrologNumberRangeArgument(name, limitMin, limitMax, canBeUnsure);
+	}
+	
 	public static PrologArgument createFixedAtom(String name, String... values) {
 		return new PrologFixedAtom(name, values);
 	}

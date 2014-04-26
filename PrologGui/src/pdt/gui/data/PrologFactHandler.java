@@ -16,6 +16,7 @@ import org.cs3.prolog.common.QueryUtils;
 import org.cs3.prolog.pif.PrologInterfaceException;
 
 import pdt.gui.FactPanel;
+import pdt.gui.SpinnerWithCheckbox;
 import pdt.gui.utils.PrologUtils;
 import pdt.gui.utils.SimpleLogger;
 import pdt.prolog.elements.PrologArgument;
@@ -141,6 +142,8 @@ public class PrologFactHandler extends PrologDataHandler {
 					text = ((JComboBox<?>) tf).getSelectedItem().toString();
 				} else if (tf instanceof JSpinner) {
 					text = ((JSpinner) tf).getValue().toString();
+				} else if (tf instanceof SpinnerWithCheckbox) {
+					text = ((SpinnerWithCheckbox) tf).getValue();
 				} else if (tf instanceof JCheckBox) {
 					if (((JCheckBox) tf).isSelected()) {
 						text = "true";
@@ -155,7 +158,11 @@ public class PrologFactHandler extends PrologDataHandler {
 						assertArgs[i] = "''";
 					}
 				} else {
-					assertArgs[i] = PrologUtils.quoteIfNecessary(text);
+					if (tf instanceof SpinnerWithCheckbox) {
+						assertArgs[i] = text;
+					} else {
+						assertArgs[i] = PrologUtils.quoteIfNecessary(text);
+					}
 				}
 			}
 		}

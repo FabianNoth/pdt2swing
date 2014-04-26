@@ -78,7 +78,12 @@ public class FactPanel extends JPanel {
 			
 			if (arg instanceof PrologNumberRangeArgument) {
 				PrologNumberRangeArgument numberArg = (PrologNumberRangeArgument) arg;
-				component = new JSpinner(new SpinnerNumberModel(numberArg.getLimitMin(), numberArg.getLimitMin(), numberArg.getLimitMax(), 1));
+				SpinnerNumberModel model = new SpinnerNumberModel(numberArg.getLimitMin(), numberArg.getLimitMin(), numberArg.getLimitMax(), 1);
+				if (numberArg.canBeUnsure()) {
+					component = new SpinnerWithCheckbox(model);
+				} else {
+					component = new JSpinner(model);
+				}
 			} else if (arg instanceof PrologFixedAtom) {
 				PrologFixedAtom fixedAtom = (PrologFixedAtom) arg;
 		
@@ -197,6 +202,8 @@ public class FactPanel extends JPanel {
 			((JTextField) tf).setText(value);
 		} else if (tf instanceof JSpinner) {
 			((JSpinner) tf).setValue(Integer.parseInt(value));
+		} else if (tf instanceof SpinnerWithCheckbox) {
+			((SpinnerWithCheckbox) tf).setValue(value);
 		} else if (tf instanceof JComboBox<?>) {
 			((JComboBox<?>) tf).setSelectedItem(value);
 		} else if (tf instanceof JCheckBox) {
@@ -212,6 +219,8 @@ public class FactPanel extends JPanel {
 				result = ((JTextField) tf).getText();
 			} else if (tf instanceof JSpinner) {
 				result = ((JSpinner) tf).getValue().toString();
+			} else if (tf instanceof SpinnerWithCheckbox) {
+				result = ((SpinnerWithCheckbox) tf).getValue();
 			} else if (tf instanceof JComboBox<?>) {
 				result = ((JComboBox<?>) tf).getSelectedItem().toString();
 			} else if (tf instanceof JCheckBox) {
