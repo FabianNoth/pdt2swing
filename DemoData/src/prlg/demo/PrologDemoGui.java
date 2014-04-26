@@ -52,7 +52,7 @@ private PrologGuiBundle createSerienBundle(File dataDir, PrologConnection con) {
 				PrologArgument.createBoolean("Epic")
 		);
 
-		PrologGoal ratingGoal = new PrologGoal("fsdb_serie_rating", PrologArgument.createId(), PrologArgument.createLimitedNumber("Rating", 0, 10));
+		PrologGoal ratingGoal = new PrologGoal("fsdb_serie_rating", PrologArgument.createId(), PrologArgument.createLimitedNumber("Rating", 0, 10, true));
 		PrologGoal tagGoal = new PrologGoal("fsdb_tags", PrologArgument.createId(), PrologArgument.createAtom("Tag"));
 		
 		PrologTableData tableData = new PrologTableData(con, tableGoal);

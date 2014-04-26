@@ -12,7 +12,8 @@
 fsdb_serie_display(Id, Title, Nation, Seasons, Episodes, Rating) :-
 	user:fsdb_serie_data(Id, Title, Nation, _),
 	user:fsdb_serie_stats(Id, Seasons, Episodes),
-	user:fsdb_serie_rating(Id, Rating).
+	user:fsdb_serie_rating(Id, RatingTerm),
+	RatingTerm =.. [_, Rating].
 	
 fsdb_serie(Id, Title, Nation, Seasons, Episodes, Epic) :-
 	user:fsdb_serie_data(Id, Title, Nation, Epic),
