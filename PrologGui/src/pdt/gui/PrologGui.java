@@ -18,6 +18,7 @@ import pdt.gui.data.InvisibleFactHandler;
 import pdt.gui.data.PrologConnection;
 import pdt.gui.data.PrologDataHandler;
 import pdt.gui.data.PrologGuiBundle;
+import pdt.gui.data.PrologRatingHandler;
 import pdt.gui.data.PrologRelationHandler;
 import pdt.gui.data.PrologFactHandler;
 import pdt.gui.data.PrologTableData;
@@ -139,6 +140,8 @@ public class PrologGui implements PrologDataVisualizer {
     		return new RelationPanel((PrologRelationHandler) prologFactHandler);
     	} else if (prologFactHandler instanceof PrologFactHandler) {
     		return new FactPanel((PrologFactHandler) prologFactHandler);
+    	} else if (prologFactHandler instanceof PrologRatingHandler) {
+    		return new RatingPanel((PrologRatingHandler) prologFactHandler);
     	} else if (prologFactHandler instanceof PrologTextFileHandler) {
     		return new TextFilePanel((PrologTextFileHandler) prologFactHandler);
     	}
