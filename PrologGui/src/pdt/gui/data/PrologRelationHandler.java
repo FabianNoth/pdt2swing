@@ -72,13 +72,15 @@ public class PrologRelationHandler extends PrologDataHandler {
 		
 		try {
 			boolean updateAutoCompletionFlag = false;
-			Map<String, Object> check = pif.queryOnce(QueryUtils.bT(CHECK_FOR_VALUE, getFunctor(), assertValue));
-			if (check == null) {
-				int answer = JOptionPane.showConfirmDialog(editPanel, "Eintrag mit dem Wert \"" + newValue + "\" existiert nicht. Soll er hinzugefügt werden?", "Neuen Eintrag hinzufügen", JOptionPane.YES_NO_OPTION);
-				if (answer == JOptionPane.NO_OPTION) {
-					return;
-				} else if (answer == JOptionPane.YES_OPTION) {
-					updateAutoCompletionFlag = true;
+			if (isAutoCompletion()) {
+				Map<String, Object> check = pif.queryOnce(QueryUtils.bT(CHECK_FOR_VALUE, getFunctor(), assertValue));
+				if (check == null) {
+					int answer = JOptionPane.showConfirmDialog(editPanel, "Eintrag mit dem Wert \"" + newValue + "\" existiert nicht. Soll er hinzugefügt werden?", "Neuen Eintrag hinzufügen", JOptionPane.YES_NO_OPTION);
+					if (answer == JOptionPane.NO_OPTION) {
+						return;
+					} else if (answer == JOptionPane.YES_OPTION) {
+						updateAutoCompletionFlag = true;
+					}
 				}
 			}
 
