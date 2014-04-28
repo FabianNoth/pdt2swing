@@ -47,11 +47,7 @@ public class QuerySelectionPanel extends JPanel {
 					if (lastPathComponent instanceof QueryNode) {
 						// if a query node was selected
 						QueryNode queryNode = (QueryNode) lastPathComponent;
-//						// get the data for the selected query
-//						PrologTableData data = new PrologTableData(visualizer.getPrologConnection(), queryNode.getGoal());
-//						// display it
-//						visualizer.changePrologData(data);
-						
+						// display it
 						visualizer.setBundle(queryNode.getBundle());
 					}
 				}
