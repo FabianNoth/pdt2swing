@@ -128,7 +128,8 @@ public class PrologGui implements PrologDataVisualizer {
 			eastPanel.add(imagePanel, BorderLayout.NORTH);
         }
 		tablePanel.updateTableModel(null);
-        frame.pack();
+		
+		frame.revalidate();
 	}
 
 	private void addToListeners(IdListener listener) {
