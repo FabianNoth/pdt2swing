@@ -110,8 +110,8 @@ public class PrologRelationHandler extends PrologDataHandler {
 	}
 
 	public void removeValue(String value) {
-		String retractQuery = QueryUtils.bT(getFunctor(), currentId, value);
-		SimpleLogger.println(retractQuery);
+		String retractQuery = QueryUtils.bT(getFunctor(), currentId, Util.quoteAtomIfNeeded(value));
+		SimpleLogger.println("retractQuery: " + retractQuery);
 		try {
 			pif.queryOnce(QueryUtils.bT(REMOVE_RELATION, retractQuery));
 		} catch (PrologInterfaceException e) {
