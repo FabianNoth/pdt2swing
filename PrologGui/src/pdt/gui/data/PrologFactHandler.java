@@ -113,6 +113,14 @@ public class PrologFactHandler extends PrologDataHandler {
 
 		try {
 			pif.queryOnce(QueryUtils.bT(REMOVE_FACT, goal));
+			
+			// if there is a text file, remove it also
+			File textOutputDir = new File(outputFile.getParentFile(), getFunctor());
+			File textFile = new File(textOutputDir, currentId);
+			if (textFile.isFile()) {
+				textFile.delete();
+			}
+			
 		} catch (PrologInterfaceException e) {
 			e.printStackTrace();
 		}
