@@ -13,17 +13,18 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.border.EmptyBorder;
 
+import pdt.gui.data.BundleProvider;
 import pdt.gui.data.IdListener;
 import pdt.gui.data.InvisibleFactHandler;
 import pdt.gui.data.PrologConnection;
 import pdt.gui.data.PrologDataHandler;
+import pdt.gui.data.PrologFactHandler;
 import pdt.gui.data.PrologGuiBundle;
 import pdt.gui.data.PrologRatingHandler;
 import pdt.gui.data.PrologRelationHandler;
-import pdt.gui.data.PrologFactHandler;
 import pdt.gui.data.PrologTableData;
-import pdt.gui.data.BundleProvider;
 import pdt.gui.data.PrologTextFileHandler;
+import pdt.gui.utils.SimpleLogger;
 
 public class PrologGui implements PrologDataVisualizer {
 
@@ -87,48 +88,53 @@ public class PrologGui implements PrologDataVisualizer {
         return contentPane;
     }
     
+    private PrologGuiBundle currentBundle;
+    
 	@Override
 	public void setBundle(PrologGuiBundle bundle) {
-		activeListeners.clear();
-		for (PrologDataHandler handler : bundle.getFactHandlers()) {
-			handler.setVisualizer(this);
+		if (bundle != currentBundle) {
+			currentBundle = bundle;
+			SimpleLogger.println("set new bundle");
+			activeListeners.clear();
+			for (PrologDataHandler handler : bundle.getFactHandlers()) {
+				handler.setVisualizer(this);
+			}
+			
+			tablePanel = new PrologTablePanel(this, bundle.getTableData());
+			
+			JPanel contentPane = createEmptyContentPane();
+			contentPane.add(tablePanel, BorderLayout.CENTER);
+			
+			JPanel eastPanel = new JPanel();
+			eastPanel.setLayout(new BorderLayout());
+			eastPanel.setPreferredSize(new Dimension(300, 100));
+			eastPanel.setMinimumSize(new Dimension(300, 100));
+			contentPane.add(eastPanel, BorderLayout.EAST);
+			
+			List<PrologDataHandler> factHandlers = bundle.getFactHandlers();
+			if (factHandlers.size() == 1) {
+				eastPanel.add(getPanel(factHandlers.get(0)), BorderLayout.CENTER);
+				addToListeners(factHandlers.get(0));
+			} else if (factHandlers.size() > 1) {
+				// tabbed pane
+				JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+				eastPanel.add(tabbedPane, BorderLayout.CENTER);
+				
+				for(int i=0; i<factHandlers.size(); i++) {
+					if (!(factHandlers.get(i) instanceof InvisibleFactHandler)) {
+						tabbedPane.addTab(factHandlers.get(i).getName(), null, getPanel(factHandlers.get(i)), null);
+					}
+					addToListeners(factHandlers.get(i));
+				}
+			}
+			
+			if (bundle.getImgDir() != null) {
+				ImagePanel imagePanel = new ImagePanel(bundle.getImgDir(), bundle.getImgListener());
+				addToListeners(imagePanel);
+				eastPanel.add(imagePanel, BorderLayout.NORTH);
+			}
 		}
-		
-		tablePanel = new PrologTablePanel(this, bundle.getTableData());
-
-		JPanel contentPane = createEmptyContentPane();
-        contentPane.add(tablePanel, BorderLayout.CENTER);
-        
-        JPanel eastPanel = new JPanel();
-        eastPanel.setLayout(new BorderLayout());
-        eastPanel.setPreferredSize(new Dimension(300, 100));
-        eastPanel.setMinimumSize(new Dimension(300, 100));
-		contentPane.add(eastPanel, BorderLayout.EAST);
-        
-		List<PrologDataHandler> factHandlers = bundle.getFactHandlers();
-        if (factHandlers.size() == 1) {
-        	eastPanel.add(getPanel(factHandlers.get(0)), BorderLayout.CENTER);
-        	addToListeners(factHandlers.get(0));
-        } else if (factHandlers.size() > 1) {
-        	// tabbed pane
-        	JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-        	eastPanel.add(tabbedPane, BorderLayout.CENTER);
-    		
-        	for(int i=0; i<factHandlers.size(); i++) {
-        		if (!(factHandlers.get(i) instanceof InvisibleFactHandler)) {
-        			tabbedPane.addTab(factHandlers.get(i).getName(), null, getPanel(factHandlers.get(i)), null);
-        		}
-            	addToListeners(factHandlers.get(i));
-        	}
-        }
-        
-        if (bundle.getImgDir() != null) {
-			ImagePanel imagePanel = new ImagePanel(bundle.getImgDir(), bundle.getImgListener());
-        	addToListeners(imagePanel);
-			eastPanel.add(imagePanel, BorderLayout.NORTH);
-        }
 		tablePanel.updateTableModel(null);
-		
 		frame.revalidate();
 	}
 

@@ -41,4 +41,8 @@ public class PrologGuiBundle {
 		return imgListener;
 	}
 	
+	public void setFilter(PrologFilter filter) {
+		tableData.setFilter(filter);
+	}
+	
 }

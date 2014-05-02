@@ -14,35 +14,36 @@ import pdt.prolog.elements.PrologGoal;
 
 public class PrologTableData extends AbstractTableModel {
 
-	// TODO: give type for args (String, int, int with limits)
-	//       make gui element depentend on that type (JSpinner for ints)
-	
 	private static final long serialVersionUID = 1L;
 	
 	private PrologGoal goal;
 	
-//	private String[] args;
 	private String[] variables;
-	
-	private List<Map<String, Object>> data;
+
+	private PrologFilter filter;
+	private List<Map<String, Object>> fullData;
+	private List<Map<String, Object>> filteredData;
+//	private List<Map<String, Object>> data;
 	private PrologInterface pif;
-//	private String functor;
 
 	private String query;
 
+
 	public PrologTableData(PrologConnection con, PrologGoal goal) {
+		this(con, goal, new PrologFilter() {
+			@Override public boolean accept(Map<String, Object> entry) {
+				return true;
+			}
+		});
+	}
+	
+	public PrologTableData(PrologConnection con, PrologGoal goal, PrologFilter filter) {
+		this.filter = filter;
 		this.goal = goal;
 		
-//		this.args = args;
-//		this.functor = functor;
-		
 		pif = con.getPif();
-		query = goal.getQuery();
-		try {
-			data = pif.queryAll(query);
-		} catch (PrologInterfaceException e) {
-			e.printStackTrace();
-		}
+		
+		updateResultData();
 		
 		ArrayList<String> variableList = new ArrayList<>();
 		for (PrologArgument arg : goal.getArgs()) {
@@ -59,6 +60,10 @@ public class PrologTableData extends AbstractTableModel {
 		}
 	}
 	
+	public void setFilter(PrologFilter filter) {
+		this.filter = filter;
+	}
+	
 	public String getQuery() {
 		return query;
 	}
@@ -70,7 +75,8 @@ public class PrologTableData extends AbstractTableModel {
 	public void updateResultData() {
 //		String query = QueryUtils.bT(goal.getFunctor(), (Object[]) args);
 		try {
-			data = pif.queryAll(goal.getQuery());
+			fullData = pif.queryAll(goal.getQuery());
+			filteredData = filter.getFilteredList(fullData);
 		} catch (PrologInterfaceException e) {
 			e.printStackTrace();
 		}
@@ -84,12 +90,12 @@ public class PrologTableData extends AbstractTableModel {
 
 	@Override
 	public int getRowCount() {
-		return data.size();
+		return filteredData.size();
 	}
 
 	@Override
 	public Object getValueAt(int rowIndex, int colIndex) {
-		Map<String, Object> map = data.get(rowIndex);
+		Map<String, Object> map = filteredData.get(rowIndex);
 		if (map != null) {
 			return map.get(variables[colIndex]);
 		}
@@ -115,7 +121,7 @@ public class PrologTableData extends AbstractTableModel {
 		// TODO: might be slow, use indexing
 		if (id != null) {
 			int i=0;
-			for(Map<String, Object> result : data) {
+			for(Map<String, Object> result : filteredData) {
 				if (id.equals(result.get("ID").toString())) {
 					return i;
 				}
