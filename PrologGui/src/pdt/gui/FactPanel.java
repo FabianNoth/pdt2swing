@@ -205,7 +205,13 @@ public class FactPanel extends JPanel {
 		} else if (tf instanceof SpinnerWithCheckbox) {
 			((SpinnerWithCheckbox) tf).setValue(value);
 		} else if (tf instanceof JComboBox<?>) {
-			((JComboBox<?>) tf).setSelectedItem(value);
+			JComboBox<?> comboBox = (JComboBox<?>) tf;
+			int index = ((DefaultComboBoxModel<?>) comboBox.getModel()).getIndexOf(value);
+			if (index == -1) {
+				comboBox.setSelectedIndex(0);
+			} else {
+				comboBox.setSelectedItem(value);
+			}
 		} else if (tf instanceof JCheckBox) {
 			((JCheckBox) tf).setSelected(value.equalsIgnoreCase("true"));
 		}
