@@ -2,7 +2,7 @@ package pdt.gui.utils;
 
 public class SimpleLogger {
 
-	private static boolean loggingEnabled = false;
+	public static boolean loggingEnabled = true;
 
 	public static void setLoggingEnabled(boolean b) {
 		loggingEnabled = b;
