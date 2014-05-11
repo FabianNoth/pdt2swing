@@ -39,6 +39,11 @@ public class PrologTextFileHandler extends PrologDataHandler {
 			editPanel.setData("");
 		}
 	}
+	
+	@Override
+	public void clearData() {
+		editPanel.clearPanel();
+	}
 
 	public void updateFromPanel() {
 		String text = editPanel.getData();

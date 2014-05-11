@@ -66,6 +66,11 @@ public class PrologRelationHandler extends PrologDataHandler {
 			e.printStackTrace();
 		}
 	}
+	
+	@Override
+	public void clearData() {
+		editPanel.clearPanel();
+	}
 
 	public void addValue(String newValue) {
 		String assertValue = Util.quoteAtomIfNeeded(newValue);

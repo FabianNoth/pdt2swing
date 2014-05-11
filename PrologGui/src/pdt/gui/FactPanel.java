@@ -199,21 +199,37 @@ public class FactPanel extends JPanel {
 		}
 		
 		if (tf instanceof JTextField) {
-			((JTextField) tf).setText(value);
+			((JTextField) tf).setText(setValue);
 		} else if (tf instanceof JSpinner) {
-			((JSpinner) tf).setValue(Integer.parseInt(value));
+			((JSpinner) tf).setValue(Integer.parseInt(setValue));
 		} else if (tf instanceof SpinnerWithCheckbox) {
-			((SpinnerWithCheckbox) tf).setValue(value);
+			((SpinnerWithCheckbox) tf).setValue(setValue);
 		} else if (tf instanceof JComboBox<?>) {
 			JComboBox<?> comboBox = (JComboBox<?>) tf;
-			int index = ((DefaultComboBoxModel<?>) comboBox.getModel()).getIndexOf(value);
+			int index = ((DefaultComboBoxModel<?>) comboBox.getModel()).getIndexOf(setValue);
 			if (index == -1) {
 				comboBox.setSelectedIndex(0);
 			} else {
-				comboBox.setSelectedItem(value);
+				comboBox.setSelectedItem(setValue);
 			}
 		} else if (tf instanceof JCheckBox) {
-			((JCheckBox) tf).setSelected(value.equalsIgnoreCase("true"));
+			((JCheckBox) tf).setSelected(setValue.equalsIgnoreCase("true"));
+		}
+	}
+	
+	private void clearSingleEntry(String key) {
+		JComponent tf = textFields.get(key);
+		
+		if (tf instanceof JTextField) {
+			((JTextField) tf).setText("");
+		} else if (tf instanceof JSpinner) {
+			((JSpinner) tf).setValue(0);
+		} else if (tf instanceof SpinnerWithCheckbox) {
+			((SpinnerWithCheckbox) tf).setValue("u(0)");
+		} else if (tf instanceof JComboBox<?>) {
+			((JComboBox<?>) tf).setSelectedIndex(0);
+		} else if (tf instanceof JCheckBox) {
+			((JCheckBox) tf).setSelected(false);
 		}
 	}
 	
@@ -239,5 +255,13 @@ public class FactPanel extends JPanel {
 		}
 		return result;
 	}
+
+	public void clearPanel() {
+		for(String s : textFields.keySet()) {
+			clearSingleEntry(s);
+		}
+	}
+
+	
 
 }

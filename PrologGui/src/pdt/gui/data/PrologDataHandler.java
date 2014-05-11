@@ -37,7 +37,6 @@ public abstract class PrologDataHandler implements IdListener {
 	private Object[] argNamesWithBoundId;
 	protected String currentId;
 	protected File outputFile;
-//	protected String[] argsWithId;
 
 	public PrologDataHandler(String name) {
 		this.name = name;
@@ -81,12 +80,15 @@ public abstract class PrologDataHandler implements IdListener {
 	@Override
 	public void setId(String id) {
 		currentId = id;
-//		argsWithId[0] = id;
-//		argNames[0] = id;
-		showData();
+		if (id == null) {
+			clearData();
+		} else {
+			showData();
+		}
 	}
-	
+
 	public abstract void showData();
+	public abstract void clearData();
 	
 	public void updateVisualizer() {
 		updateVisualizer(null);

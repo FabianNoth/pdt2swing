@@ -43,5 +43,9 @@ public class TextFilePanel extends JPanel {
 		return textArea.getText();
 	}
 
+	public void clearPanel() {
+		setData("");
+	}
+
 
 }

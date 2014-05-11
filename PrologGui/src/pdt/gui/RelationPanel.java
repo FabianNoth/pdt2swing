@@ -81,4 +81,9 @@ public class RelationPanel extends JPanel {
 		}
 	}
 
+	public void clearPanel() {
+		tfAdd.setText("");
+		listModel.clear();
+	}
+
 }

@@ -62,4 +62,8 @@ public class RatingPanel extends JPanel {
 		return ratingTableModel.getSingleEntry(key);
 	}
 
+	public void clearPanel() {
+		ratingTableModel.setData(null);
+	}
+
 }

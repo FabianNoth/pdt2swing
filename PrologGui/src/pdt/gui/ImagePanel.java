@@ -69,20 +69,24 @@ public class ImagePanel extends JPanel implements IdListener {
 	public void paint(Graphics g) {
 		super.paint(g);
 		calcPos();
-		if (img != null) {
-			g.drawImage(img, posX, posY, null);
-		} else {
+		if (img == null) {
 			g.drawImage(noImg, posX, posY, null);
+		} else {
+			g.drawImage(img, posX, posY, null);
 		}
 	}
 	
 	@Override
 	public void setId(String id) {
-		File imgFile = new File(imgDir, id + ".jpg");
-		try {
-			img = ImageIO.read(imgFile);
-		} catch (IOException e) {
+		if (id == null) {
 			img = null;
+		} else {
+			File imgFile = new File(imgDir, id + ".jpg");
+			try {
+				img = ImageIO.read(imgFile);
+			} catch (IOException e) {
+				img = null;
+			}
 		}
 		calcPos();
 		repaint();		

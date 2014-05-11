@@ -1,11 +1,15 @@
 package pdt.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -20,7 +24,7 @@ public class PrologTablePanel extends JPanel {
 	private JTable table;
 	
 	public PrologTablePanel(final PrologDataVisualizer parent, PrologTableData prologData) {
-	        super(new GridLayout(1,0));
+	        super(new BorderLayout());
 	        
 	        prologTableModel = prologData;
 			table = new JTable(prologTableModel);
@@ -34,9 +38,7 @@ public class PrologTablePanel extends JPanel {
 				public void valueChanged(ListSelectionEvent evt) {
 					if (!evt.getValueIsAdjusting()) {
 						String id = getSelectedId();
-						if (id != null) {
-							parent.changePrologId(id);
-						}
+						parent.changePrologId(id);
 					}
 				}
 			});
@@ -49,7 +51,20 @@ public class PrologTablePanel extends JPanel {
 	        JScrollPane scrollPane = new JScrollPane(table);
 
 	        // Add the scroll pane to this panel.
-	        add(scrollPane);
+	        add(scrollPane, BorderLayout.CENTER);
+	        
+	        JToolBar toolBar = new JToolBar();
+	        toolBar.setFloatable(false);
+
+	        JButton btClearSelection = new JButton("Auswahl zurücksetzen");
+	        btClearSelection.addActionListener(new ActionListener() {
+				@Override public void actionPerformed(ActionEvent evt) {
+					// clear table selection, the ListSelectionListener will handle the rest
+					table.clearSelection();
+				}
+			});
+	        toolBar.add(btClearSelection);
+	        add(toolBar, BorderLayout.NORTH);
 	    }
 	
 	public void setTableModel(PrologTableData prologTableModel) {

@@ -38,6 +38,11 @@ public class PrologRatingHandler extends PrologDataHandler {
 		}
 	}
 	
+	@Override
+	public void clearData() {
+		editPanel.clearPanel();
+	}
+	
 	public void updateFromPanel(RatingTableModel model) {
 		// build assert query
 //		String retractQuery = getRetractQuery();

@@ -13,11 +13,12 @@ import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 
 import pdt.gui.data.BundleProvider;
 import pdt.gui.data.IdListener;
-import pdt.gui.data.InvisibleFactHandler;
 import pdt.gui.data.PrologConnection;
 import pdt.gui.data.PrologDataHandler;
 import pdt.gui.data.PrologFactHandler;
@@ -89,6 +90,11 @@ public class PrologGui implements PrologDataVisualizer {
      * event-dispatching thread.
      */
     private void createAndShowGUI() {
+    	try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		}
         frame = new JFrame("Prolog Data Demo");
         frame.addWindowListener(new WindowAdapter() {
         	@Override
@@ -154,9 +160,9 @@ public class PrologGui implements PrologDataVisualizer {
 				eastPanel.add(tabbedPane, BorderLayout.CENTER);
 				
 				for(int i=0; i<factHandlers.size(); i++) {
-					if (!(factHandlers.get(i) instanceof InvisibleFactHandler)) {
+//					if (!(factHandlers.get(i) instanceof InvisibleFactHandler)) {
 						tabbedPane.addTab(factHandlers.get(i).getName(), null, getPanel(factHandlers.get(i)), null);
-					}
+//					}
 					addToListeners(factHandlers.get(i));
 				}
 			}

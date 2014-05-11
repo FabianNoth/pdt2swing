@@ -60,6 +60,11 @@ public class PrologFactHandler extends PrologDataHandler {
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public void clearData() {
+		editPanel.clearPanel();
+	}
 	
 	public String getMainElement() {
 		return getElementByName(mainElementName);

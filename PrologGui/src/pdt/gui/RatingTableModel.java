@@ -62,14 +62,20 @@ public class RatingTableModel extends AbstractTableModel {
 	}
 	
 	public void setData(Map<String, Object> result) {
-		for( int i=0; i<labels.size(); i++) {
+		if (result == null) {
+			for( int i=0; i<labels.size(); i++) {
+				setSingleEntry(i, 0, true);
+			}
+		} else {
+			for( int i=0; i<labels.size(); i++) {
 //			String term = result.get(labels[i]).toString();
-			String term = result.get(labels.get(i)).toString();
-			Boolean b = term.charAt(0) == 'u';
-			String dummy = term.substring(2, term.length()-1);
-			Integer value = Integer.parseInt(dummy);
-			
-			setSingleEntry(i, value, b);
+				String term = result.get(labels.get(i)).toString();
+				Boolean b = term.charAt(0) == 'u';
+				String dummy = term.substring(2, term.length()-1);
+				Integer value = Integer.parseInt(dummy);
+				
+				setSingleEntry(i, value, b);
+			}
 		}
 		fireTableDataChanged();
 	}
