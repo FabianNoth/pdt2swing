@@ -18,9 +18,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.commons.io.FileUtils;
-
 import pdt.gui.data.IdListener;
+import pdt.gui.utils.ImageUtils;
 
 public class ImagePanel extends JPanel implements IdListener {
 
@@ -86,7 +85,7 @@ public class ImagePanel extends JPanel implements IdListener {
 				});
 				if (result == JFileChooser.APPROVE_OPTION) {
 					File file = fileChooser.getSelectedFile();
-					// TODO: resize image
+					BufferedImage outputImage = ImageUtils.scaleImage(file, 200, 300);
 
 					// copy to imgDir
 					try {
@@ -97,7 +96,8 @@ public class ImagePanel extends JPanel implements IdListener {
 								return;
 							}
 						}
-						FileUtils.copyFile(file, destFile);
+						ImageIO.write(outputImage, "jpg", destFile);
+//						FileUtils.copyFile(file, destFile);
 						setId(id);
 					} catch (IOException e1) {
 						e1.printStackTrace();
