@@ -13,7 +13,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.filechooser.FileFilter;
+
+import org.apache.commons.io.FileUtils;
 
 import pdt.gui.data.IdListener;
 
@@ -28,13 +33,22 @@ public class ImagePanel extends JPanel implements IdListener {
 	private int posX = 0;
 	private int posY = 0;
 	
+	private String id;
+	
 	public ImagePanel(File imgDir) {
-		this(imgDir, null);
+		this(imgDir, null, false);
 	}
 	
-	public ImagePanel(File imgDir, ActionListener listener) {
+	public ImagePanel(final File imgDir, ActionListener listener, boolean allowImageUpload) {
 		this.imgDir = imgDir;
-		addActionListener(listener);
+		if (listener == null) {
+			if (allowImageUpload) {
+				// add image upload action
+				actionListener.add(createImageUploadAction());
+			}
+		} else {
+			actionListener.add(listener);
+		}
 		try {
 			noImg = ImageIO.read(new File(imgDir, "no_image.png"));
 		} catch (IOException e) {
@@ -52,16 +66,52 @@ public class ImagePanel extends JPanel implements IdListener {
 		setMinimumSize(new Dimension(220, 310));
 	}
 	
+	private ActionListener createImageUploadAction() {
+		ActionListener uploadListener = new ActionListener() {
+			private JFileChooser fileChooser = new JFileChooser();
+			@Override public void actionPerformed(ActionEvent e) {
+				// show file input dialog (only jpg files)
+				int result = fileChooser.showOpenDialog(null);
+				fileChooser.setFileFilter(new FileFilter() {
+					
+					@Override
+					public String getDescription() {
+						return "JPG Images";
+					}
+					
+					@Override
+					public boolean accept(File f) {
+						return f.getName().toLowerCase().endsWith(".jpg");
+					}
+				});
+				if (result == JFileChooser.APPROVE_OPTION) {
+					File file = fileChooser.getSelectedFile();
+					// TODO: resize image
+
+					// copy to imgDir
+					try {
+						File destFile = new File(imgDir, id + ".jpg");
+						if (destFile.isFile()) {
+							int answer = JOptionPane.showConfirmDialog(ImagePanel.this, "Das Bild exisitert bereits. Soll es überschrieben werden?", "Bild überschreiben", JOptionPane.YES_NO_OPTION);
+							if (answer == JOptionPane.NO_OPTION) {
+								return;
+							}
+						}
+						FileUtils.copyFile(file, destFile);
+						setId(id);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
+		};
+		return uploadListener;
+	}
+
 	protected void notifyListeners() {
 		ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "image_clicked");
 		for (ActionListener l : actionListener) {
 			l.actionPerformed(event);
-		}
-	}
-
-	private void addActionListener(ActionListener listener) {
-		if (listener != null) {
-			actionListener.add(listener);
 		}
 	}
 
@@ -78,6 +128,7 @@ public class ImagePanel extends JPanel implements IdListener {
 	
 	@Override
 	public void setId(String id) {
+		this.id = id;
 		if (id == null) {
 			img = null;
 		} else {

@@ -2,6 +2,7 @@ package pdt.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -167,8 +168,9 @@ public class PrologGui implements PrologDataVisualizer {
 				}
 			}
 			
-			if (bundle.getImgDir() != null) {
-				ImagePanel imagePanel = new ImagePanel(bundle.getImgDir(), bundle.getImgListener());
+			File imgDir = bundle.getImgDir();
+			if (imgDir != null) {
+				ImagePanel imagePanel = new ImagePanel(imgDir, bundle.getImgListener(), bundle.isAllowImageUpload());
 				addToListeners(imagePanel);
 				eastPanel.add(imagePanel, BorderLayout.NORTH);
 			}

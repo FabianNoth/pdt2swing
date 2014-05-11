@@ -11,9 +11,15 @@ public class PrologGuiBundle {
 	private final List<PrologDataHandler> factHandlers = new ArrayList<>();
 	private File imgDir;
 	private ActionListener imgListener;
+	private boolean allowImageUpload = false;
 
 	public PrologGuiBundle(PrologTableData tableData, PrologDataHandler... factHandlers) {
 		this(tableData, null, null, factHandlers);
+	}
+	
+	public PrologGuiBundle(PrologTableData tableData, File imgDir, boolean allowImageUpload, PrologDataHandler... factHandlers) {
+		this(tableData, imgDir, null, factHandlers);
+		this.allowImageUpload = allowImageUpload;
 	}
 	
 	public PrologGuiBundle(PrologTableData tableData, File imgDir, ActionListener imgListener, PrologDataHandler... factHandlers) {
@@ -39,6 +45,10 @@ public class PrologGuiBundle {
 
 	public ActionListener getImgListener() {
 		return imgListener;
+	}
+	
+	public boolean isAllowImageUpload() {
+		return allowImageUpload;
 	}
 	
 	public void setFilter(PrologFilter filter) {
