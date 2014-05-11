@@ -90,7 +90,7 @@ public class PrologRelationHandler extends PrologDataHandler {
 			}
 
 			String assertQuery = QueryUtils.bT(getFunctor(), currentId, assertValue);
-			SimpleLogger.info(assertQuery);
+			SimpleLogger.debug(assertQuery);
 			try {
 				pif.queryOnce(QueryUtils.bT(ADD_RELATION, assertQuery));
 			} catch (PrologInterfaceException e) {
@@ -116,7 +116,7 @@ public class PrologRelationHandler extends PrologDataHandler {
 
 	public void removeValue(String value) {
 		String retractQuery = QueryUtils.bT(getFunctor(), currentId, Util.quoteAtomIfNeeded(value));
-		SimpleLogger.info("retractQuery: " + retractQuery);
+		SimpleLogger.debug("retractQuery: " + retractQuery);
 		try {
 			pif.queryOnce(QueryUtils.bT(REMOVE_RELATION, retractQuery));
 		} catch (PrologInterfaceException e) {

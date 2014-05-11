@@ -134,7 +134,7 @@ public class PrologGui implements PrologDataVisualizer {
 	public void setBundle(PrologGuiBundle bundle) {
 		if (bundle != currentBundle) {
 			currentBundle = bundle;
-			SimpleLogger.info("set new bundle");
+			SimpleLogger.debug("set new bundle");
 			activeListeners.clear();
 			for (PrologDataHandler handler : bundle.getFactHandlers()) {
 				handler.setVisualizer(this);
