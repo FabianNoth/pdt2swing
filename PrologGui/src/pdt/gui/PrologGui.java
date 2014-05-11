@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileFilter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,10 +26,12 @@ import pdt.gui.data.PrologRatingHandler;
 import pdt.gui.data.PrologRelationHandler;
 import pdt.gui.data.PrologTableData;
 import pdt.gui.data.PrologTextFileHandler;
+import pdt.gui.utils.AppZip;
 import pdt.gui.utils.SimpleLogger;
 
 public class PrologGui implements PrologDataVisualizer {
 
+	private static final int BACKUP_FILTER = 5;
 	private final Set<IdListener> activeListeners = new HashSet<IdListener>();
 	private PrologTablePanel tablePanel;
 	private PrologConnection con;
@@ -43,6 +47,35 @@ public class PrologGui implements PrologDataVisualizer {
         createAndShowGUI();
 	}
 	
+	public PrologGui(PrologConnection con, BundleProvider bundleProvider, File baseDir, File backupDir) {
+		this(con, bundleProvider);
+		updateBackupFolder(baseDir, backupDir);
+	}
+
+	private void updateBackupFolder(File baseDir, File backupDir) {
+		File[] fileList = backupDir.listFiles(new FileFilter() {
+			@Override public boolean accept(File f) {
+				return f.getName().endsWith(".zip");
+			}
+		});
+		
+		int n = fileList.length;
+		int i = 0;
+		
+		while(n >= BACKUP_FILTER) {
+			fileList[i].delete();
+			i++;
+			n--;
+		}
+		
+		AppZip zipper = new AppZip(baseDir.getAbsolutePath());
+		zipper.generateFileList(baseDir);
+		String zipName = "backup_" + System.currentTimeMillis() + ".zip";
+		File zipFile = new File(backupDir, zipName);
+		zipper.zipIt(zipFile.getAbsolutePath());
+		
+	}
+
 	@Override
 	public void changePrologId(String id) {
 		for(IdListener l : activeListeners) {
