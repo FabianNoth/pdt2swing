@@ -106,7 +106,7 @@ public abstract class PrologDataHandler implements IdListener {
 	
 	@Override
 	public void persistFacts() {
-		SimpleLogger.println("outputQuery: " + outputQuery );
+		SimpleLogger.info("outputQuery: " + outputQuery );
 		try {
 			pif.queryOnce(outputQuery);
 		} catch (PrologInterfaceException e) {

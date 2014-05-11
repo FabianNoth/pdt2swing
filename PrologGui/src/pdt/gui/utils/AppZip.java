@@ -32,11 +32,11 @@ public class AppZip
 			FileOutputStream fos = new FileOutputStream(zipFile);
 			ZipOutputStream zos = new ZipOutputStream(fos);
 
-			SimpleLogger.println("Output to Zip : " + zipFile);
+			SimpleLogger.info("Output to Zip : " + zipFile);
 
 			for(String file : this.fileList){
 
-				SimpleLogger.println("File Added : " + file);
+				SimpleLogger.debug("File Added : " + file);
 				ZipEntry ze= new ZipEntry(file);
 				zos.putNextEntry(ze);
 
@@ -54,7 +54,7 @@ public class AppZip
 			//remember close it
 			zos.close();
 
-			SimpleLogger.println("Done");
+			SimpleLogger.info("Done");
 		}catch(IOException ex){
 			ex.printStackTrace();   
 		}

@@ -69,7 +69,7 @@ public class PrologTablePanel extends JPanel {
 	
 	public void setTableModel(PrologTableData prologTableModel) {
 		if (!this.prologTableModel.equals(prologTableModel)) {
-			SimpleLogger.println("data differs, so change table");
+			SimpleLogger.info("data differs, so change table");
 			String id = getSelectedId();
 			this.prologTableModel = prologTableModel;
 			table.setModel(prologTableModel);

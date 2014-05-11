@@ -39,7 +39,7 @@ public class PrologRelationHandler extends PrologDataHandler {
 		try {
 			Map<String, Object> results = pif.queryOnce(QueryUtils.bT(AUTO_COMPLETION, functor, "Result"));
 			autoCompletionList = (List<String>) results.get("Result");
-			SimpleLogger.println(autoCompletionList);
+			SimpleLogger.debug(autoCompletionList);
 		} catch (PrologInterfaceException e) {
 			e.printStackTrace();
 		}
@@ -90,7 +90,7 @@ public class PrologRelationHandler extends PrologDataHandler {
 			}
 
 			String assertQuery = QueryUtils.bT(getFunctor(), currentId, assertValue);
-			SimpleLogger.println(assertQuery);
+			SimpleLogger.info(assertQuery);
 			try {
 				pif.queryOnce(QueryUtils.bT(ADD_RELATION, assertQuery));
 			} catch (PrologInterfaceException e) {
@@ -116,7 +116,7 @@ public class PrologRelationHandler extends PrologDataHandler {
 
 	public void removeValue(String value) {
 		String retractQuery = QueryUtils.bT(getFunctor(), currentId, Util.quoteAtomIfNeeded(value));
-		SimpleLogger.println("retractQuery: " + retractQuery);
+		SimpleLogger.info("retractQuery: " + retractQuery);
 		try {
 			pif.queryOnce(QueryUtils.bT(REMOVE_RELATION, retractQuery));
 		} catch (PrologInterfaceException e) {

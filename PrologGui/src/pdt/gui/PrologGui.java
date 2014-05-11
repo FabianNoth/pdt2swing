@@ -85,11 +85,12 @@ public class PrologGui implements PrologDataVisualizer {
 	}
 	
 	 /**
-     * Create the GUI and show it.  For thread safety,
+     * Create the GUI and show it. For thread safety,
      * this method should be invoked from the
      * event-dispatching thread.
      */
     private void createAndShowGUI() {
+    	// set look and feel to system
     	try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
@@ -133,7 +134,7 @@ public class PrologGui implements PrologDataVisualizer {
 	public void setBundle(PrologGuiBundle bundle) {
 		if (bundle != currentBundle) {
 			currentBundle = bundle;
-			SimpleLogger.println("set new bundle");
+			SimpleLogger.info("set new bundle");
 			activeListeners.clear();
 			for (PrologDataHandler handler : bundle.getFactHandlers()) {
 				handler.setVisualizer(this);

@@ -26,7 +26,7 @@ public class PrologRatingHandler extends PrologDataHandler {
 
 	@Override
 	public void showData() {
-		SimpleLogger.println(getQuery());
+		SimpleLogger.info(getQuery());
 		try {
 			result = pif.queryOnce(getQuery());
 			result.put("ID", currentId);
