@@ -81,15 +81,15 @@ public class PrologFactHandler extends PrologDataHandler {
 	}
 
 	public void updateFromPanel(HashMap<String, JComponent> textFields) {
-		// build assert query
-//		String retractQuery = getRetractQuery();
+		if (currentId == null) {
+			return;
+		}
+		
 		// get goal for assertion, use current id
 		String goal = getGoalWithData(textFields, currentId);
 		
 		try {
 			pif.queryOnce(QueryUtils.bT(UPDATE_FACT, goal));
-//			pif.queryOnce("retractall(" + retractQuery + ")");
-//			pif.queryOnce("assert(" + assertQuery + ")");
 		} catch (PrologInterfaceException e) {
 			e.printStackTrace();
 		}
@@ -114,6 +114,10 @@ public class PrologFactHandler extends PrologDataHandler {
 	}
 	
 	public void delete() {
+		if (currentId == null) {
+			return;
+		}
+		
 		String goal = getSimpleGoal();
 
 		try {
@@ -210,6 +214,10 @@ public class PrologFactHandler extends PrologDataHandler {
 			}
 		}
 		return null;
+	}
+
+	public boolean isElementSelected() {
+		return currentId != null;
 	}
 	
 }

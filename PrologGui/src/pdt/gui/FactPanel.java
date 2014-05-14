@@ -29,12 +29,17 @@ public class FactPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private final HashMap<String, JComponent> textFields = new HashMap<>();
+	private JButton btUpdate;
+	private JButton btDelete;
+	private PrologFactHandler prolog;
 
 	/**
 	 * Create the panel.
 	 */
 	public FactPanel(final PrologFactHandler prolog) {
 
+		this.prolog = prolog;
+		
 		Map<String, ActionListener> additionalActions = prolog.getAdditionalActions();
 		prolog.setEditPanel(this);
 		String[] variables = prolog.getArgNames();
@@ -114,7 +119,8 @@ public class FactPanel extends JPanel {
 			
 		}
 		
-		JButton btUpdate = new JButton("Update");
+		btUpdate = new JButton("Update");
+		btUpdate.setEnabled(false);
 		btUpdate.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent evt) {
 				prolog.updateFromPanel(textFields);
@@ -144,12 +150,15 @@ public class FactPanel extends JPanel {
 			gbc_btSaveAsNew.gridy = variables.length;
 			add(btSaveAsNew, gbc_btSaveAsNew);
 			
-			JButton btDelete = new JButton("Delete");
+			btDelete = new JButton("Delete");
+			btDelete.setEnabled(false);
 			btDelete.addActionListener(new ActionListener() {
 				@Override public void actionPerformed(ActionEvent evt) {
-					int answer = JOptionPane.showConfirmDialog(FactPanel.this, "Soll der Eintrag wirklich gelöscht werden?", "Eintrag löschen", JOptionPane.YES_NO_OPTION);
-					if (answer == JOptionPane.YES_OPTION) {
-						prolog.delete();
+					if (prolog.isElementSelected()) {
+						int answer = JOptionPane.showConfirmDialog(FactPanel.this, "Soll der Eintrag wirklich gelöscht werden?", "Eintrag löschen", JOptionPane.YES_NO_OPTION);
+						if (answer == JOptionPane.YES_OPTION) {
+							prolog.delete();
+						}
 					}
 				}
 			});
@@ -186,8 +195,14 @@ public class FactPanel extends JPanel {
 	}
 
 	public void setData(Map<String, Object> result) {
-		for(String s : textFields.keySet()) {
-			setSingleEntry(s, result.get(s).toString());
+		if (result != null) {
+			btUpdate.setEnabled(true);
+			if (prolog.isMainPredicate()) {
+				btDelete.setEnabled(true);
+			}
+			for(String s : textFields.keySet()) {
+				setSingleEntry(s, result.get(s).toString());
+			}
 		}
 	}
 	
@@ -260,6 +275,8 @@ public class FactPanel extends JPanel {
 		for(String s : textFields.keySet()) {
 			clearSingleEntry(s);
 		}
+		btUpdate.setEnabled(false);
+		btDelete.setEnabled(false);
 	}
 
 	
