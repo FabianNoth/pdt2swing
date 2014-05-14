@@ -1,7 +1,7 @@
 package pdt.gui.utils;
 
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import javax.imageio.ImageIO;
 
 public class ImageUtils {
 
-	public static BufferedImage scaleImage(BufferedImage input, int maxWidth, int maxHeight) {
+	private static BufferedImage scaleImage(BufferedImage input, int maxWidth, int maxHeight) {
 
 		int origWidth = input.getWidth();
 		int origHeight = input.getHeight();
@@ -27,13 +27,13 @@ public class ImageUtils {
 			scale = Math.min(scaleWidth, scaleHeigth);
 			int newWidth = (int) (origWidth * scale);
 			int newHeight = (int) (origHeight * scale);
-
+			
+			Image scaledInstance = input.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+			
 			// scale image
 			output = new BufferedImage(newWidth, newHeight, input.getType());
 			Graphics2D g = output.createGraphics();
-			// TODO: schlechte qualität
-			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-			g.drawImage(input, 0, 0, newWidth, newHeight, 0, 0, input.getWidth(), input.getHeight(), null);
+			g.drawImage(scaledInstance, 0, 0, null);
 			g.dispose();
 		}
 		return output;
@@ -48,5 +48,5 @@ public class ImageUtils {
 		}
 		return null;
 	}
-
+	
 }
