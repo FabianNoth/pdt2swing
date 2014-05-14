@@ -4,11 +4,11 @@ import java.io.File;
 
 import pdt.gui.PrologGui;
 import pdt.gui.data.PrologConnection;
-import pdt.gui.data.PrologFactHandler;
 import pdt.gui.data.PrologGuiBundle;
-import pdt.gui.data.PrologRelationHandler;
 import pdt.gui.data.PrologTableData;
-import pdt.gui.data.PrologTextFileHandler;
+import pdt.gui.datapanels.handler.PrologFactHandler;
+import pdt.gui.datapanels.handler.PrologRelationHandler;
+import pdt.gui.datapanels.handler.PrologTextFileHandler;
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologGoal;
 
