@@ -26,6 +26,8 @@ public class RelationPanel extends JPanel {
 	private boolean useAutoCompletion;
 	private JTextField tfAdd;
 	private PrologRelationHandler prolog;
+	private JButton btAdd;
+	private JList<String> list;
 
 	public RelationPanel(final PrologRelationHandler prolog) {
 		this.prolog = prolog;
@@ -48,13 +50,15 @@ public class RelationPanel extends JPanel {
 		
 		tfAdd.addActionListener(actionListener);
 		addPanel.add(tfAdd, BorderLayout.CENTER);
-		JButton btAdd = new JButton("Add");
+		btAdd = new JButton("Add");
 		btAdd.addActionListener(actionListener);
 		addPanel.add(btAdd, BorderLayout.EAST);
+		btAdd.setEnabled(false);
 		
-		final JList<String> list = new JList<String>();
+		list = new JList<String>();
 		list.addKeyListener(new KeyAdapter() {
 			@Override public void keyReleased(KeyEvent e) {
+				System.out.println(e.getKeyCode());
 				if (e.getKeyCode() == KeyEvent.VK_DELETE) {
 					String s = list.getSelectedValue();
 					int answer = JOptionPane.showConfirmDialog(RelationPanel.this, "Soll der Eintrag \"" + s + "\" wirklich gelöscht werden?", "Eintrag löschen", JOptionPane.YES_NO_OPTION);
@@ -66,6 +70,7 @@ public class RelationPanel extends JPanel {
 		});
 		listModel = new DefaultListModel<>();
 		list.setModel(listModel);
+		list.setEnabled(false);
 		add(new JScrollPane(list), BorderLayout.CENTER);
 	}
 
@@ -79,11 +84,18 @@ public class RelationPanel extends JPanel {
 		for (String s : entries) {
 			listModel.addElement(s);
 		}
+		updateButtons(true);
 	}
 
 	public void clearPanel() {
 		tfAdd.setText("");
 		listModel.clear();
+		updateButtons(false);
+	}
+	
+	private void updateButtons(boolean enabled) {
+		btAdd.setEnabled(enabled);
+		list.setEnabled(enabled);
 	}
 
 }

@@ -46,6 +46,10 @@ public class PrologTextFileHandler extends PrologDataHandler {
 	}
 
 	public void updateFromPanel() {
+		if (currentId == null) {
+			return;
+		}
+		
 		String text = editPanel.getData();
 
 		file = new File(outputDir, currentId);

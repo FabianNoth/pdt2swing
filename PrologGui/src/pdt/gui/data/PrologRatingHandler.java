@@ -44,6 +44,10 @@ public class PrologRatingHandler extends PrologDataHandler {
 	}
 	
 	public void updateFromPanel(RatingTableModel model) {
+		if (currentId == null) {
+			return;
+		}
+		
 		// build assert query
 //		String retractQuery = getRetractQuery();
 		// get goal for assertion, use current id

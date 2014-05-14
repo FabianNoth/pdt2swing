@@ -109,9 +109,11 @@ public class ImagePanel extends JPanel implements IdListener {
 	}
 
 	protected void notifyListeners() {
-		ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "image_clicked");
-		for (ActionListener l : actionListener) {
-			l.actionPerformed(event);
+		if (id != null) {
+			ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "image_clicked");
+			for (ActionListener l : actionListener) {
+				l.actionPerformed(event);
+			}
 		}
 	}
 

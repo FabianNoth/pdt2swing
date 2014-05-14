@@ -73,6 +73,10 @@ public class PrologRelationHandler extends PrologDataHandler {
 	}
 
 	public void addValue(String newValue) {
+		if (currentId == null) {
+			return;
+		}
+		
 		String assertValue = Util.quoteAtomIfNeeded(newValue);
 		
 		try {
@@ -115,6 +119,10 @@ public class PrologRelationHandler extends PrologDataHandler {
 	}
 
 	public void removeValue(String value) {
+		if (currentId == null) {
+			return;
+		}
+		
 		String retractQuery = QueryUtils.bT(getFunctor(), currentId, Util.quoteAtomIfNeeded(value));
 		SimpleLogger.debug("retractQuery: " + retractQuery);
 		try {

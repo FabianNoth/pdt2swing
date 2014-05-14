@@ -15,6 +15,7 @@ public class TextFilePanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JTextArea textArea;
+	private JButton btUpdate;
 	
 	public TextFilePanel(final PrologTextFileHandler handler) {
 		super();
@@ -25,18 +26,20 @@ public class TextFilePanel extends JPanel {
 		textArea.setWrapStyleWord(true);
 		JScrollPane scrollPane = new JScrollPane(textArea);
 		add(scrollPane, BorderLayout.CENTER);
-		JButton btUpdate = new JButton("Update");
+		btUpdate = new JButton("Update");
 		btUpdate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				handler.updateFromPanel();
 			}
 		});
+		btUpdate.setEnabled(false);
 		add(btUpdate, BorderLayout.SOUTH);
 	}
 	
 	public void setData(String text) {
 		textArea.setText(text);
+		updateButtons(true);
 	}
 
 	public String getData() {
@@ -45,6 +48,11 @@ public class TextFilePanel extends JPanel {
 
 	public void clearPanel() {
 		setData("");
+		updateButtons(false);
+	}
+	
+	private void updateButtons(boolean enabled) {
+		btUpdate.setEnabled(enabled);
 	}
 
 

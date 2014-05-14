@@ -18,6 +18,8 @@ public class RatingPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private RatingTableModel ratingTableModel;
+	private JTable table;
+	private JButton btUpdate;
 
 	/**
 	 * Create the panel.
@@ -29,7 +31,7 @@ public class RatingPanel extends JPanel {
 		setLayout(new BorderLayout());
 		
 		ratingTableModel = new RatingTableModel(prolog.getArgs());
-		JTable table = new JTable(ratingTableModel);
+		table = new JTable(ratingTableModel);
 		
 		TableColumn ratingColumn = table.getColumnModel().getColumn(1);
 		ratingColumn.setCellEditor(new SpinnerEditor());
@@ -37,13 +39,15 @@ public class RatingPanel extends JPanel {
 
 //		table.getInputMap().put(KeyStroke.getKeyStroke("TAB"), "selectNextRowCell");
 
+		table.setEnabled(false);
 		 // Create the scroll pane and add the table to it.
         JScrollPane scrollPane = new JScrollPane(table);
 
         // Add the scroll pane to this panel.
 		add(scrollPane, BorderLayout.CENTER);
         
-		JButton btUpdate = new JButton("Update");
+		btUpdate = new JButton("Update");
+		btUpdate.setEnabled(false);
 		btUpdate.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent evt) {
 				prolog.updateFromPanel(ratingTableModel);
@@ -56,6 +60,7 @@ public class RatingPanel extends JPanel {
 
 	public void setData(Map<String, Object> result) {
 		ratingTableModel.setData(result);
+		updateButtons(result != null);
 	}
 	
 	public String getSingleEntry(String key) {
@@ -64,6 +69,12 @@ public class RatingPanel extends JPanel {
 
 	public void clearPanel() {
 		ratingTableModel.setData(null);
+		updateButtons(false);
+	}
+
+	private void updateButtons(boolean enabled) {
+		table.setEnabled(enabled);
+		btUpdate.setEnabled(enabled);
 	}
 
 }

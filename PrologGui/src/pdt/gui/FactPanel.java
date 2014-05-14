@@ -31,15 +31,12 @@ public class FactPanel extends JPanel {
 	private final HashMap<String, JComponent> textFields = new HashMap<>();
 	private JButton btUpdate;
 	private JButton btDelete;
-	private PrologFactHandler prolog;
 
 	/**
 	 * Create the panel.
 	 */
 	public FactPanel(final PrologFactHandler prolog) {
 
-		this.prolog = prolog;
-		
 		Map<String, ActionListener> additionalActions = prolog.getAdditionalActions();
 		prolog.setEditPanel(this);
 		String[] variables = prolog.getArgNames();
@@ -196,13 +193,10 @@ public class FactPanel extends JPanel {
 
 	public void setData(Map<String, Object> result) {
 		if (result != null) {
-			btUpdate.setEnabled(true);
-			if (prolog.isMainPredicate()) {
-				btDelete.setEnabled(true);
-			}
 			for(String s : textFields.keySet()) {
 				setSingleEntry(s, result.get(s).toString());
 			}
+			updateButtons(true);
 		}
 	}
 	
@@ -275,8 +269,16 @@ public class FactPanel extends JPanel {
 		for(String s : textFields.keySet()) {
 			clearSingleEntry(s);
 		}
-		btUpdate.setEnabled(false);
-		btDelete.setEnabled(false);
+		updateButtons(false);
+	}
+	
+	public void updateButtons(boolean enabled) {
+		btUpdate.setEnabled(enabled);
+		
+		// btDelete might be null if predicate is not main 
+		if (btDelete != null) {
+			btDelete.setEnabled(enabled);
+		}
 	}
 
 	
