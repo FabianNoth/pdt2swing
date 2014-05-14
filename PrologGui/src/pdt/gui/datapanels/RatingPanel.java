@@ -1,4 +1,4 @@
-package pdt.gui;
+package pdt.gui.datapanels;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -11,7 +11,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.TableColumn;
 
-import pdt.gui.data.PrologRatingHandler;
+import pdt.gui.datapanels.handler.PrologRatingHandler;
 import pdt.gui.utils.SpinnerEditor;
 
 public class RatingPanel extends JPanel {

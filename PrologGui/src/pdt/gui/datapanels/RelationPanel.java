@@ -1,4 +1,4 @@
-package pdt.gui;
+package pdt.gui.datapanels;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -17,7 +17,7 @@ import javax.swing.JTextField;
 
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
-import pdt.gui.data.PrologRelationHandler;
+import pdt.gui.datapanels.handler.PrologRelationHandler;
 
 public class RelationPanel extends JPanel {
 

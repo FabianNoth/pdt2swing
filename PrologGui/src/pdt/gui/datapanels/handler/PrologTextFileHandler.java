@@ -1,4 +1,4 @@
-package pdt.gui.data;
+package pdt.gui.datapanels.handler;
 
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -10,7 +10,7 @@ import javax.swing.JOptionPane;
 
 import org.apache.commons.io.FileUtils;
 
-import pdt.gui.TextFilePanel;
+import pdt.gui.datapanels.TextFilePanel;
 
 public class PrologTextFileHandler extends PrologDataHandler {
 

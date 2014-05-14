@@ -1,4 +1,4 @@
-package pdt.gui;
+package pdt.gui.datapanels;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import pdt.gui.data.PrologTextFileHandler;
+import pdt.gui.datapanels.handler.PrologTextFileHandler;
 
 public class TextFilePanel extends JPanel {
 

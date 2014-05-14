@@ -1,4 +1,4 @@
-package pdt.gui.data;
+package pdt.gui.datapanels.handler;
 
 import java.io.File;
 
@@ -8,6 +8,8 @@ import org.cs3.prolog.pif.PrologInterface;
 import org.cs3.prolog.pif.PrologInterfaceException;
 
 import pdt.gui.PrologDataVisualizer;
+import pdt.gui.data.IdListener;
+import pdt.gui.data.PrologConnection;
 import pdt.gui.utils.SimpleLogger;
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologGoal;

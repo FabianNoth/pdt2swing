@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import pdt.gui.QueryNode;
+import pdt.gui.datapanels.handler.PrologDataHandler;
 
 public abstract class BundleProvider {
 

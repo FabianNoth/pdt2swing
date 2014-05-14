@@ -1,4 +1,4 @@
-package pdt.gui;
+package pdt.gui.datapanels;
 
 import java.awt.BorderLayout;
 

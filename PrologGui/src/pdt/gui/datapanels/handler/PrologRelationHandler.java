@@ -1,4 +1,4 @@
-package pdt.gui.data;
+package pdt.gui.datapanels.handler;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -11,7 +11,8 @@ import org.cs3.prolog.common.QueryUtils;
 import org.cs3.prolog.common.Util;
 import org.cs3.prolog.pif.PrologInterfaceException;
 
-import pdt.gui.RelationPanel;
+import pdt.gui.data.PrologConnection;
+import pdt.gui.datapanels.RelationPanel;
 import pdt.gui.utils.SimpleLogger;
 import pdt.prolog.elements.PrologGoal;
 

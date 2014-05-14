@@ -1,4 +1,4 @@
-package pdt.gui.data;
+package pdt.gui.datapanels.handler;
 
 import java.io.File;
 import java.util.Map;
@@ -6,8 +6,9 @@ import java.util.Map;
 import org.cs3.prolog.common.QueryUtils;
 import org.cs3.prolog.pif.PrologInterfaceException;
 
-import pdt.gui.RatingPanel;
-import pdt.gui.RatingTableModel;
+import pdt.gui.data.PrologConnection;
+import pdt.gui.datapanels.RatingPanel;
+import pdt.gui.datapanels.RatingTableModel;
 import pdt.gui.utils.SimpleLogger;
 import pdt.prolog.elements.PrologGoal;
 

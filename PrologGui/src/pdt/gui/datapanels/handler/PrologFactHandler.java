@@ -1,4 +1,4 @@
-package pdt.gui.data;
+package pdt.gui.datapanels.handler;
 
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -15,8 +15,9 @@ import javax.swing.JTextField;
 import org.cs3.prolog.common.QueryUtils;
 import org.cs3.prolog.pif.PrologInterfaceException;
 
-import pdt.gui.FactPanel;
-import pdt.gui.SpinnerWithCheckbox;
+import pdt.gui.data.PrologConnection;
+import pdt.gui.datapanels.FactPanel;
+import pdt.gui.datapanels.SpinnerWithCheckbox;
 import pdt.gui.utils.PrologUtils;
 import pdt.gui.utils.SimpleLogger;
 import pdt.prolog.elements.PrologArgument;
