@@ -220,5 +220,11 @@ public class PrologFactHandler extends PrologDataHandler {
 	public boolean isElementSelected() {
 		return currentId != null;
 	}
+
+	@Override
+	public boolean changed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 }

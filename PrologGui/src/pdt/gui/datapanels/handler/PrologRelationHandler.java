@@ -140,5 +140,11 @@ public class PrologRelationHandler extends PrologDataHandler {
 		return autoCompletionList;
 	}
 
+	@Override
+	public boolean changed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	
 }

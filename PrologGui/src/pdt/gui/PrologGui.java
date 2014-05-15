@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
@@ -83,13 +84,41 @@ public class PrologGui implements PrologDataVisualizer {
 	}
 
 	@Override
-	public void changePrologId(String id) {
+	public boolean changePrologId(String id) {
+		if (abort()) {
+			return false;
+		}
+		
 		for(IdListener l : activeListeners) {
 			l.setId(id);
 		}
+		return true;
 	}
-	
-	 /**
+
+	private boolean abort() {
+		boolean changed = checkForChange();
+
+		if (changed) {
+			// something was changed
+			// ask before overwriting
+			int answer = JOptionPane.showConfirmDialog(tablePanel, "Gemachte Änderungen werden überschrieben, fortfahren?", "Daten überschreiben", JOptionPane.YES_NO_OPTION);
+			if (answer == JOptionPane.NO_OPTION) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean checkForChange() {
+		for(IdListener l : activeListeners) {
+			if (l.changed()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
      * Create the GUI and show it. For thread safety,
      * this method should be invoked from the
      * event-dispatching thread.

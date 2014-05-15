@@ -84,4 +84,10 @@ public class PrologTextFileHandler extends PrologDataHandler {
 	@Override
 	public void persistFacts() {}
 
+	// TODO: move to PrologDataHandler and handle it with some generalization of the panels
+	@Override
+	public boolean changed() {
+		return editPanel.changed();
+	}
+
 }

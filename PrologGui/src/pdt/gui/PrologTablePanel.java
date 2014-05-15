@@ -22,6 +22,8 @@ public class PrologTablePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private PrologTableData prologTableModel;
 	private JTable table;
+	private int rowSelection = -1;
+	private boolean skipListener = false;
 	
 	public PrologTablePanel(final PrologDataVisualizer parent, PrologTableData prologData) {
 	        super(new BorderLayout());
@@ -37,8 +39,20 @@ public class PrologTablePanel extends JPanel {
 				@Override
 				public void valueChanged(ListSelectionEvent evt) {
 					if (!evt.getValueIsAdjusting()) {
-						String id = getSelectedId();
-						parent.changePrologId(id);
+						if (skipListener) {
+							// only skip once
+							skipListener = false;
+						} else {
+							String id = getSelectedId();
+							if (parent.changePrologId(id)) {
+								rowSelection = table.getSelectedRow();
+							} else {
+								// if prolog id wasn't changed (because of unsafed changes)
+								// reset the id (and skip the next update, because its just resetting)
+								skipListener = true;
+								table.setRowSelectionInterval(rowSelection, rowSelection);
+							}
+						}
 					}
 				}
 			});

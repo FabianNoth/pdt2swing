@@ -76,5 +76,11 @@ public class PrologRatingHandler extends PrologDataHandler {
 
 		return QueryUtils.bT(getFunctor(), (Object[]) assertArgs);
 	}
+
+	@Override
+	public boolean changed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 }

@@ -17,6 +17,8 @@ public class TextFilePanel extends JPanel {
 	private JTextArea textArea;
 	private JButton btUpdate;
 	
+	private String dummyText = "";
+	
 	public TextFilePanel(final PrologTextFileHandler handler) {
 		super();
 		handler.setEditPanel(this);
@@ -31,6 +33,7 @@ public class TextFilePanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				handler.updateFromPanel();
+				dummyText = textArea.getText();
 			}
 		});
 		btUpdate.setEnabled(false);
@@ -39,6 +42,7 @@ public class TextFilePanel extends JPanel {
 	
 	public void setData(String text) {
 		textArea.setText(text);
+		dummyText = text;
 		updateButtons(true);
 	}
 
@@ -46,6 +50,8 @@ public class TextFilePanel extends JPanel {
 		return textArea.getText();
 	}
 
+	// TODO: add interface for clearPanel(), updateButtons(boolean) and changed()
+	//       every handler has a Panel reference where these methods are called
 	public void clearPanel() {
 		setData("");
 		updateButtons(false);
@@ -53,6 +59,10 @@ public class TextFilePanel extends JPanel {
 	
 	private void updateButtons(boolean enabled) {
 		btUpdate.setEnabled(enabled);
+	}
+	
+	public boolean changed() {
+		return(!textArea.getText().equals(dummyText));
 	}
 
 
