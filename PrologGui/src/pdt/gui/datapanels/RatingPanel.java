@@ -21,8 +21,8 @@ public class RatingPanel extends JPanel implements DataPanel {
 	private RatingTableModel ratingTableModel;
 	private JTable table;
 	private JButton btUpdate;
-	private List<Integer> values;
-	private List<Boolean> unsure;
+	private List<Integer> dummyValues;
+	private List<Boolean> dummyUnsure;
 
 	/**
 	 * Create the panel.
@@ -46,8 +46,7 @@ public class RatingPanel extends JPanel implements DataPanel {
 		 // Create the scroll pane and add the table to it.
         JScrollPane scrollPane = new JScrollPane(table);
 
-        values = ratingTableModel.getValues();
-        unsure = ratingTableModel.getUnsure();
+        updateDummyValues();
         // Add the scroll pane to this panel.
 		add(scrollPane, BorderLayout.CENTER);
         
@@ -56,6 +55,7 @@ public class RatingPanel extends JPanel implements DataPanel {
 		btUpdate.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent evt) {
 				prolog.updateFromPanel(ratingTableModel);
+		        updateDummyValues();
 			}
 		});
 
@@ -66,8 +66,7 @@ public class RatingPanel extends JPanel implements DataPanel {
 	public void setData(Map<String, Object> result) {
 		ratingTableModel.setData(result);
 		updateButtons(result != null);
-        values = ratingTableModel.getValues();
-        unsure = ratingTableModel.getUnsure();
+        updateDummyValues();
 	}
 	
 	public String getSingleEntry(String key) {
@@ -77,7 +76,13 @@ public class RatingPanel extends JPanel implements DataPanel {
 	@Override
 	public void clearPanel() {
 		ratingTableModel.setData(null);
+        updateDummyValues();
 		updateButtons(false);
+	}
+
+	private void updateDummyValues() {
+		dummyValues = ratingTableModel.getValues();
+        dummyUnsure = ratingTableModel.getUnsure();
 	}
 
 	private void updateButtons(boolean enabled) {
@@ -87,8 +92,8 @@ public class RatingPanel extends JPanel implements DataPanel {
 
 	@Override
 	public boolean changed() {
-		boolean valuesChanged = !ratingTableModel.getValues().equals(values);
-		boolean unsureChanged = !ratingTableModel.getUnsure().equals(unsure);
+		boolean valuesChanged = !ratingTableModel.getValues().equals(dummyValues);
+		boolean unsureChanged = !ratingTableModel.getUnsure().equals(dummyUnsure);
 		// values or unsure changed
 		return valuesChanged || unsureChanged;
 	}

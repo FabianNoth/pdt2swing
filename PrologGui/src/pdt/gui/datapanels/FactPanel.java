@@ -29,6 +29,7 @@ public class FactPanel extends JPanel implements DataPanel {
 
 	private static final long serialVersionUID = 1L;
 	private final HashMap<String, JComponent> textFields = new HashMap<>();
+	private final HashMap<String, String> dummyValues = new HashMap<>();
 	private JButton btUpdate;
 	private JButton btDelete;
 
@@ -111,15 +112,16 @@ public class FactPanel extends JPanel implements DataPanel {
 			gbc_component.gridx = 1;
 			gbc_component.gridy = i;
 			add(component, gbc_component);
-			
+
 			textFields.put(s, component);
-			
 		}
+		updateDummyValues();
 		
 		btUpdate = new JButton("Update");
 		btUpdate.setEnabled(false);
 		btUpdate.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent evt) {
+				updateDummyValues();
 				prolog.updateFromPanel(textFields);
 			}
 		});
@@ -137,6 +139,7 @@ public class FactPanel extends JPanel implements DataPanel {
 			JButton btSaveAsNew = new JButton("Save as New");
 			btSaveAsNew.addActionListener(new ActionListener() {
 				@Override public void actionPerformed(ActionEvent evt) {
+					updateDummyValues();
 					prolog.saveAsNew(textFields);
 				}
 			});
@@ -154,6 +157,7 @@ public class FactPanel extends JPanel implements DataPanel {
 					if (prolog.isElementSelected()) {
 						int answer = JOptionPane.showConfirmDialog(FactPanel.this, "Soll der Eintrag wirklich gelöscht werden?", "Eintrag löschen", JOptionPane.YES_NO_OPTION);
 						if (answer == JOptionPane.YES_OPTION) {
+							updateDummyValues();
 							prolog.delete();
 						}
 					}
@@ -191,10 +195,19 @@ public class FactPanel extends JPanel implements DataPanel {
 		
 	}
 
+	protected void updateDummyValues() {
+		for(String key : textFields.keySet()) {
+			String value = getSingleEntry(key);
+			dummyValues.put(key, value);
+		}
+	}
+
 	public void setData(Map<String, Object> result) {
 		if (result != null) {
 			for(String s : textFields.keySet()) {
-				setSingleEntry(s, result.get(s).toString());
+				String value = result.get(s).toString();
+				setSingleEntry(s, value);
+				dummyValues.put(s, value);
 			}
 			updateButtons(true);
 		}
@@ -270,6 +283,7 @@ public class FactPanel extends JPanel implements DataPanel {
 		for(String s : textFields.keySet()) {
 			clearSingleEntry(s);
 		}
+		updateDummyValues();
 		updateButtons(false);
 	}
 	
@@ -284,7 +298,13 @@ public class FactPanel extends JPanel implements DataPanel {
 
 	@Override
 	public boolean changed() {
-		String todo;
+		for(String key : textFields.keySet()) {
+			String value1 = getSingleEntry(key);
+			String value2 = dummyValues.get(key);
+			if (!value1.equals(value2)) {
+				return true;
+			}
+		}
 		return false;
 	}
 
