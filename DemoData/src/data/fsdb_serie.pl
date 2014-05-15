@@ -1,6 +1,6 @@
 :- dynamic id_handling:current_id/2.
 
-id_handling:current_id(fsdb_serie,4).
+id_handling:current_id(fsdb_serie,7).
 
 :- dynamic fsdb_serie_data/4.
 :- multifile fsdb_serie_data/4.

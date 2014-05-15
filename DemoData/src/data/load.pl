@@ -28,7 +28,7 @@ gui_hooks:add_data_hook(fsdb_serie(AddedId, Title, Nation, Seasons, Episodes, Ep
 	id_handling:new_id(fsdb_serie, AddedId),
 	assert(user:fsdb_serie_data(AddedId, Title, Nation, Epic)),
 	assert(user:fsdb_serie_stats(AddedId, Seasons, Episodes)),
-	assert(user:fsdb_serie_rating(AddedId, 0)).
+	assert(user:fsdb_serie_rating(AddedId, u(0))).
 	
 gui_hooks:add_data_hook(fsdb_tags(Id, Tag), _) :-
 	( user:fsdb_category(TagId, Tag)
@@ -45,11 +45,17 @@ gui_hooks:add_data_hook(fsdb_tags(Id, Tag), _) :-
 gui_hooks:remove_data_hook(fsdb_serie(Id, _, _, _, _, _)) :-
 	retractall(user:fsdb_serie_data(Id, _, _, _)),
 	retractall(user:fsdb_serie_stats(Id, _, _)),
-	retractall(user:fsdb_serie_rating(Id, _)).
+	retractall(user:fsdb_serie_rating(Id, _)),
+	% relations
+	retractall(user:fsdb_tags_impl(Id, _)).
 
 gui_hooks:remove_data_hook(fsdb_tags(Id, Tag)) :-
 	user:fsdb_category(TagId, Tag),
 	retractall(user:fsdb_tags_impl(Id, TagId)).
+	
+gui_hooks:remove_data_hook(fsdb_category(Id, _)) :-
+	retractall(user:fsdb_category(Id, _)),
+	retractall(user:fsdb_tags_impl(_, Id)).
 	
 :- multifile gui_hooks:update_data_hook/1.
 
