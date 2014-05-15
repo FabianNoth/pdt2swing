@@ -12,17 +12,12 @@ import pdt.gui.datapanels.RatingTableModel;
 import pdt.gui.utils.SimpleLogger;
 import pdt.prolog.elements.PrologGoal;
 
-public class PrologRatingHandler extends PrologDataHandler {
+public class PrologRatingHandler extends PrologDataHandler<RatingPanel> {
 
-	private RatingPanel editPanel;
 	private Map<String, Object> result;
 	
 	public PrologRatingHandler(PrologConnection con, String name, File outputFile, PrologGoal goal) {
 		super(con, name, outputFile, false, goal);
-	}
-
-	public void setEditPanel(RatingPanel editPanel) {
-		this.editPanel = editPanel;
 	}
 
 	@Override
@@ -31,17 +26,12 @@ public class PrologRatingHandler extends PrologDataHandler {
 		try {
 			result = pif.queryOnce(getQuery());
 			result.put("ID", currentId);
-			if (editPanel != null) {
-				editPanel.setData(result);
+			if (getEditPanel() != null) {
+				getEditPanel().setData(result);
 			}
 		} catch (PrologInterfaceException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	@Override
-	public void clearData() {
-		editPanel.clearPanel();
 	}
 	
 	public void updateFromPanel(RatingTableModel model) {
@@ -77,10 +67,4 @@ public class PrologRatingHandler extends PrologDataHandler {
 		return QueryUtils.bT(getFunctor(), (Object[]) assertArgs);
 	}
 
-	@Override
-	public boolean changed() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
 }

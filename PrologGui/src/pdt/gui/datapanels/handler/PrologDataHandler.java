@@ -10,11 +10,12 @@ import org.cs3.prolog.pif.PrologInterfaceException;
 import pdt.gui.PrologDataVisualizer;
 import pdt.gui.data.IdListener;
 import pdt.gui.data.PrologConnection;
+import pdt.gui.datapanels.DataPanel;
 import pdt.gui.utils.SimpleLogger;
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologGoal;
 
-public abstract class PrologDataHandler implements IdListener {
+public abstract class PrologDataHandler<PanelType extends DataPanel> implements IdListener {
 	
 	protected static final String ADD_FACT = "add_fact";
 	protected static final String ADD_RELATION = "add_relation";
@@ -29,6 +30,7 @@ public abstract class PrologDataHandler implements IdListener {
 
 	protected PrologInterface pif;
 	private PrologDataVisualizer visualizer;
+	private PanelType panel;
 
 	private String name;
 	private String outputQuery;
@@ -90,7 +92,6 @@ public abstract class PrologDataHandler implements IdListener {
 	}
 
 	public abstract void showData();
-	public abstract void clearData();
 	
 	public void updateVisualizer() {
 		updateVisualizer(null);
@@ -127,5 +128,29 @@ public abstract class PrologDataHandler implements IdListener {
 	public int getArity() {
 		return argNames.length;
 	}
+	
+	/**
+	 * Set the implementation of the data panel
+	 */
+	public void setEditPanel(PanelType panel) {
+		this.panel = panel;
+	}
+	
+	public PanelType getEditPanel() {
+		return panel;
+	}
+	
+	@Override
+	public final boolean changed() {
+		if (panel != null) {
+			return panel.changed();
+		}
+		return false;
+	}
 
+	public final void clearData() {
+		if (panel != null) {
+			panel.clearPanel();
+		}
+	}
 }

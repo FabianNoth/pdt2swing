@@ -12,9 +12,9 @@ import org.apache.commons.io.FileUtils;
 
 import pdt.gui.datapanels.TextFilePanel;
 
-public class PrologTextFileHandler extends PrologDataHandler {
+public class PrologTextFileHandler extends PrologDataHandler<TextFilePanel> {
 
-	private TextFilePanel editPanel;
+//	private TextFilePanel editPanel;
 	private File file;
 	private File outputDir;
 	
@@ -25,24 +25,15 @@ public class PrologTextFileHandler extends PrologDataHandler {
 		this.outputDir = outputDir;
 	}
 	
-	public void setEditPanel(TextFilePanel editPanel) {
-		this.editPanel = editPanel;
-	}
-
 	@Override
 	public void showData() {
 		file = new File(outputDir, currentId);
 		try {
 			String text = FileUtils.readFileToString(file);
-			editPanel.setData(text);
+			getEditPanel().setData(text);
 		} catch (IOException e) {
-			editPanel.setData("");
+			getEditPanel().setData("");
 		}
-	}
-	
-	@Override
-	public void clearData() {
-		editPanel.clearPanel();
 	}
 
 	public void updateFromPanel() {
@@ -50,12 +41,12 @@ public class PrologTextFileHandler extends PrologDataHandler {
 			return;
 		}
 		
-		String text = editPanel.getData();
+		String text = getEditPanel().getData();
 
 		file = new File(outputDir, currentId);
 		
 		if (!outputDir.exists()) {
-			int answer = JOptionPane.showConfirmDialog(editPanel, "Soll das Verzeichnis angelegt werden?", "Verzeichnis existiert nicht", JOptionPane.YES_NO_OPTION);
+			int answer = JOptionPane.showConfirmDialog(getEditPanel(), "Soll das Verzeichnis angelegt werden?", "Verzeichnis existiert nicht", JOptionPane.YES_NO_OPTION);
 			if (answer == JOptionPane.YES_OPTION) {
 				outputDir.mkdirs();
 			} else {
@@ -83,11 +74,5 @@ public class PrologTextFileHandler extends PrologDataHandler {
 	
 	@Override
 	public void persistFacts() {}
-
-	// TODO: move to PrologDataHandler and handle it with some generalization of the panels
-	@Override
-	public boolean changed() {
-		return editPanel.changed();
-	}
 
 }

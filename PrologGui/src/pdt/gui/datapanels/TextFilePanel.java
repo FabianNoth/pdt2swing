@@ -11,7 +11,7 @@ import javax.swing.JTextArea;
 
 import pdt.gui.datapanels.handler.PrologTextFileHandler;
 
-public class TextFilePanel extends JPanel {
+public class TextFilePanel extends JPanel implements DataPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JTextArea textArea;
@@ -49,18 +49,18 @@ public class TextFilePanel extends JPanel {
 	public String getData() {
 		return textArea.getText();
 	}
+	
+	private void updateButtons(boolean enabled) {
+		btUpdate.setEnabled(enabled);
+	}
 
-	// TODO: add interface for clearPanel(), updateButtons(boolean) and changed()
-	//       every handler has a Panel reference where these methods are called
+	@Override
 	public void clearPanel() {
 		setData("");
 		updateButtons(false);
 	}
 	
-	private void updateButtons(boolean enabled) {
-		btUpdate.setEnabled(enabled);
-	}
-	
+	@Override
 	public boolean changed() {
 		return(!textArea.getText().equals(dummyText));
 	}

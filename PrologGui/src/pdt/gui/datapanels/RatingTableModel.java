@@ -141,4 +141,13 @@ public class RatingTableModel extends AbstractTableModel {
 			System.err.println("try to write in unwriteable field");
 		}
 	}
+
+	public List<Integer> getValues() {
+		return values;
+	}
+
+	public List<Boolean> getUnsure() {
+		return unsure;
+	}
+	
 }

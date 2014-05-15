@@ -25,7 +25,7 @@ import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologFixedAtom;
 import pdt.prolog.elements.PrologNumberRangeArgument;
 
-public class FactPanel extends JPanel {
+public class FactPanel extends JPanel implements DataPanel {
 
 	private static final long serialVersionUID = 1L;
 	private final HashMap<String, JComponent> textFields = new HashMap<>();
@@ -265,6 +265,7 @@ public class FactPanel extends JPanel {
 		return result;
 	}
 
+	@Override
 	public void clearPanel() {
 		for(String s : textFields.keySet()) {
 			clearSingleEntry(s);
@@ -281,6 +282,11 @@ public class FactPanel extends JPanel {
 		}
 	}
 
-	
+	@Override
+	public boolean changed() {
+		String todo;
+		return false;
+	}
+
 
 }

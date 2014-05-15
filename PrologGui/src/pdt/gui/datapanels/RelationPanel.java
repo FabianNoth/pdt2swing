@@ -19,7 +19,7 @@ import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import pdt.gui.datapanels.handler.PrologRelationHandler;
 
-public class RelationPanel extends JPanel {
+public class RelationPanel extends JPanel implements DataPanel {
 
 	private static final long serialVersionUID = 1L;
 	private DefaultListModel<String> listModel;
@@ -87,6 +87,7 @@ public class RelationPanel extends JPanel {
 		updateButtons(true);
 	}
 
+	@Override
 	public void clearPanel() {
 		tfAdd.setText("");
 		listModel.clear();
@@ -96,6 +97,13 @@ public class RelationPanel extends JPanel {
 	private void updateButtons(boolean enabled) {
 		btAdd.setEnabled(enabled);
 		list.setEnabled(enabled);
+	}
+
+	@Override
+	public boolean changed() {
+		// relations are always added directly, so there are no unsafed states
+		// (entry in the textfield is not important)
+		return false;
 	}
 
 }

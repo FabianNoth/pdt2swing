@@ -16,9 +16,8 @@ import pdt.gui.datapanels.RelationPanel;
 import pdt.gui.utils.SimpleLogger;
 import pdt.prolog.elements.PrologGoal;
 
-public class PrologRelationHandler extends PrologDataHandler {
+public class PrologRelationHandler extends PrologDataHandler<RelationPanel> {
 
-	private RelationPanel editPanel;
 	private List<String> autoCompletionList;
 	private String functor;
 	
@@ -54,25 +53,20 @@ public class PrologRelationHandler extends PrologDataHandler {
 	public void showData() {
 		try {
 			List<Map<String, Object>> results = pif.queryAll(getQuery());
-			if (editPanel != null) {
+			if (getEditPanel() != null) {
 				List<String> entries = new ArrayList<String>();
 				for (Map<String, Object> m : results) {
 					String entry = m.get(getArgNames()[1]).toString();
 					entries.add(entry);
 				}
 				
-				editPanel.setData(entries);
+				getEditPanel().setData(entries);
 			}
 		} catch (PrologInterfaceException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	@Override
-	public void clearData() {
-		editPanel.clearPanel();
-	}
-
 	public void addValue(String newValue) {
 		if (currentId == null) {
 			return;
@@ -85,7 +79,7 @@ public class PrologRelationHandler extends PrologDataHandler {
 			if (isAutoCompletion()) {
 				Map<String, Object> check = pif.queryOnce(QueryUtils.bT(CHECK_FOR_VALUE, getFunctor(), assertValue));
 				if (check == null) {
-					int answer = JOptionPane.showConfirmDialog(editPanel, "Eintrag mit dem Wert \"" + newValue + "\" existiert nicht. Soll er hinzugefügt werden?", "Neuen Eintrag hinzufügen", JOptionPane.YES_NO_OPTION);
+					int answer = JOptionPane.showConfirmDialog(getEditPanel(), "Eintrag mit dem Wert \"" + newValue + "\" existiert nicht. Soll er hinzugefügt werden?", "Neuen Eintrag hinzufügen", JOptionPane.YES_NO_OPTION);
 					if (answer == JOptionPane.NO_OPTION) {
 						return;
 					} else if (answer == JOptionPane.YES_OPTION) {
@@ -115,10 +109,6 @@ public class PrologRelationHandler extends PrologDataHandler {
 		}
 	}
 	
-	public void setEditPanel(RelationPanel editPanel) {
-		this.editPanel = editPanel;
-	}
-
 	public void removeValue(String value) {
 		if (currentId == null) {
 			return;
@@ -139,12 +129,5 @@ public class PrologRelationHandler extends PrologDataHandler {
 	public List<String> getAutoCompletionList() {
 		return autoCompletionList;
 	}
-
-	@Override
-	public boolean changed() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	
 }

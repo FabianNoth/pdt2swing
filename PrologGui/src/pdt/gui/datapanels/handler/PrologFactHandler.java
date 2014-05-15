@@ -23,9 +23,9 @@ import pdt.gui.utils.SimpleLogger;
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologGoal;
 
-public class PrologFactHandler extends PrologDataHandler {
+public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 
-	private FactPanel editPanel;
+//	private FactPanel editPanel;
 	private Map<String, Object> result;
 	private String mainElementName;
 	private final Map<String, ActionListener> additionalActions = new TreeMap<String, ActionListener>();
@@ -44,29 +44,20 @@ public class PrologFactHandler extends PrologDataHandler {
 		this.mainElementName = mainElementName;
 	}
 	
-	public void setEditPanel(FactPanel editPanel) {
-		this.editPanel = editPanel;
-	}
-
 	@Override
 	public void showData() {
 		SimpleLogger.debug(getQuery());
 		try {
 			result = pif.queryOnce(getQuery());
 			result.put("ID", currentId);
-			if (editPanel != null) {
-				editPanel.setData(result);
+			if (getEditPanel() != null) {
+				getEditPanel().setData(result);
 			}
 		} catch (PrologInterfaceException e) {
 			e.printStackTrace();
 		}
 	}
 
-	@Override
-	public void clearData() {
-		editPanel.clearPanel();
-	}
-	
 	public String getMainElement() {
 		return getElementByName(mainElementName);
 	}
@@ -221,10 +212,4 @@ public class PrologFactHandler extends PrologDataHandler {
 		return currentId != null;
 	}
 
-	@Override
-	public boolean changed() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
 }

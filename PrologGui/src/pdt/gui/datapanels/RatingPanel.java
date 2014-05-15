@@ -3,6 +3,7 @@ package pdt.gui.datapanels;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JButton;
@@ -14,12 +15,14 @@ import javax.swing.table.TableColumn;
 import pdt.gui.datapanels.handler.PrologRatingHandler;
 import pdt.gui.utils.SpinnerEditor;
 
-public class RatingPanel extends JPanel {
+public class RatingPanel extends JPanel implements DataPanel {
 
 	private static final long serialVersionUID = 1L;
 	private RatingTableModel ratingTableModel;
 	private JTable table;
 	private JButton btUpdate;
+	private List<Integer> values;
+	private List<Boolean> unsure;
 
 	/**
 	 * Create the panel.
@@ -43,6 +46,8 @@ public class RatingPanel extends JPanel {
 		 // Create the scroll pane and add the table to it.
         JScrollPane scrollPane = new JScrollPane(table);
 
+        values = ratingTableModel.getValues();
+        unsure = ratingTableModel.getUnsure();
         // Add the scroll pane to this panel.
 		add(scrollPane, BorderLayout.CENTER);
         
@@ -61,12 +66,15 @@ public class RatingPanel extends JPanel {
 	public void setData(Map<String, Object> result) {
 		ratingTableModel.setData(result);
 		updateButtons(result != null);
+        values = ratingTableModel.getValues();
+        unsure = ratingTableModel.getUnsure();
 	}
 	
 	public String getSingleEntry(String key) {
 		return ratingTableModel.getSingleEntry(key);
 	}
 
+	@Override
 	public void clearPanel() {
 		ratingTableModel.setData(null);
 		updateButtons(false);
@@ -75,6 +83,14 @@ public class RatingPanel extends JPanel {
 	private void updateButtons(boolean enabled) {
 		table.setEnabled(enabled);
 		btUpdate.setEnabled(enabled);
+	}
+
+	@Override
+	public boolean changed() {
+		boolean valuesChanged = !ratingTableModel.getValues().equals(values);
+		boolean unsureChanged = !ratingTableModel.getUnsure().equals(unsure);
+		// values or unsure changed
+		return valuesChanged || unsureChanged;
 	}
 
 }
