@@ -10,25 +10,25 @@ import pdt.gui.datapanels.handler.PrologDataHandler;
 public class PrologGuiBundle {
 
 	private PrologTableData tableData;
-	private final List<PrologDataHandler> factHandlers = new ArrayList<>();
+	private final List<PrologDataHandler<?>> factHandlers = new ArrayList<>();
 	private File imgDir;
 	private ActionListener imgListener;
 	private boolean allowImageUpload = false;
 
-	public PrologGuiBundle(PrologTableData tableData, PrologDataHandler... factHandlers) {
+	public PrologGuiBundle(PrologTableData tableData, PrologDataHandler<?>... factHandlers) {
 		this(tableData, null, null, factHandlers);
 	}
 	
-	public PrologGuiBundle(PrologTableData tableData, File imgDir, boolean allowImageUpload, PrologDataHandler... factHandlers) {
+	public PrologGuiBundle(PrologTableData tableData, File imgDir, boolean allowImageUpload, PrologDataHandler<?>... factHandlers) {
 		this(tableData, imgDir, null, factHandlers);
 		this.allowImageUpload = allowImageUpload;
 	}
 	
-	public PrologGuiBundle(PrologTableData tableData, File imgDir, ActionListener imgListener, PrologDataHandler... factHandlers) {
+	public PrologGuiBundle(PrologTableData tableData, File imgDir, ActionListener imgListener, PrologDataHandler<?>... factHandlers) {
 		this.tableData = tableData;
 		this.imgDir = imgDir;
 		this.imgListener = imgListener;
-		for(PrologDataHandler fh : factHandlers) {
+		for(PrologDataHandler<?> fh : factHandlers) {
 			this.factHandlers.add(fh);
 		}
 	}
@@ -37,7 +37,7 @@ public class PrologGuiBundle {
 		return tableData;
 	}
 
-	public List<PrologDataHandler> getFactHandlers() {
+	public List<PrologDataHandler<?>> getFactHandlers() {
 		return factHandlers;
 	}
 	

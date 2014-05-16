@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.HashSet;
@@ -181,7 +180,7 @@ public class PrologGui implements PrologDataVisualizer {
 			currentBundle = bundle;
 			SimpleLogger.debug("set new bundle");
 			activeListeners.clear();
-			for (PrologDataHandler handler : bundle.getFactHandlers()) {
+			for (PrologDataHandler<?> handler : bundle.getFactHandlers()) {
 				handler.setVisualizer(this);
 			}
 			
@@ -196,7 +195,7 @@ public class PrologGui implements PrologDataVisualizer {
 			eastPanel.setMinimumSize(new Dimension(300, 100));
 			contentPane.add(eastPanel, BorderLayout.EAST);
 			
-			List<PrologDataHandler> factHandlers = bundle.getFactHandlers();
+			List<PrologDataHandler<?>> factHandlers = bundle.getFactHandlers();
 			if (factHandlers.size() == 1) {
 				eastPanel.add(getPanel(factHandlers.get(0)), BorderLayout.CENTER);
 				addToListeners(factHandlers.get(0));
@@ -228,7 +227,7 @@ public class PrologGui implements PrologDataVisualizer {
 		activeListeners.add(listener);
 	}
 
-	private JPanel getPanel(PrologDataHandler prologFactHandler) {
+	private JPanel getPanel(PrologDataHandler<?> prologFactHandler) {
     	if (prologFactHandler instanceof PrologRelationHandler) {
     		return new RelationPanel((PrologRelationHandler) prologFactHandler);
     	} else if (prologFactHandler instanceof PrologFactHandler) {
