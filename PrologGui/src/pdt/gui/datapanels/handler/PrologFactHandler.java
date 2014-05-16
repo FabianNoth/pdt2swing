@@ -73,6 +73,7 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 	}
 
 	public void updateFromPanel(HashMap<String, JComponent> textFields) {
+		// TODO: add check if name already exists (quick&dirty)
 		if (currentId == null) {
 			return;
 		}
@@ -90,6 +91,7 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 	}
 	
 	public void saveAsNew(HashMap<String, JComponent> textFields) {
+		// TODO: add check if name already exists (quick&dirty)
 		// get goal for assertion, use empty ID
 		String goal = getGoalWithData(textFields, "_");
 		String id = null;
