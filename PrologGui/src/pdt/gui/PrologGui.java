@@ -203,11 +203,9 @@ public class PrologGui implements PrologDataVisualizer {
 				// tabbed pane
 				JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 				eastPanel.add(tabbedPane, BorderLayout.CENTER);
-				
+
 				for(int i=0; i<factHandlers.size(); i++) {
-//					if (!(factHandlers.get(i) instanceof InvisibleFactHandler)) {
-						tabbedPane.addTab(factHandlers.get(i).getName(), null, getPanel(factHandlers.get(i)), null);
-//					}
+					tabbedPane.addTab(factHandlers.get(i).getName(), null, getPanel(factHandlers.get(i)), null);
 					addToListeners(factHandlers.get(i));
 				}
 			}
