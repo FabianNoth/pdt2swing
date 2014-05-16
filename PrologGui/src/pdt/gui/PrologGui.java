@@ -45,6 +45,12 @@ public class PrologGui implements PrologDataVisualizer {
 	private JFrame frame;
 	private QuerySelectionPanel querySelectionPanel;
 	
+	/**
+	 * flag to check if the update of the id is a result of changing the bundle
+	 * if it is, there must be no warning dialog (for changing the data) since
+	 * this dialog has already been dealt with by the QuerySelectionPanel
+	 */
+	private boolean updateFromBundleFlag = false;
 	private BundleProvider bundleProvider;
 	
 	public PrologGui(PrologConnection con, BundleProvider bundleProvider) {
@@ -85,8 +91,12 @@ public class PrologGui implements PrologDataVisualizer {
 
 	@Override
 	public boolean changePrologId(String id) {
-		if (abort()) {
-			return false;
+		if (updateFromBundleFlag) {
+			updateFromBundleFlag = false;
+		} else {
+			if (abort()) {
+				return false;
+			}
 		}
 		
 		for(IdListener l : activeListeners) {
@@ -95,7 +105,7 @@ public class PrologGui implements PrologDataVisualizer {
 		return true;
 	}
 
-	private boolean abort() {
+	public boolean abort() {
 		boolean changed = checkForChange();
 
 		if (changed) {
@@ -217,6 +227,7 @@ public class PrologGui implements PrologDataVisualizer {
 				eastPanel.add(imagePanel, BorderLayout.NORTH);
 			}
 		}
+		updateFromBundleFlag  = true;
 		tablePanel.updateTableModel(null);
 		frame.revalidate();
 	}

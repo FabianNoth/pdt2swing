@@ -23,36 +23,55 @@ public class QuerySelectionPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private final JTextField textField = new JTextField();
+	private TreePath treeSelectionPath = null;
+	private boolean skipListener = false;
 
 	/**
 	 * Create the panel and fill the tree with the queries provided by the QuerySelectionProvider.
 	 * If a query is selected, the PrologDataVisualizer will be called to display the data of this query.
 	 * 
-	 * @param visualizer The PrologDataVisualizer which will display the data of the query
+	 * @param visualizer The PrologGui which will display the data of the query
 	 * @param selectionCreator The QuerySelectionProvider which provides all the possible queries
 	 */
-	public QuerySelectionPanel(final PrologDataVisualizer visualizer, BundleProvider selectionCreator) {
+	public QuerySelectionPanel(final PrologGui visualizer, BundleProvider selectionCreator) {
 		setLayout(new BorderLayout(5, 5));
 		
 		// create the tree element
 		final JTree tree = new JTree(selectionCreator.createRoot());
+	
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		
+		treeSelectionPath = tree.getPathForRow(0);
+		tree.setSelectionPath(treeSelectionPath);
 		
 		// add action for changing the selection
 		tree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
 			@Override public void valueChanged(TreeSelectionEvent evt) {
-				TreePath selectionPath = tree.getSelectionPath();
-				if (selectionPath != null) {
-					Object lastPathComponent = selectionPath.getLastPathComponent();
-					if (lastPathComponent instanceof QueryNode) {
-						// if a query node was selected
-						QueryNode queryNode = (QueryNode) lastPathComponent;
-						// update the filter
-						queryNode.getBundle().setFilter(queryNode.getFilter());
-						// display it
-						visualizer.setBundle(queryNode.getBundle());
+				if (skipListener) {
+					// only skip once
+					skipListener = false;
+				} else {
+					if (visualizer.abort()) {
+						// if prolog id wasn't changed (because of unsafed changes)
+						// reset the id (and skip the next update, because its just resetting)
+						skipListener = true;
+						tree.setSelectionPath(treeSelectionPath);
+					} else {
+						treeSelectionPath = tree.getSelectionPath();
+						if (treeSelectionPath != null) {
+							Object lastPathComponent = treeSelectionPath.getLastPathComponent();
+							if (lastPathComponent instanceof QueryNode) {
+								// if a query node was selected
+								QueryNode queryNode = (QueryNode) lastPathComponent;
+								// update the filter
+								queryNode.getBundle().setFilter(queryNode.getFilter());
+								// display it
+								visualizer.setBundle(queryNode.getBundle());
+							}
+						}
 					}
 				}
+				
 			}
 		});
 		add(new JScrollPane(tree), BorderLayout.CENTER);
