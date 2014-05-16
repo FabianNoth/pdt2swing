@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.HashSet;
@@ -130,18 +131,28 @@ public class PrologGui implements PrologDataVisualizer {
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		}
+    	
+    	// create frame
         frame = new JFrame("Prolog Data Demo");
+        
+        // add handling of windowClosing
         frame.addWindowListener(new WindowAdapter() {
         	@Override
 			public void windowClosing(WindowEvent evt) {
-        		bundleProvider.persistFacts();
-//				for(IdListener l : allListeners) {
-//					l.persistFacts();
-//				}
+        		// check for unsafed state
+        		if (!abort()) {
+        			// state doesn't need to be saves
+        			SimpleLogger.debug("persisting facts");
+        			bundleProvider.persistFacts();
+        			SimpleLogger.debug("done persisting facts\nshutting down");
+        			System.exit(0);
+        		}
 			}
 		});
         
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // it has to be DO_NOTHING_ON_CLOSE, otherwise the frame would disappear
+        // even if the user wants to cancel it
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         querySelectionPanel = new QuerySelectionPanel(this, bundleProvider);
         
         setBundle(bundleProvider.getDefault());
