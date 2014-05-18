@@ -6,6 +6,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileFilter;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -70,6 +71,9 @@ public class PrologGui implements PrologDataVisualizer {
 				return f.getName().endsWith(".zip");
 			}
 		});
+		
+		// listFiles() doesn't guarantee any order
+		Arrays.sort(fileList);
 		
 		int n = fileList.length;
 		int i = 0;
