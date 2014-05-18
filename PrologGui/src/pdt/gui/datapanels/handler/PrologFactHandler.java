@@ -3,7 +3,9 @@ package pdt.gui.datapanels.handler;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.swing.JCheckBox;
@@ -27,12 +29,14 @@ import pdt.prolog.elements.PrologGoal;
 public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 
 //	private FactPanel editPanel;
+	private Set<PrologRelationHandler> relationHandler;
 	private Map<String, Object> result;
 	private String mainElementName;
 	private final Map<String, ActionListener> additionalActions = new TreeMap<String, ActionListener>();
 	
 	public PrologFactHandler(PrologConnection con, String name, File outputFile, boolean isMainPredicate, PrologGoal goal) {
 		super(con, name, outputFile, isMainPredicate, goal);
+		relationHandler = new HashSet<>();
 	}
 
 	public PrologTextFileHandler createTextFileHandler(String title) {
@@ -95,6 +99,7 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		}
 		
 		updateVisualizer();
+		updateRelationHandlers();
 		return true;
 	}
 
@@ -149,6 +154,7 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		}
 		
 		updateVisualizer(id);
+		updateRelationHandlers();
 		return true;
 	}
 	
@@ -264,6 +270,28 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 
 	public boolean isElementSelected() {
 		return currentId != null;
+	}
+	
+	public void addRelationHandler(PrologRelationHandler handler) {
+		if (handler == null) {
+			SimpleLogger.error("handler is null");
+		} else {
+			relationHandler.add(handler);
+		}
+	}
+	
+	public void removeRelationHandler(PrologRelationHandler handler) {
+		if (handler == null) {
+			SimpleLogger.error("handler is null");
+		} else {
+			relationHandler.remove(handler);
+		}
+	}
+	
+	public void updateRelationHandlers() {
+		for (PrologRelationHandler h : relationHandler) {
+			h.updateAutoCompletion();
+		}
 	}
 
 }

@@ -34,7 +34,7 @@ public class PrologRelationHandler extends PrologDataHandler<RelationPanel> {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void updateAutoCompletion() {
+	public void updateAutoCompletion() {
 		autoCompletionList = new ArrayList<String>();
 		try {
 			Map<String, Object> results = pif.queryOnce(QueryUtils.bT(AUTO_COMPLETION, functor, "Result"));
