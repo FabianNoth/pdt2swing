@@ -215,7 +215,7 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 					}
 				}
 				if (text.isEmpty()) {
-					if (getArgs()[i-1].getType() == PrologArgument.NUMBER) {
+					if (getArgs()[i].getType() == PrologArgument.NUMBER) {
 						assertArgs[i] = "0";
 					} else {
 						assertArgs[i] = "''";
