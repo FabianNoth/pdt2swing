@@ -41,8 +41,7 @@ public class TextFilePanel extends JPanel implements DataPanel {
 		add(scrollPane, BorderLayout.CENTER);
 		btUpdate = new JButton("Update");
 		btUpdate.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
+			@Override public void actionPerformed(ActionEvent e) {
 				saveData(handler);
 			}
 		});
