@@ -29,7 +29,7 @@ public class FactPanel extends JPanel implements DataPanel {
 
 	private static final long serialVersionUID = 1L;
 	private final HashMap<String, JComponent> textFields = new HashMap<>();
-	private final HashMap<String, String> dummyValues = new HashMap<>();
+	private HashMap<String, String> dummyValues = new HashMap<>();
 	private JButton btUpdate;
 	private JButton btDelete;
 
@@ -121,8 +121,11 @@ public class FactPanel extends JPanel implements DataPanel {
 		btUpdate.setEnabled(false);
 		btUpdate.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent evt) {
-				if (prolog.updateFromPanel(textFields)) {
-					updateDummyValues();
+				HashMap<String, String> dummyValuesBackup = new HashMap<>(dummyValues);
+				updateDummyValues();
+				if (!prolog.updateFromPanel(textFields)) {
+					// reset dummy values
+					dummyValues = dummyValuesBackup;
 				}
 			}
 		});
@@ -140,8 +143,11 @@ public class FactPanel extends JPanel implements DataPanel {
 			JButton btSaveAsNew = new JButton("Save as New");
 			btSaveAsNew.addActionListener(new ActionListener() {
 				@Override public void actionPerformed(ActionEvent evt) {
-					if (prolog.saveAsNew(textFields)) {
-						updateDummyValues();
+					HashMap<String, String> dummyValuesBackup = new HashMap<>(dummyValues);
+					updateDummyValues();
+					if (!prolog.saveAsNew(textFields)) {
+						// reset dummy values
+						dummyValues = dummyValuesBackup;
 					}
 				}
 			});
