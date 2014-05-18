@@ -3,6 +3,8 @@ package pdt.gui.datapanels;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -26,18 +28,31 @@ public class TextFilePanel extends JPanel implements DataPanel {
 		textArea = new JTextArea();
 		textArea.setLineWrap(true);
 		textArea.setWrapStyleWord(true);
+		
+		textArea.addKeyListener(new KeyAdapter() {
+			@Override public void keyReleased(KeyEvent evt) {
+				if (evt.getKeyCode() == KeyEvent.VK_S && evt.isControlDown()) {
+					saveData(handler);
+				}
+			}
+		});
+		
 		JScrollPane scrollPane = new JScrollPane(textArea);
 		add(scrollPane, BorderLayout.CENTER);
 		btUpdate = new JButton("Update");
 		btUpdate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				handler.updateFromPanel();
-				dummyText = textArea.getText();
+				saveData(handler);
 			}
 		});
 		btUpdate.setEnabled(false);
 		add(btUpdate, BorderLayout.SOUTH);
+	}
+
+	private void saveData(final PrologTextFileHandler handler) {
+		handler.updateFromPanel();
+		dummyText = textArea.getText();
 	}
 	
 	public void setData(String text) {
@@ -64,6 +79,7 @@ public class TextFilePanel extends JPanel implements DataPanel {
 	public boolean changed() {
 		return(!textArea.getText().equals(dummyText));
 	}
+
 
 
 }
