@@ -81,7 +81,7 @@ public class QuerySelectionPanel extends JPanel {
 		panel.setLayout(new BorderLayout(2, 2));
 		
 		// textfield for manual queries
-		// TODO: still has to be implemented
+		// TODO: still has to be implemented (see #24)
 		panel.add(textField, BorderLayout.CENTER);
 		textField.setColumns(10);
 		
