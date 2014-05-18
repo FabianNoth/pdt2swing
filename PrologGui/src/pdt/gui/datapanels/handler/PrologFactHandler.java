@@ -9,6 +9,7 @@ import java.util.TreeMap;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 
@@ -73,8 +74,13 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 	}
 
 	public void updateFromPanel(HashMap<String, JComponent> textFields) {
-		// TODO: add check if name already exists (quick&dirty)
 		if (currentId == null) {
+			return;
+		}
+		
+		// check if name already exists (quick & dirty)
+		// TODO: improve (move to prolog side)
+		if (nameAlreadyExists(textFields)) {
 			return;
 		}
 		
@@ -89,9 +95,44 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		
 		updateVisualizer();
 	}
-	
+
+	private boolean nameAlreadyExists(HashMap<String, JComponent> textFields) {
+		JComponent comp = textFields.get("Name");
+		if (comp != null && comp instanceof JTextField) {
+			String checkRename = checkRename((JTextField) comp);
+			if (checkRename != null) {
+				try {
+					Map<String, Object> checkRes = pif.queryOnce(QueryUtils.bT("name_is_free", PrologUtils.quoteIfNecessary(checkRename)));
+					if (checkRes == null) {
+						// query failed --> name is not free
+						JOptionPane.showMessageDialog(getEditPanel(), "Name \"" + checkRename + "\" existiert bereits.",  "Fehler", JOptionPane.ERROR_MESSAGE);
+						return true;
+					}
+				} catch (PrologInterfaceException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return false;
+	}
+
+	private String checkRename(JTextField tf) {
+		String newName = tf.getText();
+		String oldName = getElementByName("Name");
+		if (newName.equals(oldName)) {
+			return null;
+		} else {
+			return newName;
+		}
+	}
+
 	public void saveAsNew(HashMap<String, JComponent> textFields) {
-		// TODO: add check if name already exists (quick&dirty)
+		// check if name already exists (quick & dirty)
+		// TODO: improve (move to prolog side)
+		if (nameAlreadyExists(textFields)) {
+			return;
+		}
+
 		// get goal for assertion, use empty ID
 		String goal = getGoalWithData(textFields, "_");
 		String id = null;
