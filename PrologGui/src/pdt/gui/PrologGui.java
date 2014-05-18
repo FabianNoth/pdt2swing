@@ -22,7 +22,6 @@ import pdt.gui.data.BundleProvider;
 import pdt.gui.data.IdListener;
 import pdt.gui.data.PrologConnection;
 import pdt.gui.data.PrologGuiBundle;
-import pdt.gui.data.PrologTableData;
 import pdt.gui.datapanels.FactPanel;
 import pdt.gui.datapanels.ImagePanel;
 import pdt.gui.datapanels.RatingPanel;
@@ -251,11 +250,6 @@ public class PrologGui implements PrologDataVisualizer {
 	@Override
 	public void changedDatabase(String id) {
 		tablePanel.updateTableModel(id);
-	}
-
-	@Override
-	public void changePrologData(PrologTableData data) {
-		tablePanel.setTableModel(data);
 	}
 
 	@Override

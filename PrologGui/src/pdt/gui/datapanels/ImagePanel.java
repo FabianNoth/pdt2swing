@@ -171,7 +171,6 @@ public class ImagePanel extends JPanel implements IdListener {
 
 	@Override
 	public boolean changed() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
