@@ -47,10 +47,14 @@ public class PrologTablePanel extends JPanel {
 							if (parent.changePrologId(id)) {
 								rowSelection = table.getSelectedRow();
 							} else {
-								// if prolog id wasn't changed (because of unsafed changes)
+								// if prolog id wasn't changed (because of unsaved changes)
 								// reset the id (and skip the next update, because its just resetting)
 								skipListener = true;
-								table.setRowSelectionInterval(rowSelection, rowSelection);
+								if (rowSelection == -1) {
+									table.clearSelection();
+								} else {
+									table.setRowSelectionInterval(rowSelection, rowSelection);
+								}
 							}
 						}
 					}

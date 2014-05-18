@@ -164,6 +164,8 @@ public class PrologGui implements PrologDataVisualizer {
         querySelectionPanel = new QuerySelectionPanel(this, bundleProvider);
         
         setBundle(bundleProvider.getDefault());
+        // at the first start, it's no update from bundle
+        updateFromBundleFlag = false;
         
         //Display the window.
         frame.pack();
