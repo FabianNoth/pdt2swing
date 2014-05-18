@@ -220,9 +220,8 @@ public class PrologGui implements PrologDataVisualizer {
 				}
 			}
 			
-			File imgDir = bundle.getImgDir();
-			if (imgDir != null) {
-				ImagePanel imagePanel = new ImagePanel(imgDir, bundle.getImgListener(), bundle.isAllowImageUpload());
+			if (bundle.containsImagePanel()) {
+				ImagePanel imagePanel = new ImagePanel(bundle.getImgDir(), bundle.getImgActionListener(), bundle.hasDefaultImageUpload());
 				addToListeners(imagePanel);
 				eastPanel.add(imagePanel, BorderLayout.NORTH);
 			}

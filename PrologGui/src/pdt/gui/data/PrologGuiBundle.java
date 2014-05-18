@@ -12,27 +12,29 @@ public class PrologGuiBundle {
 	private PrologTableData tableData;
 	private final List<PrologDataHandler<?>> factHandlers = new ArrayList<>();
 	private File imgDir;
-	private ActionListener imgListener;
-	private boolean allowImageUpload = false;
+	// image panel stuff
+	private boolean containsImagePanel = false;
+	private boolean defaultImageUpload = false;
+	private ActionListener imgActionListener;
 
 	public PrologGuiBundle(PrologTableData tableData, PrologDataHandler<?>... factHandlers) {
-		this(tableData, null, null, factHandlers);
-	}
-	
-	public PrologGuiBundle(PrologTableData tableData, File imgDir, boolean allowImageUpload, PrologDataHandler<?>... factHandlers) {
-		this(tableData, imgDir, null, factHandlers);
-		this.allowImageUpload = allowImageUpload;
-	}
-	
-	public PrologGuiBundle(PrologTableData tableData, File imgDir, ActionListener imgListener, PrologDataHandler<?>... factHandlers) {
 		this.tableData = tableData;
-		this.imgDir = imgDir;
-		this.imgListener = imgListener;
 		for(PrologDataHandler<?> fh : factHandlers) {
 			this.factHandlers.add(fh);
 		}
 	}
 
+	public void addImagePanel(File imgDir, boolean defaultImageUpload) {
+		containsImagePanel = true;
+		this.imgDir = imgDir;
+		this.defaultImageUpload = defaultImageUpload;
+	}
+	
+	public void addImagePanel(File imgDir, ActionListener imgActionListener) {
+		this.imgActionListener = imgActionListener;
+		addImagePanel(imgDir, false);
+	}
+	
 	public PrologTableData getTableData() {
 		return tableData;
 	}
@@ -41,20 +43,23 @@ public class PrologGuiBundle {
 		return factHandlers;
 	}
 	
+	public boolean containsImagePanel() {
+		return containsImagePanel;
+	}
 	public File getImgDir() {
 		return imgDir;
 	}
 
-	public ActionListener getImgListener() {
-		return imgListener;
+	public ActionListener getImgActionListener() {
+		return imgActionListener;
 	}
 	
-	public boolean isAllowImageUpload() {
-		return allowImageUpload;
+	public boolean hasDefaultImageUpload() {
+		return defaultImageUpload;
 	}
 	
 	public void setFilter(PrologFilter filter) {
 		tableData.setFilter(filter);
 	}
-	
+
 }

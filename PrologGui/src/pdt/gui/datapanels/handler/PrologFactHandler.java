@@ -118,10 +118,17 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 			pif.queryOnce(QueryUtils.bT(REMOVE_FACT, goal));
 			
 			// if there is a text file, remove it also
-			File textOutputDir = new File(outputFile.getParentFile(), getFunctor());
-			File textFile = new File(textOutputDir, currentId);
+			File dataDir = new File(outputFile.getParentFile(), getFunctor());
+			File textFile = new File(dataDir, currentId);
 			if (textFile.isFile()) {
 				textFile.delete();
+			}
+			
+			// same for image file
+			File imgDir = new File(dataDir, "imgs");
+			File imgFile = new File(imgDir, currentId + ".jpg");
+			if (imgFile.isFile()) {
+				imgFile.delete();
 			}
 			
 		} catch (PrologInterfaceException e) {
