@@ -121,8 +121,9 @@ public class FactPanel extends JPanel implements DataPanel {
 		btUpdate.setEnabled(false);
 		btUpdate.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent evt) {
-				updateDummyValues();
-				prolog.updateFromPanel(textFields);
+				if (prolog.updateFromPanel(textFields)) {
+					updateDummyValues();
+				}
 			}
 		});
 		GridBagConstraints gbc_btUpdate = new GridBagConstraints();
@@ -139,8 +140,9 @@ public class FactPanel extends JPanel implements DataPanel {
 			JButton btSaveAsNew = new JButton("Save as New");
 			btSaveAsNew.addActionListener(new ActionListener() {
 				@Override public void actionPerformed(ActionEvent evt) {
-					updateDummyValues();
-					prolog.saveAsNew(textFields);
+					if (prolog.saveAsNew(textFields)) {
+						updateDummyValues();
+					}
 				}
 			});
 			GridBagConstraints gbc_btSaveAsNew = new GridBagConstraints();

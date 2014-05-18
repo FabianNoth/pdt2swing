@@ -73,15 +73,15 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		return null;
 	}
 
-	public void updateFromPanel(HashMap<String, JComponent> textFields) {
+	public boolean updateFromPanel(HashMap<String, JComponent> textFields) {
 		if (currentId == null) {
-			return;
+			return false;
 		}
 		
 		// check if name already exists (quick & dirty)
 		// TODO: improve (move to prolog side)
 		if (nameAlreadyExists(textFields)) {
-			return;
+			return false;
 		}
 		
 		// get goal for assertion, use current id
@@ -91,9 +91,11 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 			pif.queryOnce(QueryUtils.bT(UPDATE_FACT, goal));
 		} catch (PrologInterfaceException e) {
 			e.printStackTrace();
+			return false;
 		}
 		
 		updateVisualizer();
+		return true;
 	}
 
 	private boolean nameAlreadyExists(HashMap<String, JComponent> textFields) {
@@ -126,11 +128,11 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		}
 	}
 
-	public void saveAsNew(HashMap<String, JComponent> textFields) {
+	public boolean saveAsNew(HashMap<String, JComponent> textFields) {
 		// check if name already exists (quick & dirty)
 		// TODO: improve (move to prolog side)
 		if (nameAlreadyExists(textFields)) {
-			return;
+			return false;
 		}
 
 		// get goal for assertion, use empty ID
@@ -143,9 +145,11 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 			}
 		} catch (PrologInterfaceException e) {
 			e.printStackTrace();
+			return false;
 		}
 		
 		updateVisualizer(id);
+		return true;
 	}
 	
 	public void delete() {
