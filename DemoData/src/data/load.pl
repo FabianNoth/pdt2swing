@@ -80,3 +80,6 @@ gui_hooks:check_for_existing_value_hook(fsdb_tags, Value) :-
 :- multifile gui_hooks:auto_completion_hook/2.
 gui_hooks:auto_completion_hook(fsdb_tags, Value) :-
 	user:fsdb_category(_, Value).
+
+% compatibility
+name_is_free(_).
