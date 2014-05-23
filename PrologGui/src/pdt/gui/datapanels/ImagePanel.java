@@ -14,12 +14,14 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 
+import org.apache.commons.codec.digest.DigestUtils;
+
 import pdt.gui.data.IdListener;
 import pdt.gui.utils.ImageUtils;
+import pdt.gui.utils.PrologUtils;
 
 public class ImagePanel extends JPanel implements IdListener {
 
@@ -87,27 +89,14 @@ public class ImagePanel extends JPanel implements IdListener {
 						return f.isDirectory() || f.getName().toLowerCase().endsWith(".jpg");
 					}
 				});
-				int result = fileChooser.showOpenDialog(null);
+				int result = fileChooser.showOpenDialog(PrologUtils.getActiveFrame());
 				if (result == JFileChooser.APPROVE_OPTION) {
 					File file = fileChooser.getSelectedFile();
-//					BufferedImage outputImage = ImageUtils.scaleImageIJ(file, 200, 300);
 					BufferedImage outputImage = ImageUtils.scaleImageSmooth(file, maxWidth, maxHeight);
 
 					// copy to imgDir
-					try {
-						File destFile = new File(imgDir, id + ".jpg");
-						if (destFile.isFile()) {
-							int answer = JOptionPane.showConfirmDialog(ImagePanel.this, "Das Bild exisitert bereits. Soll es überschrieben werden?", "Bild überschreiben", JOptionPane.YES_NO_OPTION);
-							if (answer == JOptionPane.NO_OPTION) {
-								return;
-							}
-						}
-						ImageIO.write(outputImage, "jpg", destFile);
-//						FileUtils.copyFile(file, destFile);
-						setId(id);
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
+					ImageUtils.saveImage(outputImage, getImageFile());
+					setId(id);
 				}
 			}
 		};
@@ -140,7 +129,7 @@ public class ImagePanel extends JPanel implements IdListener {
 		if (id == null) {
 			img = null;
 		} else {
-			File imgFile = new File(imgDir, id + ".jpg");
+			File imgFile = getImageFile();
 			try {
 				img = ImageIO.read(imgFile);
 			} catch (IOException e) {
@@ -177,6 +166,11 @@ public class ImagePanel extends JPanel implements IdListener {
 	@Override
 	public boolean changed() {
 		return false;
+	}
+
+	private File getImageFile() {
+		File subdir = new File(imgDir, PrologUtils.md5Prefix(id));
+		return new File(subdir, id + ".jpg");
 	}
 
 }

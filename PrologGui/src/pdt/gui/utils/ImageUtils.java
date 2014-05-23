@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 
 public class ImageUtils {
 
@@ -74,5 +75,21 @@ public class ImageUtils {
 		return null;
 	}
 	
+	public static void saveImage(BufferedImage outputImage, File destFile) {
+		if (destFile.isFile()) {
+			int answer = JOptionPane.showConfirmDialog(PrologUtils.getActiveFrame(), "Das Bild exisitert bereits. Soll es überschrieben werden?", "Bild überschreiben", JOptionPane.YES_NO_OPTION);
+			if (answer == JOptionPane.NO_OPTION) {
+				return;
+			}
+		}
+		if (!destFile.getParentFile().isDirectory()) {
+			destFile.getParentFile().mkdirs();
+		}
+		try {
+			ImageIO.write(outputImage, "jpg", destFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
 }

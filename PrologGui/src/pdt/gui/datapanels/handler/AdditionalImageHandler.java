@@ -4,18 +4,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileFilter;
+
+import org.apache.commons.codec.digest.DigestUtils;
 
 import pdt.gui.datapanels.AdditionalImagePanel;
 import pdt.gui.utils.ImageUtils;
@@ -67,7 +66,7 @@ public class AdditionalImageHandler extends PrologDataHandler<AdditionalImagePan
 		imageFiles.clear();
 		
 		for (ImageElement img : images) {
-			imageFiles.put(img.getSuffix(), new File(outputDir, imageName(img.getSuffix())));
+			imageFiles.put(img.getSuffix(), getImageFile(img.getSuffix()));
 		}
 		
 		getEditPanel().setData(imageFiles);
@@ -77,6 +76,11 @@ public class AdditionalImageHandler extends PrologDataHandler<AdditionalImagePan
 		return currentId + "_" + suffix + ".jpg";
 	}
 
+	private File getImageFile(String suffix) {
+		File subdir = new File(outputDir, PrologUtils.md5Prefix(currentId));
+		return new File(subdir, imageName(suffix));
+	}
+	
 	@Override
 	public void persistFacts() {}
 	
@@ -102,20 +106,10 @@ public class AdditionalImageHandler extends PrologDataHandler<AdditionalImagePan
 				outputImage = ImageUtils.scaleImageSmooth(file, image.getMaxWidth(), image.getMaxHeight());
 			}
 
-			// copy to imgDir
-			try {
-				File destFile = new File(outputDir, imageName(evt.getActionCommand()));
-				if (destFile.isFile()) {
-					int answer = JOptionPane.showConfirmDialog(PrologUtils.getActiveFrame(), "Das Bild exisitert bereits. Soll es überschrieben werden?", "Bild überschreiben", JOptionPane.YES_NO_OPTION);
-					if (answer == JOptionPane.NO_OPTION) {
-						return;
-					}
-				}
-				ImageIO.write(outputImage, "jpg", destFile);
-				getEditPanel().setData(imageFiles);
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+			// save to imgDir
+			File destFile = getImageFile(evt.getActionCommand());
+			ImageUtils.saveImage(outputImage, destFile);
+			getEditPanel().setData(imageFiles);
 		}
 	}
 	

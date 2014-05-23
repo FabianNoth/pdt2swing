@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.cs3.prolog.common.QueryUtils;
 import org.cs3.prolog.pif.PrologInterfaceException;
 
@@ -186,12 +187,13 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 			
 			// same for image file
 			File imgDir = new File(dataDir, "imgs");
-			File imgFile = new File(imgDir, currentId + ".jpg");
+			File subdir = new File(imgDir, PrologUtils.md5Prefix(currentId));
+			File imgFile = new File(subdir, currentId + ".jpg");
 			deleteImage(imgFile);
 			
 			if (imagesToDelete != null) {
 				for (String name : imagesToDelete) {
-					File imgFile2 = new File(imgDir, currentId + "_" + name + ".jpg");
+					File imgFile2 = new File(subdir, currentId + "_" + name + ".jpg");
 					deleteImage(imgFile2);
 				}
 			}

@@ -1,7 +1,10 @@
 package pdt.gui.utils;
 
+import java.io.File;
+
 import javax.swing.JFrame;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.cs3.prolog.common.Util;
 
 public class PrologUtils {
@@ -23,6 +26,14 @@ public class PrologUtils {
 	
 	public static JFrame getActiveFrame() {
 		return activeFrame;
+	}
+	
+	public static String md5Prefix(String input) {
+		return Character.toString(md5(input).charAt(0));
+	}
+	
+	private static String md5(String input) {
+		return DigestUtils.md5Hex(input);
 	}
 	
 }
