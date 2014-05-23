@@ -29,6 +29,7 @@ import pdt.prolog.elements.PrologGoal;
 public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 
 //	private FactPanel editPanel;
+	private Set<String> imagesToDelete;
 	private Set<PrologRelationHandler> relationHandler;
 	private Map<String, Object> result;
 	private String mainElementName;
@@ -43,6 +44,16 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		File textOutputDir = new File(outputFile.getParentFile(), getFunctor());
 		PrologTextFileHandler textData = new PrologTextFileHandler(title, textOutputDir);
 		return textData;
+	}
+	
+	public AdditionalImageHandler createAdditionalImageHandler(String name, String... imageNames) {
+		File imgDir = new File(outputFile.getParentFile(), getFunctor() + "/imgs");
+		AdditionalImageHandler handler = new AdditionalImageHandler(name, imgDir, imageNames);
+		imagesToDelete = new HashSet<String>();
+		for (String s : imageNames) {
+			imagesToDelete.add(s);
+		}
+		return handler;
 	}
 
 	public void setMainElementName(String mainElementName) {
@@ -171,15 +182,18 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 			// if there is a text file, remove it also
 			File dataDir = new File(outputFile.getParentFile(), getFunctor());
 			File textFile = new File(dataDir, currentId);
-			if (textFile.isFile()) {
-				textFile.delete();
-			}
+			deleteImage(textFile);
 			
 			// same for image file
 			File imgDir = new File(dataDir, "imgs");
 			File imgFile = new File(imgDir, currentId + ".jpg");
-			if (imgFile.isFile()) {
-				imgFile.delete();
+			deleteImage(imgFile);
+			
+			if (imagesToDelete != null) {
+				for (String name : imagesToDelete) {
+					File imgFile2 = new File(imgDir, currentId + "_" + name + ".jpg");
+					deleteImage(imgFile2);
+				}
 			}
 			
 		} catch (PrologInterfaceException e) {
@@ -188,6 +202,13 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		
 		updateVisualizer();
 	}
+
+	private void deleteImage(File imgFile) {
+		if (imgFile.isFile()) {
+			imgFile.delete();
+		}
+	}
+	
 
 	
 	private String getGoalWithData(HashMap<String, JComponent> textFields, String id) {

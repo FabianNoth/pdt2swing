@@ -10,7 +10,7 @@ import javax.imageio.ImageIO;
 
 public class ImageUtils {
 
-	private static BufferedImage scaleImage(BufferedImage input, int maxWidth, int maxHeight) {
+	private static BufferedImage scaleImage(BufferedImage input, int maxWidth, int maxHeight, int scaleMethod) {
 
 		int origWidth = input.getWidth();
 		int origHeight = input.getHeight();
@@ -28,7 +28,7 @@ public class ImageUtils {
 			int newWidth = (int) (origWidth * scale);
 			int newHeight = (int) (origHeight * scale);
 			
-			Image scaledInstance = input.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+			Image scaledInstance = input.getScaledInstance(newWidth, newHeight, scaleMethod);
 			
 			// scale image
 			output = new BufferedImage(newWidth, newHeight, input.getType());
@@ -39,14 +39,32 @@ public class ImageUtils {
 		return output;
 	}
 
-	public static BufferedImage scaleImage(File file, int maxWidth, int maxHeight) {
+	private static BufferedImage scaleImage(File file, int maxWidth, int maxHeight, int scaleMethod) {
 		try {
 			BufferedImage img = ImageIO.read(file);
-			return scaleImage(img, maxWidth, maxHeight);
+			return scaleImage(img, maxWidth, maxHeight, scaleMethod);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
+	
+	public static BufferedImage scaleImageFast(File file, int maxWidth, int maxHeight) {
+		return scaleImage(file, maxWidth, maxHeight, Image.SCALE_FAST);
+	}
+	
+	public static BufferedImage scaleImageSmooth(File file, int maxWidth, int maxHeight) {
+		return scaleImage(file, maxWidth, maxHeight, Image.SCALE_SMOOTH);
+	}
+
+	public static BufferedImage loadImage(File file) {
+		try {
+			return ImageIO.read(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	
 }

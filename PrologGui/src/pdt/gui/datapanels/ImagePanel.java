@@ -86,7 +86,7 @@ public class ImagePanel extends JPanel implements IdListener {
 				if (result == JFileChooser.APPROVE_OPTION) {
 					File file = fileChooser.getSelectedFile();
 //					BufferedImage outputImage = ImageUtils.scaleImageIJ(file, 200, 300);
-					BufferedImage outputImage = ImageUtils.scaleImage(file, 200, 300);
+					BufferedImage outputImage = ImageUtils.scaleImageSmooth(file, 200, 300);
 
 					// copy to imgDir
 					try {

@@ -1,5 +1,7 @@
 package pdt.gui.utils;
 
+import javax.swing.JFrame;
+
 import org.cs3.prolog.common.Util;
 
 public class PrologUtils {
@@ -10,6 +12,17 @@ public class PrologUtils {
 			return atom;
 		} catch (NumberFormatException e) {}
 		return Util.quoteAtomIfNeeded(atom);
+	}
+	
+	
+	private static JFrame activeFrame;
+	
+	public static void setActiveFrame(JFrame f) {
+		activeFrame = f;
+	}
+	
+	public static JFrame getActiveFrame() {
+		return activeFrame;
 	}
 	
 }

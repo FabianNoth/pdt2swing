@@ -23,17 +23,20 @@ import pdt.gui.data.BundleProvider;
 import pdt.gui.data.IdListener;
 import pdt.gui.data.PrologConnection;
 import pdt.gui.data.PrologGuiBundle;
+import pdt.gui.datapanels.AdditionalImagePanel;
 import pdt.gui.datapanels.FactPanel;
 import pdt.gui.datapanels.ImagePanel;
 import pdt.gui.datapanels.RatingPanel;
 import pdt.gui.datapanels.RelationPanel;
 import pdt.gui.datapanels.TextFilePanel;
+import pdt.gui.datapanels.handler.AdditionalImageHandler;
 import pdt.gui.datapanels.handler.PrologDataHandler;
 import pdt.gui.datapanels.handler.PrologFactHandler;
 import pdt.gui.datapanels.handler.PrologRatingHandler;
 import pdt.gui.datapanels.handler.PrologRelationHandler;
 import pdt.gui.datapanels.handler.PrologTextFileHandler;
 import pdt.gui.utils.AppZip;
+import pdt.gui.utils.PrologUtils;
 import pdt.gui.utils.SimpleLogger;
 
 public class PrologGui implements PrologDataVisualizer {
@@ -147,6 +150,8 @@ public class PrologGui implements PrologDataVisualizer {
     	// create frame
         frame = new JFrame("Prolog Data Demo");
         
+        PrologUtils.setActiveFrame(frame);
+        
         // add handling of windowClosing
         frame.addWindowListener(new WindowAdapter() {
         	@Override
@@ -249,6 +254,8 @@ public class PrologGui implements PrologDataVisualizer {
     		return new RatingPanel((PrologRatingHandler) prologFactHandler);
     	} else if (prologFactHandler instanceof PrologTextFileHandler) {
     		return new TextFilePanel((PrologTextFileHandler) prologFactHandler);
+    	} else if (prologFactHandler instanceof AdditionalImageHandler) {
+    		return new AdditionalImagePanel((AdditionalImageHandler) prologFactHandler);
     	}
     	return new JPanel();
 	}
