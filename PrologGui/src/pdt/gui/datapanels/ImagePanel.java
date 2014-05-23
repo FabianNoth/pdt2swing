@@ -32,14 +32,19 @@ public class ImagePanel extends JPanel implements IdListener {
 	private int posX = 0;
 	private int posY = 0;
 	
+	private int maxWidth = 0;
+	private int maxHeight = 0;
+	
 	private String id;
 	
 	public ImagePanel(File imgDir) {
-		this(imgDir, null, false);
+		this(imgDir, null, false, 200, 300);
 	}
 	
-	public ImagePanel(final File imgDir, ActionListener listener, boolean allowImageUpload) {
+	public ImagePanel(final File imgDir, ActionListener listener, boolean allowImageUpload, int maxWidth, int maxHeight) {
 		this.imgDir = imgDir;
+		this.maxWidth = maxWidth;
+		this.maxHeight = maxHeight;
 		if (listener == null) {
 			if (allowImageUpload) {
 				// add image upload action
@@ -61,8 +66,8 @@ public class ImagePanel extends JPanel implements IdListener {
 			}
 		});
 
-		setPreferredSize(new Dimension(220, 310));
-		setMinimumSize(new Dimension(220, 310));
+		setPreferredSize(new Dimension(maxWidth + 20, maxHeight + 10));
+		setMinimumSize(new Dimension(maxWidth + 20, maxHeight + 10));
 	}
 	
 	private ActionListener createImageUploadAction() {
@@ -70,7 +75,6 @@ public class ImagePanel extends JPanel implements IdListener {
 			private JFileChooser fileChooser = new JFileChooser();
 			@Override public void actionPerformed(ActionEvent e) {
 				// show file input dialog (only jpg files)
-				int result = fileChooser.showOpenDialog(null);
 				fileChooser.setFileFilter(new FileFilter() {
 					
 					@Override
@@ -80,13 +84,14 @@ public class ImagePanel extends JPanel implements IdListener {
 					
 					@Override
 					public boolean accept(File f) {
-						return f.getName().toLowerCase().endsWith(".jpg");
+						return f.isDirectory() || f.getName().toLowerCase().endsWith(".jpg");
 					}
 				});
+				int result = fileChooser.showOpenDialog(null);
 				if (result == JFileChooser.APPROVE_OPTION) {
 					File file = fileChooser.getSelectedFile();
 //					BufferedImage outputImage = ImageUtils.scaleImageIJ(file, 200, 300);
-					BufferedImage outputImage = ImageUtils.scaleImageSmooth(file, 200, 300);
+					BufferedImage outputImage = ImageUtils.scaleImageSmooth(file, maxWidth, maxHeight);
 
 					// copy to imgDir
 					try {

@@ -231,7 +231,7 @@ public class PrologGui implements PrologDataVisualizer {
 			}
 			
 			if (bundle.containsImagePanel()) {
-				ImagePanel imagePanel = new ImagePanel(bundle.getImgDir(), bundle.getImgActionListener(), bundle.hasDefaultImageUpload());
+				ImagePanel imagePanel = new ImagePanel(bundle.getImgDir(), bundle.getImgActionListener(), bundle.hasDefaultImageUpload(), 200, 300);
 				addToListeners(imagePanel);
 				eastPanel.add(imagePanel, BorderLayout.NORTH);
 			}

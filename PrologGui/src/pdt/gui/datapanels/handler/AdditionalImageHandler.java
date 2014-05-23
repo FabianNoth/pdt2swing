@@ -24,15 +24,17 @@ import pdt.gui.utils.PrologUtils;
 public class AdditionalImageHandler extends PrologDataHandler<AdditionalImagePanel> implements ActionListener {
 
 	private File outputDir;
-	private final List<String> imageNames = new ArrayList<String>();
-	private final Map<String, File> imageFiles = new HashMap<String, File>();
+	private final List<ImageElement> images = new ArrayList<>();
+	private final Map<String, ImageElement> imageMap = new HashMap<>();
+	private final Map<String, File> imageFiles = new HashMap<>();
 	private JFileChooser fileChooser;
 	
-	protected AdditionalImageHandler(String name, File outputDir, String... imageNames) {
+	protected AdditionalImageHandler(String name, File outputDir, ImageElement... imageNames) {
 		super(name);
 		this.outputDir = outputDir;
-		for (String s : imageNames) {
-			this.imageNames.add(s);
+		for (ImageElement img : imageNames) {
+			this.images.add(img);
+			this.imageMap.put(img.getSuffix(), img);
 		}
 		initFileChooser();
 	}
@@ -64,18 +66,22 @@ public class AdditionalImageHandler extends PrologDataHandler<AdditionalImagePan
 	public void showData() {
 		imageFiles.clear();
 		
-		for (String name : imageNames) {
-			imageFiles.put(name, new File(outputDir, currentId + "_" + name + ".jpg"));
+		for (ImageElement img : images) {
+			imageFiles.put(img.getSuffix(), new File(outputDir, imageName(img.getSuffix())));
 		}
 		
 		getEditPanel().setData(imageFiles);
 	}
 
+	private String imageName(String suffix) {
+		return currentId + "_" + suffix + ".jpg";
+	}
+
 	@Override
 	public void persistFacts() {}
 	
-	public List<String> getImageNames() {
-		return imageNames;
+	public List<ImageElement> getImages() {
+		return images;
 	}
 
 	
@@ -87,11 +93,18 @@ public class AdditionalImageHandler extends PrologDataHandler<AdditionalImagePan
 		
 		if (result == JFileChooser.APPROVE_OPTION) {
 			File file = fileChooser.getSelectedFile();
-			BufferedImage outputImage = ImageUtils.loadImage(file);
+			BufferedImage outputImage;
+			ImageElement image = imageMap.get(evt.getActionCommand());
+			
+			if (image.getMaxHeight() == -1 && image.getMaxWidth() == -1) {
+				outputImage = ImageUtils.loadImage(file);
+			} else {
+				outputImage = ImageUtils.scaleImageSmooth(file, image.getMaxWidth(), image.getMaxHeight());
+			}
 
 			// copy to imgDir
 			try {
-				File destFile = new File(outputDir, currentId + "_" + evt.getActionCommand() + ".jpg");
+				File destFile = new File(outputDir, imageName(evt.getActionCommand()));
 				if (destFile.isFile()) {
 					int answer = JOptionPane.showConfirmDialog(PrologUtils.getActiveFrame(), "Das Bild exisitert bereits. Soll es überschrieben werden?", "Bild überschreiben", JOptionPane.YES_NO_OPTION);
 					if (answer == JOptionPane.NO_OPTION) {

@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import pdt.gui.datapanels.handler.AdditionalImageHandler;
+import pdt.gui.datapanels.handler.ImageElement;
 import pdt.gui.utils.ImageUtils;
 import pdt.gui.utils.SimpleLogger;
 
@@ -33,26 +34,26 @@ public class AdditionalImagePanel extends JPanel implements DataPanel {
 		URL res = ClassLoader.getSystemClassLoader().getResource("res/empty.png");
 		emptyIcon = new ImageIcon(res);
 		
-		List<String> imageNames = handler.getImageNames();
+		List<ImageElement> images = handler.getImages();
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
-		gridBagLayout.rowHeights = new int[imageNames.size() + 1];
+		gridBagLayout.rowHeights = new int[images.size() + 1];
 		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[imageNames.size() + 1];
+		gridBagLayout.rowWeights = new double[images.size() + 1];
 
-		for (int i=0; i<=imageNames.size(); i++) {
+		for (int i=0; i<=images.size(); i++) {
 			gridBagLayout.rowHeights[i] = 0;
 			gridBagLayout.rowWeights[i] = 0.0;
 		}
-		gridBagLayout.rowWeights[imageNames.size()] = Double.MIN_VALUE;
+		gridBagLayout.rowWeights[images.size()] = Double.MIN_VALUE;
 		
 		setLayout(gridBagLayout);
 		
 		
-		for (int i=0; i<imageNames.size(); i++) {
+		for (int i=0; i<images.size(); i++) {
 			// Label
-			String name = imageNames.get(i);
+			String name = images.get(i).getSuffix();
 			
 			JLabel label = new JLabel(name);
 			GridBagConstraints gbc_label = new GridBagConstraints();

@@ -18,13 +18,21 @@ public class ImageUtils {
 		double scale = 1.0;
 		BufferedImage output = input;
 		
-		if (origWidth > maxWidth || origHeight > maxHeight) {
+		if ((origWidth > maxWidth && maxWidth != -1) || (origHeight > maxHeight && maxHeight != -1)) {
 			// image is larger than area, so scaling required
 			double scaleWidth = (1.0 * maxWidth) / origWidth;
-			double scaleHeigth = (1.0 * maxHeight) / origHeight;
+			double scaleHeight = (1.0 * maxHeight) / origHeight;
+			
+			if (scaleWidth < 0) {
+				scaleWidth = Double.MAX_VALUE;
+			}
+			
+			if (scaleHeight < 0) {
+				scaleHeight = Double.MAX_VALUE;
+			}
 
 			// use smallest scale factor (so that both sides match)
-			scale = Math.min(scaleWidth, scaleHeigth);
+			scale = Math.min(scaleWidth, scaleHeight);
 			int newWidth = (int) (origWidth * scale);
 			int newHeight = (int) (origHeight * scale);
 			

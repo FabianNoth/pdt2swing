@@ -46,12 +46,12 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		return textData;
 	}
 	
-	public AdditionalImageHandler createAdditionalImageHandler(String name, String... imageNames) {
+	public AdditionalImageHandler createAdditionalImageHandler(String name, ImageElement... images) {
 		File imgDir = new File(outputFile.getParentFile(), getFunctor() + "/imgs");
-		AdditionalImageHandler handler = new AdditionalImageHandler(name, imgDir, imageNames);
+		AdditionalImageHandler handler = new AdditionalImageHandler(name, imgDir, images);
 		imagesToDelete = new HashSet<String>();
-		for (String s : imageNames) {
-			imagesToDelete.add(s);
+		for (ImageElement img : images) {
+			imagesToDelete.add(img.getSuffix());
 		}
 		return handler;
 	}
