@@ -14,8 +14,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.commons.codec.digest.DigestUtils;
-
 import pdt.gui.datapanels.AdditionalImagePanel;
 import pdt.gui.utils.ImageUtils;
 import pdt.gui.utils.PrologUtils;

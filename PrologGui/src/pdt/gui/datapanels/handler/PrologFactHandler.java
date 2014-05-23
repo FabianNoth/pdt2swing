@@ -15,7 +15,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.cs3.prolog.common.QueryUtils;
 import org.cs3.prolog.pif.PrologInterfaceException;
 

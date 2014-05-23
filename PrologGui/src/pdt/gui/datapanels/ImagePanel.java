@@ -17,8 +17,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.commons.codec.digest.DigestUtils;
-
 import pdt.gui.data.IdListener;
 import pdt.gui.utils.ImageUtils;
 import pdt.gui.utils.PrologUtils;

@@ -1,7 +1,5 @@
 package pdt.gui.utils;
 
-import java.io.File;
-
 import javax.swing.JFrame;
 
 import org.apache.commons.codec.digest.DigestUtils;
