@@ -15,6 +15,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileFilter;
 
 import pdt.gui.datapanels.AdditionalImagePanel;
+import pdt.gui.imageselection.ImageSelectionDialog;
 import pdt.gui.utils.ImageUtils;
 import pdt.gui.utils.PrologUtils;
 
@@ -25,6 +26,7 @@ public class AdditionalImageHandler extends PrologDataHandler<AdditionalImagePan
 	private final Map<String, ImageElement> imageMap = new HashMap<>();
 	private final Map<String, File> imageFiles = new HashMap<>();
 	private JFileChooser fileChooser;
+	private ImageSelectionDialog imgDialog;
 	
 	protected AdditionalImageHandler(String name, File outputDir, ImageElement... imageNames) {
 		super(name);
@@ -44,7 +46,7 @@ public class AdditionalImageHandler extends PrologDataHandler<AdditionalImagePan
 			e.printStackTrace();
 		}
 		
-		fileChooser = new JFileChooser();
+		fileChooser = new JFileChooser(PrologUtils.getDownloadDirectory());
 		fileChooser.setFileFilter(new FileFilter() {
 
 			@Override
@@ -57,6 +59,8 @@ public class AdditionalImageHandler extends PrologDataHandler<AdditionalImagePan
 				return f.isDirectory() || f.getName().toLowerCase().endsWith(".jpg");
 			}
 		});
+		
+		imgDialog = new ImageSelectionDialog();
 	}
 
 	@Override
@@ -95,19 +99,30 @@ public class AdditionalImageHandler extends PrologDataHandler<AdditionalImagePan
 		
 		if (result == JFileChooser.APPROVE_OPTION) {
 			File file = fileChooser.getSelectedFile();
-			BufferedImage outputImage;
-			ImageElement image = imageMap.get(evt.getActionCommand());
 			
-			if (image.getMaxHeight() == -1 && image.getMaxWidth() == -1) {
-				outputImage = ImageUtils.loadImage(file);
+			ImageElement imgElement = imageMap.get(evt.getActionCommand());
+			
+			boolean fixedSize = imgElement.getMaxHeight() > -1 && imgElement.getMaxWidth() > -1;
+			
+			if (fixedSize) {
+				imgDialog.setFile(file, 1.0 * imgElement.getMaxWidth() / imgElement.getMaxHeight());
 			} else {
-				outputImage = ImageUtils.scaleImageSmooth(file, image.getMaxWidth(), image.getMaxHeight());
+				imgDialog.setFile(file);
 			}
+			imgDialog.setVisible(true);
+			BufferedImage outputImage = imgDialog.getResultImage();
 
+			if (outputImage != null) {
+				File destFile = getImageFile(evt.getActionCommand());
+				// save to imgDir
+				if (fixedSize) {
+					outputImage = ImageUtils.scaleUnprop(outputImage, imgElement.getMaxWidth(), imgElement.getMaxHeight());
+				}
+				ImageUtils.saveImage(outputImage, destFile);
+				getEditPanel().setData(imageFiles);
+			}
 			// save to imgDir
-			File destFile = getImageFile(evt.getActionCommand());
-			ImageUtils.saveImage(outputImage, destFile);
-			getEditPanel().setData(imageFiles);
+//			ImageUtils.saveImage(outputImage, destFile);
 		}
 	}
 	

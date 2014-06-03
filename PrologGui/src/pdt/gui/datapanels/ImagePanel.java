@@ -73,7 +73,7 @@ public class ImagePanel extends JPanel implements IdListener {
 	
 	private ActionListener createImageUploadAction() {
 		ActionListener uploadListener = new ActionListener() {
-			private JFileChooser fileChooser = new JFileChooser(new File(System.getProperty("user.home") + "\\Downloads"));
+			private JFileChooser fileChooser = new JFileChooser(PrologUtils.getDownloadDirectory());
 			private ImageSelectionDialog imgFrame = new ImageSelectionDialog();
 			@Override public void actionPerformed(ActionEvent e) {
 				// show file input dialog (only jpg files)

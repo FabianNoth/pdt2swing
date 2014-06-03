@@ -1,5 +1,7 @@
 package pdt.gui.utils;
 
+import java.io.File;
+
 import javax.swing.JFrame;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -32,6 +34,10 @@ public class PrologUtils {
 	
 	private static String md5(String input) {
 		return DigestUtils.md5Hex(input);
+	}
+	
+	public static File getDownloadDirectory() {
+		return new File(System.getProperty("user.home") + "\\Downloads");
 	}
 	
 }
