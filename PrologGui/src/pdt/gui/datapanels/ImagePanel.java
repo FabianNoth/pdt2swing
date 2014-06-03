@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 
 import pdt.gui.data.IdListener;
+import pdt.gui.imageselection.ImageSelectionDialog;
 import pdt.gui.utils.ImageUtils;
 import pdt.gui.utils.PrologUtils;
 
@@ -72,7 +73,8 @@ public class ImagePanel extends JPanel implements IdListener {
 	
 	private ActionListener createImageUploadAction() {
 		ActionListener uploadListener = new ActionListener() {
-			private JFileChooser fileChooser = new JFileChooser();
+			private JFileChooser fileChooser = new JFileChooser(new File(System.getProperty("user.home") + "\\Downloads"));
+			private ImageSelectionDialog imgFrame = new ImageSelectionDialog();
 			@Override public void actionPerformed(ActionEvent e) {
 				// show file input dialog (only jpg files)
 				fileChooser.setFileFilter(new FileFilter() {
@@ -90,11 +92,19 @@ public class ImagePanel extends JPanel implements IdListener {
 				int result = fileChooser.showOpenDialog(PrologUtils.getActiveFrame());
 				if (result == JFileChooser.APPROVE_OPTION) {
 					File file = fileChooser.getSelectedFile();
-					BufferedImage outputImage = ImageUtils.scaleImageSmooth(file, maxWidth, maxHeight);
-
-					// copy to imgDir
-					ImageUtils.saveImage(outputImage, getImageFile());
-					setId(id);
+					
+					imgFrame.setFile(file, 1.0 * maxWidth / maxHeight);
+					imgFrame.setVisible(true);
+					
+					BufferedImage outputImage = imgFrame.getResultImage();
+					
+					if (outputImage != null) {
+						// save to imgDir
+						outputImage = ImageUtils.scaleUnprop(outputImage, maxWidth, maxHeight);
+						ImageUtils.saveImage(outputImage, getImageFile());
+						setId(id);
+					}
+					
 				}
 			}
 		};

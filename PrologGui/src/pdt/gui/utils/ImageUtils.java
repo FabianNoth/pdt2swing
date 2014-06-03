@@ -65,6 +65,16 @@ public class ImageUtils {
 	public static BufferedImage scaleImageSmooth(File file, int maxWidth, int maxHeight) {
 		return scaleImage(file, maxWidth, maxHeight, Image.SCALE_SMOOTH);
 	}
+	
+	public static BufferedImage scaleUnprop(BufferedImage input, int width, int height) {
+		Image scaledInstance = input.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+		BufferedImage output = new BufferedImage(width, height, input.getType());
+		Graphics2D g = output.createGraphics();
+		g.drawImage(scaledInstance, 0, 0, null);
+		g.dispose();
+		
+		return output;
+	}
 
 	public static BufferedImage loadImage(File file) {
 		try {
