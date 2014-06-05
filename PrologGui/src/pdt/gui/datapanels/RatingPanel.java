@@ -3,6 +3,7 @@ package pdt.gui.datapanels;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -81,8 +82,8 @@ public class RatingPanel extends JPanel implements DataPanel {
 	}
 
 	private void updateDummyValues() {
-		dummyValues = ratingTableModel.getValues();
-        dummyUnsure = ratingTableModel.getUnsure();
+		dummyValues = new ArrayList<Integer>(ratingTableModel.getValues());
+        dummyUnsure = new ArrayList<Boolean>(ratingTableModel.getUnsure());
 	}
 
 	private void updateButtons(boolean enabled) {
