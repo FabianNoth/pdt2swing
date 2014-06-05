@@ -23,7 +23,6 @@ public class PrologTableData extends AbstractTableModel {
 	private PrologFilter filter;
 	private List<Map<String, Object>> fullData;
 	private List<Map<String, Object>> filteredData;
-//	private List<Map<String, Object>> data;
 	private PrologInterface pif;
 
 	private String query;
@@ -73,7 +72,6 @@ public class PrologTableData extends AbstractTableModel {
 	}
 
 	public void updateResultData() {
-//		String query = QueryUtils.bT(goal.getFunctor(), (Object[]) args);
 		try {
 			fullData = pif.queryAll(goal.getQuery());
 			filteredData = filter.getFilteredList(fullData);

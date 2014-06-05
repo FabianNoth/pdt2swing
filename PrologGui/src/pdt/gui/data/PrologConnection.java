@@ -25,7 +25,6 @@ public class PrologConnection {
 			directory = new File(res.toURI()); 
 			pif = Util.newStandalonePrologInterface();
 			consultData(new File(directory, "gui_hooks.pl"));
-//			consultData(new File(directory, "data_handling.pl"));
 			if (loadFile != null) {
 				consultData(loadFile);
 			}
@@ -35,7 +34,6 @@ public class PrologConnection {
 	}
 	
 	public void consultData(File file) {
-//		System.out.println(file.getAbsolutePath());
 		String prologFileName = Util.prologFileName(file);
 		consultData(prologFileName);
 	}
