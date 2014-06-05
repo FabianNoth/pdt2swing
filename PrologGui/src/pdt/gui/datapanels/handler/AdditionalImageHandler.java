@@ -102,7 +102,7 @@ public class AdditionalImageHandler extends PrologDataHandler<AdditionalImagePan
 			
 			ImageElement imgElement = imageMap.get(evt.getActionCommand());
 			
-			boolean fixedSize = imgElement.getMaxHeight() > -1 && imgElement.getMaxWidth() > -1;
+			boolean fixedSize = imgElement.getMaxHeight() > 0;	// this automatically means that maxWidth is also > 0
 			
 			if (fixedSize) {
 				imgDialog.setFile(file, 1.0 * imgElement.getMaxWidth() / imgElement.getMaxHeight());
