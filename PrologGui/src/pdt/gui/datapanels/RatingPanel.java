@@ -39,9 +39,7 @@ public class RatingPanel extends JPanel implements DataPanel {
 		
 		TableColumn ratingColumn = table.getColumnModel().getColumn(1);
 		ratingColumn.setCellEditor(new SpinnerEditor());
-//		ratingColumn.setCellEditor(new SpinnerEditor2(0, 10, 1));
 
-//		table.getInputMap().put(KeyStroke.getKeyStroke("TAB"), "selectNextRowCell");
 
 		table.setEnabled(false);
 		 // Create the scroll pane and add the table to it.
