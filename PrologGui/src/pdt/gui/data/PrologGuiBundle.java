@@ -5,11 +5,17 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import pdt.gui.QueryNode;
 import pdt.gui.datapanels.handler.PrologDataHandler;
+import pdt.prolog.elements.PrologGoal;
 
 public class PrologGuiBundle {
 
 	private PrologTableData tableData;
+	
+	private PrologGoal mainGoal;
+	private QueryNode rootNode;
+	
 	private final List<PrologDataHandler<?>> factHandlers = new ArrayList<>();
 	private File imgDir;
 	// image panel stuff
@@ -19,6 +25,7 @@ public class PrologGuiBundle {
 
 	public PrologGuiBundle(PrologTableData tableData, PrologDataHandler<?>... factHandlers) {
 		this.tableData = tableData;
+		this.mainGoal = tableData.getGoal();
 		for(PrologDataHandler<?> fh : factHandlers) {
 			this.factHandlers.add(fh);
 		}
@@ -58,8 +65,16 @@ public class PrologGuiBundle {
 		return defaultImageUpload;
 	}
 	
-	public void setFilter(PrologFilter filter) {
-		tableData.setFilter(filter);
+	public PrologGoal getMainGoal() {
+		return mainGoal;
+	}
+	
+	public QueryNode getRootNode() {
+		return rootNode;
 	}
 
+	public void setRootNode(QueryNode root) {
+		this.rootNode = root;
+	}
+	
 }
