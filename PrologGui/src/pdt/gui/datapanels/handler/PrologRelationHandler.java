@@ -18,7 +18,7 @@ import pdt.prolog.elements.PrologGoal;
 
 public class PrologRelationHandler extends PrologDataHandler<RelationPanel> {
 
-	private List<String> autoCompletionList;
+	private final List<String> autoCompletionList = new ArrayList<String>();
 	private String functor;
 	
 	public PrologRelationHandler(PrologConnection con, String name, File outputFile, PrologGoal goal) {
@@ -33,12 +33,17 @@ public class PrologRelationHandler extends PrologDataHandler<RelationPanel> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public void updateAutoCompletion() {
-		autoCompletionList = new ArrayList<String>();
+		autoCompletionList.clear();
 		try {
 			Map<String, Object> results = pif.queryOnce(QueryUtils.bT(AUTO_COMPLETION, functor, "Result"));
-			autoCompletionList = (List<String>) results.get("Result");
+			Object o = results.get("Result");
+			if (o instanceof List<?>) {
+				List<?> dummyList = (List<?>) o;
+				for (Object entry : dummyList) {
+					autoCompletionList.add(entry.toString());
+				}
+			}
 			SimpleLogger.debug(autoCompletionList);
 		} catch (PrologInterfaceException e) {
 			e.printStackTrace();
