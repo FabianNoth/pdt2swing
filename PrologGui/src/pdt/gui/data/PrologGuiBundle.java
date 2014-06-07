@@ -1,5 +1,6 @@
 package pdt.gui.data;
 
+import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
@@ -23,6 +24,9 @@ public class PrologGuiBundle {
 	private boolean defaultImageUpload = false;
 	private ActionListener imgActionListener;
 
+	private Dimension imageDisplayDim = new Dimension(0, 0);
+	private Dimension imageSizeDim = new Dimension(0, 0);
+
 	public PrologGuiBundle(PrologTableData tableData, PrologDataHandler<?>... factHandlers) {
 		this.tableData = tableData;
 		this.mainGoal = tableData.getGoal();
@@ -40,6 +44,16 @@ public class PrologGuiBundle {
 	public void addImagePanel(File imgDir, ActionListener imgActionListener) {
 		this.imgActionListener = imgActionListener;
 		addImagePanel(imgDir, false);
+	}
+	
+	public void setImageDisplayDimension(int width, int height) {
+		imageDisplayDim.width = width;
+		imageDisplayDim.height = height;
+	}
+
+	public void setImageSizeDimension(int width, int height) {
+		imageSizeDim.width = width;
+		imageSizeDim.height = height;
 	}
 	
 	public PrologTableData getTableData() {
@@ -75,6 +89,14 @@ public class PrologGuiBundle {
 
 	public void setRootNode(QueryNode root) {
 		this.rootNode = root;
+	}
+
+	public Dimension getImageDisplayDimension() {
+		return imageDisplayDim;
+	}
+
+	public Dimension getImageSizeDimension() {
+		return imageSizeDim;
 	}
 	
 }

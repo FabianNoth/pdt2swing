@@ -1,9 +1,11 @@
 package pdt.gui.datapanels.handler;
 
+import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +28,6 @@ public class AdditionalImageHandler extends PrologDataHandler<AdditionalImagePan
 	private final Map<String, ImageElement> imageMap = new HashMap<>();
 	private final Map<String, File> imageFiles = new HashMap<>();
 	private JFileChooser fileChooser;
-	private ImageSelectionDialog imgDialog;
 	
 	protected AdditionalImageHandler(String name, File outputDir, ImageElement... imageNames) {
 		super(name);
@@ -59,8 +60,6 @@ public class AdditionalImageHandler extends PrologDataHandler<AdditionalImagePan
 				return f.isDirectory() || f.getName().toLowerCase().endsWith(".jpg");
 			}
 		});
-		
-		imgDialog = new ImageSelectionDialog();
 	}
 
 	@Override
@@ -103,7 +102,8 @@ public class AdditionalImageHandler extends PrologDataHandler<AdditionalImagePan
 			ImageElement imgElement = imageMap.get(evt.getActionCommand());
 			
 			boolean fixedSize = imgElement.getMaxHeight() > 0;	// this automatically means that maxWidth is also > 0
-			
+
+			ImageSelectionDialog imgDialog = new ImageSelectionDialog();
 			if (fixedSize) {
 				imgDialog.setFile(file, 1.0 * imgElement.getMaxWidth() / imgElement.getMaxHeight());
 			} else {
@@ -121,9 +121,21 @@ public class AdditionalImageHandler extends PrologDataHandler<AdditionalImagePan
 				ImageUtils.saveImage(outputImage, destFile);
 				getEditPanel().setData(imageFiles);
 			}
-			// save to imgDir
-//			ImageUtils.saveImage(outputImage, destFile);
 		}
+	}
+
+	public void openImage(String name) {
+
+		File destFile = getImageFile(name);
+		if (destFile.isFile()) {
+			Desktop desktop = Desktop.getDesktop();
+			try {
+				desktop.open(destFile);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+		
 	}
 	
 }

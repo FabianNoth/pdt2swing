@@ -22,7 +22,7 @@ public class ImageSelectionDialog extends JDialog implements KeyListener {
 
 	public ImageSelectionDialog() {
 		super(PrologUtils.getActiveFrame(), Dialog.ModalityType.APPLICATION_MODAL);
-		pnl = new ImageSelectionPanel(600, 900);
+		pnl = new ImageSelectionPanel(1000, 800);
 		addKeyListener(this);
 		addKeyListener(pnl);
 		
@@ -34,8 +34,9 @@ public class ImageSelectionDialog extends JDialog implements KeyListener {
 
 	public void setFile(File f) {
 		cuttedImg = null;
-		pnl.setImage(ImageUtils.loadImage(f));
-		pnl.setSelectionBox(new SelectionBox(0, 0, 100, 100, Color.RED));
+		BufferedImage img = ImageUtils.loadImage(f);
+		pnl.setImage(img);
+		pnl.setFullSelectionBox(Color.RED);
 	}
 	
 	public void setFile(File f, double scale) {
