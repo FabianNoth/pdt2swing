@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
@@ -24,6 +25,7 @@ public class RelationPanel extends JPanel implements DataPanel {
 	private static final long serialVersionUID = 1L;
 	private DefaultListModel<String> listModel;
 	private boolean useAutoCompletion;
+	private final List<String> autoCompletionList = new ArrayList<>();
 	private JTextField tfAdd;
 	private PrologRelationHandler prolog;
 	private JButton btAdd;
@@ -40,10 +42,15 @@ public class RelationPanel extends JPanel implements DataPanel {
 		add(addPanel, BorderLayout.NORTH);
 		tfAdd = new JTextField();
 		
+		if (useAutoCompletion) {
+			AutoCompleteDecorator.decorate(tfAdd, prolog.getAutoCompletionList(), false);
+		}
+		
 		ActionListener actionListener = new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
-				if (!tfAdd.getText().trim().isEmpty()) {
-					prolog.addValue(tfAdd.getText());
+				String addedValue = tfAdd.getText().trim();
+				if (!addedValue.isEmpty()) {
+					prolog.addValue(addedValue);
 				}
 			}
 		};
@@ -73,10 +80,12 @@ public class RelationPanel extends JPanel implements DataPanel {
 		list.setEnabled(false);
 		add(new JScrollPane(list), BorderLayout.CENTER);
 	}
-
+	
 	public void setData(List<String> entries) {
 		if (useAutoCompletion) {
-			AutoCompleteDecorator.decorate(tfAdd, prolog.getAutoCompletionList(), false);
+			autoCompletionList.clear();
+			autoCompletionList.addAll(prolog.getAutoCompletionList());
+//			AutoCompleteDecorator.decorate(tfAdd, prolog.getAutoCompletionList(), false);
 		} else {
 			tfAdd.setText("");
 		}
