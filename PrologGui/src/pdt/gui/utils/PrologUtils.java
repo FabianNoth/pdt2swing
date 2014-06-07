@@ -14,7 +14,7 @@ public class PrologUtils {
 			Integer.parseInt(atom);
 			return atom;
 		} catch (NumberFormatException e) {}
-		return Util.quoteAtomIfNeeded(atom);
+		return Util.quoteAtomIfNeeded(atom.replace("\\", "/"));
 	}
 	
 	
