@@ -70,4 +70,22 @@ public class SimpleLogger {
 		}
 	}
 	
+	
+	private static long startTime = 0;
+	
+	public static void profileStart() {
+		startTime = System.currentTimeMillis();
+	}
+	
+	public static void profileEnd(String msg) {
+		if (startTime == 0) {
+			System.err.println("no start time, call profileStart() before profileEnd()");
+			return;
+		}
+		long endTime = System.currentTimeMillis();
+		long duration = endTime - startTime;
+		startTime = 0;
+		System.out.println("duration " + msg + ": " + duration + "ms");
+	}
+	
 }
