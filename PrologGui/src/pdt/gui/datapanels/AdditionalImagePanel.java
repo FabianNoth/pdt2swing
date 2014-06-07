@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
@@ -53,7 +55,7 @@ public class AdditionalImagePanel extends JPanel implements DataPanel {
 		
 		for (int i=0; i<images.size(); i++) {
 			// Label
-			String name = images.get(i).getSuffix();
+			final String name = images.get(i).getSuffix();
 			
 			JLabel label = new JLabel(name);
 			GridBagConstraints gbc_label = new GridBagConstraints();
@@ -67,6 +69,13 @@ public class AdditionalImagePanel extends JPanel implements DataPanel {
 			Dimension imgDim = new Dimension(100, 100);
 			imgLabel.setMinimumSize(imgDim);
 			imgLabel.setPreferredSize(imgDim);
+			imgLabel.addMouseListener(new MouseAdapter() {
+				@Override public void mouseClicked(MouseEvent e) {
+					if (e.getClickCount() >= 2 && e.getButton() == MouseEvent.BUTTON1) {
+						handler.openImage(name);
+					}
+				}
+			});
 			
 			GridBagConstraints gbc_image = new GridBagConstraints();
 			gbc_image.insets = new Insets(0, 0, 5, 0);

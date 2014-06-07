@@ -1,15 +1,22 @@
 package pdt.gui.data;
 
+import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import pdt.gui.QueryNode;
 import pdt.gui.datapanels.handler.PrologDataHandler;
+import pdt.prolog.elements.PrologGoal;
 
 public class PrologGuiBundle {
 
 	private PrologTableData tableData;
+	
+	private PrologGoal mainGoal;
+	private QueryNode rootNode;
+	
 	private final List<PrologDataHandler<?>> factHandlers = new ArrayList<>();
 	private File imgDir;
 	// image panel stuff
@@ -17,8 +24,12 @@ public class PrologGuiBundle {
 	private boolean defaultImageUpload = false;
 	private ActionListener imgActionListener;
 
+	private Dimension imageDisplayDim = new Dimension(0, 0);
+	private Dimension imageSizeDim = new Dimension(0, 0);
+
 	public PrologGuiBundle(PrologTableData tableData, PrologDataHandler<?>... factHandlers) {
 		this.tableData = tableData;
+		this.mainGoal = tableData.getGoal();
 		for(PrologDataHandler<?> fh : factHandlers) {
 			this.factHandlers.add(fh);
 		}
@@ -33,6 +44,16 @@ public class PrologGuiBundle {
 	public void addImagePanel(File imgDir, ActionListener imgActionListener) {
 		this.imgActionListener = imgActionListener;
 		addImagePanel(imgDir, false);
+	}
+	
+	public void setImageDisplayDimension(int width, int height) {
+		imageDisplayDim.width = width;
+		imageDisplayDim.height = height;
+	}
+
+	public void setImageSizeDimension(int width, int height) {
+		imageSizeDim.width = width;
+		imageSizeDim.height = height;
 	}
 	
 	public PrologTableData getTableData() {
@@ -58,8 +79,24 @@ public class PrologGuiBundle {
 		return defaultImageUpload;
 	}
 	
-	public void setFilter(PrologFilter filter) {
-		tableData.setFilter(filter);
+	public PrologGoal getMainGoal() {
+		return mainGoal;
+	}
+	
+	public QueryNode getRootNode() {
+		return rootNode;
 	}
 
+	public void setRootNode(QueryNode root) {
+		this.rootNode = root;
+	}
+
+	public Dimension getImageDisplayDimension() {
+		return imageDisplayDim;
+	}
+
+	public Dimension getImageSizeDimension() {
+		return imageSizeDim;
+	}
+	
 }

@@ -2,9 +2,8 @@ package pdt.gui;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import pdt.gui.data.PrologFilter;
-import pdt.gui.data.PrologFilterUtils;
 import pdt.gui.data.PrologGuiBundle;
+import pdt.prolog.elements.PrologGoal;
 
 public class QueryNode extends DefaultMutableTreeNode {
 
@@ -12,17 +11,17 @@ public class QueryNode extends DefaultMutableTreeNode {
 	
 	private String name;
 	private PrologGuiBundle bundle;
-	private PrologFilter filter;
+	private PrologGoal goal;
 
 	public QueryNode(String name, PrologGuiBundle bundle) {
-		this(name, bundle, PrologFilterUtils.createFullFilter());
+		this(name, bundle, bundle.getMainGoal());
 	}
 	
-	public QueryNode(String name, PrologGuiBundle bundle, PrologFilter filter) {
+	public QueryNode(String name, PrologGuiBundle bundle, PrologGoal goal) {
 		super(name);
 		this.name = name;
 		this.bundle = bundle;
-		this.filter = filter;
+		this.goal = goal;
 	}
 
 	public String getName() {
@@ -33,8 +32,8 @@ public class QueryNode extends DefaultMutableTreeNode {
 		return bundle;
 	}
 	
-	public PrologFilter getFilter() {
-		return filter;
+	public PrologGoal getGoal() {
+		return goal;
 	}
 	
 }

@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.cs3.prolog.common.QueryUtils;
 import org.cs3.prolog.common.Util;
@@ -49,6 +52,19 @@ public class PrologConnection {
 
 	public PrologInterface getPif() {
 		return pif;
+	}
+
+	public List<String> getAllAsString(String query) {
+		List<String> result = new ArrayList<String>();
+		try {
+			List<Map<String, Object>> queryAll = pif.queryAll(query);
+			for (Map<String, Object> m : queryAll) {
+				result.add(m.get("Value").toString());
+			}
+		} catch (PrologInterfaceException e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 	
 }

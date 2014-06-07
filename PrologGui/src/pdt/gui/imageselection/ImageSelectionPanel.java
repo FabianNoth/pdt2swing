@@ -1,5 +1,6 @@
 package pdt.gui.imageselection;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -164,6 +165,10 @@ public class ImageSelectionPanel extends JPanel implements MouseListener, MouseW
 
 	public void setSelectionBox(SelectionBox fixedSelectionBox) {
 		visibleSelectionBox = fixedSelectionBox;
+	}
+	
+	public void setFullSelectionBox(Color c) {
+		visibleSelectionBox = new SelectionBox(0, 0, originalImg.getWidth(), originalImg.getHeight(), c);
 	}
 
 	@Override

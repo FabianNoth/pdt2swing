@@ -32,20 +32,29 @@ public class ImagePanel extends JPanel implements IdListener {
 	
 	private int posX = 0;
 	private int posY = 0;
-	
-	private int maxWidth = 0;
-	private int maxHeight = 0;
+
+	private Dimension displayDimension = new Dimension(0, 0);
+	private Dimension imageDimension = new Dimension(0, 0);
 	
 	private String id;
-	
-	public ImagePanel(File imgDir) {
-		this(imgDir, null, false, 200, 300);
+
+	public ImagePanel(File imgDir, Dimension dim) {
+		this(imgDir, null, false, dim);
 	}
 	
-	public ImagePanel(final File imgDir, ActionListener listener, boolean allowImageUpload, int maxWidth, int maxHeight) {
+	public ImagePanel(File imgDir, Dimension displayDim, Dimension imageDim) {
+		this(imgDir, null, false, displayDim, imageDim);
+	}
+
+	public ImagePanel(final File imgDir, ActionListener listener, boolean allowImageUpload, Dimension displayDim) {
+		this(imgDir, listener, allowImageUpload, displayDim, new Dimension(0, 0));
+	}
+	
+	public ImagePanel(final File imgDir, ActionListener listener, boolean allowImageUpload, Dimension displayDim, Dimension imageDim) {
 		this.imgDir = imgDir;
-		this.maxWidth = maxWidth;
-		this.maxHeight = maxHeight;
+		this.displayDimension = displayDim;
+		this.imageDimension = imageDim;
+		
 		if (listener == null) {
 			if (allowImageUpload) {
 				// add image upload action
@@ -67,14 +76,13 @@ public class ImagePanel extends JPanel implements IdListener {
 			}
 		});
 
-		setPreferredSize(new Dimension(maxWidth + 20, maxHeight + 10));
-		setMinimumSize(new Dimension(maxWidth + 20, maxHeight + 10));
+		setPreferredSize(new Dimension(displayDim.width + 20, displayDim.height + 10));
+		setMinimumSize(new Dimension(displayDim.width + 20, displayDim.height + 10));
 	}
 	
 	private ActionListener createImageUploadAction() {
 		ActionListener uploadListener = new ActionListener() {
 			private JFileChooser fileChooser = new JFileChooser(PrologUtils.getDownloadDirectory());
-			private ImageSelectionDialog imgFrame = new ImageSelectionDialog();
 			@Override public void actionPerformed(ActionEvent e) {
 				// show file input dialog (only jpg files)
 				fileChooser.setFileFilter(new FileFilter() {
@@ -92,15 +100,26 @@ public class ImagePanel extends JPanel implements IdListener {
 				int result = fileChooser.showOpenDialog(PrologUtils.getActiveFrame());
 				if (result == JFileChooser.APPROVE_OPTION) {
 					File file = fileChooser.getSelectedFile();
+
+					ImageSelectionDialog imgFrame = new ImageSelectionDialog();
 					
-					imgFrame.setFile(file, 1.0 * maxWidth / maxHeight);
+					if (imageDimension.height > 0) {
+						// there is a fixed ratio for the images
+						imgFrame.setFile(file, 1.0 * imageDimension.width / imageDimension.height);
+					} else {
+						// there is no fixed ratio
+						imgFrame.setFile(file);
+					}
 					imgFrame.setVisible(true);
 					
 					BufferedImage outputImage = imgFrame.getResultImage();
 					
 					if (outputImage != null) {
 						// save to imgDir
-						outputImage = ImageUtils.scaleUnprop(outputImage, maxWidth, maxHeight);
+						if (imageDimension.height > 0) {
+							// resize image to fixed size (unproportional to avoid rounding errors and to ensure exact size)
+							outputImage = ImageUtils.scaleUnprop(outputImage, imageDimension.width, imageDimension.height);
+						}
 						ImageUtils.saveImage(outputImage, getImageFile());
 						setId(id);
 					}
@@ -140,6 +159,11 @@ public class ImagePanel extends JPanel implements IdListener {
 			File imgFile = getImageFile();
 			try {
 				img = ImageIO.read(imgFile);
+				// check if image needs resizing
+				if (img.getWidth() > displayDimension.width || img.getHeight() > displayDimension.height) {
+					// resize
+					img = ImageUtils.scaleImageSmooth(img, displayDimension.width, displayDimension.height);
+				}
 			} catch (IOException e) {
 				img = null;
 			}

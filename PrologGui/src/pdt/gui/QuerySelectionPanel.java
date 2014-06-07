@@ -64,7 +64,7 @@ public class QuerySelectionPanel extends JPanel {
 								// if a query node was selected
 								QueryNode queryNode = (QueryNode) lastPathComponent;
 								// update the filter
-								queryNode.getBundle().setFilter(queryNode.getFilter());
+								queryNode.getBundle().getTableData().setGoal(queryNode.getGoal());
 								// display it
 								visualizer.setBundle(queryNode.getBundle());
 							}

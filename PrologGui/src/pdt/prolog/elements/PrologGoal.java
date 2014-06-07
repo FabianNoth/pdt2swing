@@ -5,8 +5,8 @@ import org.cs3.prolog.common.QueryUtils;
 public class PrologGoal {
 
 	private String functor;
-	private PrologArgument[] args;
-	private String[] argNames;
+	protected PrologArgument[] args;
+	protected String[] argNames;
 
 	public PrologGoal(String functor, PrologArgument... args) {
 		this.functor = functor;

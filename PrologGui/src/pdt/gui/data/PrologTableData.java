@@ -20,24 +20,13 @@ public class PrologTableData extends AbstractTableModel {
 	
 	private String[] variables;
 
-	private PrologFilter filter;
-	private List<Map<String, Object>> fullData;
-	private List<Map<String, Object>> filteredData;
+	private List<Map<String, Object>> data;
 	private PrologInterface pif;
 
 	private String query;
 
 
 	public PrologTableData(PrologConnection con, PrologGoal goal) {
-		this(con, goal, new PrologFilter() {
-			@Override public boolean accept(Map<String, Object> entry) {
-				return true;
-			}
-		});
-	}
-	
-	public PrologTableData(PrologConnection con, PrologGoal goal, PrologFilter filter) {
-		this.filter = filter;
 		this.goal = goal;
 		
 		pif = con.getPif();
@@ -59,10 +48,6 @@ public class PrologTableData extends AbstractTableModel {
 		}
 	}
 	
-	public void setFilter(PrologFilter filter) {
-		this.filter = filter;
-	}
-	
 	public String getQuery() {
 		return query;
 	}
@@ -73,8 +58,7 @@ public class PrologTableData extends AbstractTableModel {
 
 	public void updateResultData() {
 		try {
-			fullData = pif.queryAll(goal.getQuery());
-			filteredData = filter.getFilteredList(fullData);
+			data = pif.queryAll(goal.getQuery());
 		} catch (PrologInterfaceException e) {
 			e.printStackTrace();
 		}
@@ -88,12 +72,12 @@ public class PrologTableData extends AbstractTableModel {
 
 	@Override
 	public int getRowCount() {
-		return filteredData.size();
+		return data.size();
 	}
 
 	@Override
 	public Object getValueAt(int rowIndex, int colIndex) {
-		Map<String, Object> map = filteredData.get(rowIndex);
+		Map<String, Object> map = data.get(rowIndex);
 		if (map != null) {
 			return map.get(variables[colIndex]);
 		}
@@ -119,7 +103,7 @@ public class PrologTableData extends AbstractTableModel {
 		// TODO: might be slow, use indexing
 		if (id != null) {
 			int i=0;
-			for(Map<String, Object> result : filteredData) {
+			for(Map<String, Object> result : data) {
 				if (id.equals(result.get("ID").toString())) {
 					return i;
 				}
@@ -137,5 +121,13 @@ public class PrologTableData extends AbstractTableModel {
 		}
 		return false;
 	}
-	
+
+	public PrologGoal getGoal() {
+		return goal;
+	}
+
+	public void setGoal(PrologGoal goal) {
+		this.goal = goal;
+	}
+
 }
