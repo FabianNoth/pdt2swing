@@ -4,9 +4,9 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -28,16 +28,14 @@ import pdt.prolog.elements.PrologGoal;
 
 public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 
-//	private FactPanel editPanel;
 	private Set<String> imagesToDelete;
-	private Set<PrologRelationHandler> relationHandler;
+	private final Set<PrologRelationHandler> relationHandler = new HashSet<>();
 	private Map<String, Object> result;
 	private String mainElementName;
-	private final Map<String, ActionListener> additionalActions = new TreeMap<String, ActionListener>();
+	private final Map<String, ActionListener> additionalActions = new LinkedHashMap<String, ActionListener>();
 	
 	public PrologFactHandler(PrologConnection con, String name, File outputFile, boolean isMainPredicate, PrologGoal goal) {
 		super(con, name, outputFile, isMainPredicate, goal);
-		relationHandler = new HashSet<>();
 	}
 
 	public PrologTextFileHandler createTextFileHandler(String title) {
