@@ -20,6 +20,8 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
+import org.cs3.prolog.pif.PrologInterface;
+
 import pdt.gui.datapanels.handler.PrologFactHandler;
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologFixedAtom;
@@ -32,11 +34,13 @@ public class FactPanel extends JPanel implements DataPanel {
 	private HashMap<String, String> dummyValues = new HashMap<>();
 	private JButton btUpdate;
 	private JButton btDelete;
+	private PrologFactHandler factHandler;
 
 	/**
 	 * Create the panel.
 	 */
-	public FactPanel(final PrologFactHandler prolog) {
+	public FactPanel(PrologFactHandler prolog) {
+		factHandler = prolog;
 
 		Map<String, ActionListener> additionalActions = prolog.getAdditionalActions();
 		prolog.setEditPanel(this);
@@ -123,7 +127,7 @@ public class FactPanel extends JPanel implements DataPanel {
 			@Override public void actionPerformed(ActionEvent evt) {
 				HashMap<String, String> dummyValuesBackup = new HashMap<>(dummyValues);
 				updateDummyValues();
-				if (!prolog.updateFromPanel(textFields)) {
+				if (!factHandler.updateFromPanel(textFields)) {
 					// reset dummy values
 					dummyValues = dummyValuesBackup;
 				}
@@ -145,7 +149,7 @@ public class FactPanel extends JPanel implements DataPanel {
 				@Override public void actionPerformed(ActionEvent evt) {
 					HashMap<String, String> dummyValuesBackup = new HashMap<>(dummyValues);
 					updateDummyValues();
-					if (!prolog.saveAsNew(textFields)) {
+					if (!factHandler.saveAsNew(textFields)) {
 						// reset dummy values
 						dummyValues = dummyValuesBackup;
 					}
@@ -162,11 +166,11 @@ public class FactPanel extends JPanel implements DataPanel {
 			btDelete.setEnabled(false);
 			btDelete.addActionListener(new ActionListener() {
 				@Override public void actionPerformed(ActionEvent evt) {
-					if (prolog.isElementSelected()) {
+					if (factHandler.isElementSelected()) {
 						int answer = JOptionPane.showConfirmDialog(FactPanel.this, "Soll der Eintrag wirklich gelöscht werden?", "Eintrag löschen", JOptionPane.YES_NO_OPTION);
 						if (answer == JOptionPane.YES_OPTION) {
 							updateDummyValues();
-							prolog.delete();
+							factHandler.delete();
 						}
 					}
 				}
@@ -315,6 +319,9 @@ public class FactPanel extends JPanel implements DataPanel {
 		}
 		return false;
 	}
-
+	
+	public PrologInterface getPrologInterface() {
+		return factHandler.getPrologInterface();
+	}
 
 }

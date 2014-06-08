@@ -153,4 +153,8 @@ public abstract class PrologDataHandler<PanelType extends DataPanel> implements 
 			panel.clearPanel();
 		}
 	}
+	
+	public PrologInterface getPrologInterface() {
+		return pif;
+	}
 }
