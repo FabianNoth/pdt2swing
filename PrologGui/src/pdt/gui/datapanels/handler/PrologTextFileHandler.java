@@ -9,19 +9,23 @@ import java.util.TreeMap;
 import javax.swing.JOptionPane;
 
 import org.apache.commons.io.FileUtils;
+import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
+import org.jasypt.util.text.BasicTextEncryptor;
 
 import pdt.gui.datapanels.TextFilePanel;
+import pdt.gui.utils.SimpleLogger;
 
 public class PrologTextFileHandler extends PrologDataHandler<TextFilePanel> {
 
-//	private TextFilePanel editPanel;
 	private File file;
 	private File outputDir;
 	
 	private final Map<String, ActionListener> additionalActions = new TreeMap<String, ActionListener>();
+	private BasicTextEncryptor textEncryptor;
 	
-	protected PrologTextFileHandler(String name, File outputDir) {
+	protected PrologTextFileHandler(String name, File outputDir, BasicTextEncryptor textEncryptor) {
 		super(name);
+		this.textEncryptor = textEncryptor;
 		this.outputDir = outputDir;
 	}
 	
@@ -29,7 +33,19 @@ public class PrologTextFileHandler extends PrologDataHandler<TextFilePanel> {
 	public void showData() {
 		file = new File(outputDir, currentId);
 		try {
-			String text = FileUtils.readFileToString(file);
+			String text = null;
+			if (textEncryptor == null) {
+				text = FileUtils.readFileToString(file);
+			} else {
+				String encryptedText = FileUtils.readFileToString(file);
+				try {
+					text = textEncryptor.decrypt(encryptedText);
+				} catch(EncryptionOperationNotPossibleException e) {
+//					SimpleLogger.error(e.getMessage());
+					SimpleLogger.error("Text wasn't encrypted correctly");
+					text = encryptedText;
+				}				
+			}
 			getEditPanel().setData(text);
 		} catch (IOException e) {
 			getEditPanel().setData("");
@@ -40,8 +56,13 @@ public class PrologTextFileHandler extends PrologDataHandler<TextFilePanel> {
 		if (currentId == null) {
 			return;
 		}
-		
-		String text = getEditPanel().getData();
+		String text = null;
+		if (textEncryptor == null) {
+			text = getEditPanel().getData();
+		} else {
+			String plainText = getEditPanel().getData();
+			text = textEncryptor.encrypt(plainText);
+		}
 
 		file = new File(outputDir, currentId);
 		

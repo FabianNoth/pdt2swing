@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="lib/commons-io-2.4.jar" sourcepath="C:/Users/Fabian/.m2/repository/commons-io/commons-io/2.4/commons-io-2.4-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.cs3.prolog.connector_2.3.0.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jasypt-1.9.2.jar" sourcepath="lib/jasypt-1.9.2-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

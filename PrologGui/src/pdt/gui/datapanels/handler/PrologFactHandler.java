@@ -17,6 +17,7 @@ import javax.swing.JTextField;
 
 import org.cs3.prolog.common.QueryUtils;
 import org.cs3.prolog.pif.PrologInterfaceException;
+import org.jasypt.util.text.BasicTextEncryptor;
 
 import pdt.gui.data.PrologConnection;
 import pdt.gui.datapanels.FactPanel;
@@ -38,9 +39,9 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		super(con, name, outputFile, isMainPredicate, goal);
 	}
 
-	public PrologTextFileHandler createTextFileHandler(String title) {
+	public PrologTextFileHandler createTextFileHandler(String title, BasicTextEncryptor textEncryptor) {
 		File textOutputDir = new File(outputFile.getParentFile(), getFunctor());
-		PrologTextFileHandler textData = new PrologTextFileHandler(title, textOutputDir);
+		PrologTextFileHandler textData = new PrologTextFileHandler(title, textOutputDir, textEncryptor);
 		return textData;
 	}
 	
