@@ -117,7 +117,7 @@ public class PrologGui implements PrologDataVisualizer {
 		if (changed) {
 			// something was changed
 			// ask before overwriting
-			int answer = JOptionPane.showConfirmDialog(tablePanel, "Gemachte Änderungen werden überschrieben, fortfahren?", "Daten überschreiben", JOptionPane.YES_NO_OPTION);
+			int answer = JOptionPane.showConfirmDialog(tablePanel, "Gemachte Änderungen werden verworfen! Fortfahren?", "Daten überschreiben", JOptionPane.YES_NO_OPTION);
 			if (answer == JOptionPane.NO_OPTION) {
 				return true;
 			}
