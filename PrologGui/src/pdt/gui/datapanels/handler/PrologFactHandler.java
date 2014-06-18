@@ -94,7 +94,7 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		
 		// check if name already exists (quick & dirty)
 		// TODO: improve (move to prolog side)
-		if (nameAlreadyExists(textFields)) {
+		if (nameAlreadyExists(textFields, false)) {
 			return false;
 		}
 		
@@ -113,16 +113,17 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		return true;
 	}
 
-	private boolean nameAlreadyExists(HashMap<String, JComponent> textFields) {
+	private boolean nameAlreadyExists(HashMap<String, JComponent> textFields, boolean always) {
 		JComponent comp = textFields.get("Name");
 		if (comp != null && comp instanceof JTextField) {
-			String checkRename = checkRename((JTextField) comp);
-			if (checkRename != null) {
+//			String checkRename = checkRename((JTextField) comp);
+			if (always || checkRename((JTextField) comp) != null) {
 				try {
-					Map<String, Object> checkRes = pif.queryOnce(QueryUtils.bT("name_is_free", PrologUtils.quoteIfNecessary(checkRename)));
+					String newName = ((JTextField) comp).getText();
+					Map<String, Object> checkRes = pif.queryOnce(QueryUtils.bT("name_is_free", PrologUtils.quoteIfNecessary(newName)));
 					if (checkRes == null) {
 						// query failed --> name is not free
-						JOptionPane.showMessageDialog(getEditPanel(), "Name \"" + checkRename + "\" existiert bereits.",  "Fehler", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(getEditPanel(), "Name \"" + newName + "\" existiert bereits.",  "Fehler", JOptionPane.ERROR_MESSAGE);
 						return true;
 					}
 				} catch (PrologInterfaceException e) {
@@ -146,7 +147,7 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 	public boolean saveAsNew(HashMap<String, JComponent> textFields) {
 		// check if name already exists (quick & dirty)
 		// TODO: improve (move to prolog side)
-		if (nameAlreadyExists(textFields)) {
+		if (nameAlreadyExists(textFields, true)) {
 			return false;
 		}
 
