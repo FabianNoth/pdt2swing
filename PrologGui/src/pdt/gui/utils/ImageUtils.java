@@ -28,8 +28,8 @@ public class ImageUtils {
 
 	/**
 	 * saves image to a JPEG file. Shows dialog if file already exists.
-	 * @param outputImage: image which shall be written to a file
-	 * @param destFile: destination
+	 * @param outputImage image which shall be written to a file
+	 * @param destFile destination
 	 * @return true if file was saved, false otherwise
 	 */
 	public static boolean saveImage(BufferedImage outputImage, File destFile) {

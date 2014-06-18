@@ -8,15 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.cs3.prolog.common.QueryUtils;
-import org.cs3.prolog.common.Util;
-import org.cs3.prolog.pif.PrologInterface;
-import org.cs3.prolog.pif.PrologInterfaceException;
+import org.cs3.prolog.connector.Connector;
+import org.cs3.prolog.connector.process.PrologProcess;
+import org.cs3.prolog.connector.process.PrologProcessException;
 
 public class PrologConnection {
 
 	private File directory; 
-	private PrologInterface pif;
+	private PrologProcess process;
 	
 	public PrologConnection() {
 		this(null);
@@ -26,7 +25,7 @@ public class PrologConnection {
 		URL res = ClassLoader.getSystemClassLoader().getResource("prolog");
 		try {
 			directory = new File(res.toURI()); 
-			pif = Util.newStandalonePrologInterface();
+			process = Connector.newPrologProcess();
 			consultData(new File(directory, "gui_hooks.pl"));
 			if (loadFile != null) {
 				consultData(loadFile);
@@ -37,31 +36,25 @@ public class PrologConnection {
 	}
 	
 	public void consultData(File file) {
-		String prologFileName = Util.prologFileName(file);
-		consultData(prologFileName);
-	}
-	
-	private void consultData(String prologFileName) {
 		try {
-			String consultQuery = QueryUtils.buildTerm("reconsult", Util.quoteAtomIfNeeded(prologFileName));
-			pif.queryOnce(consultQuery);
-		} catch (PrologInterfaceException e) {
+			process.consult(file);
+		} catch (PrologProcessException e) {
 			e.printStackTrace();
 		}
 	}
-
-	public PrologInterface getPif() {
-		return pif;
+	
+	public PrologProcess getProcess() {
+		return process;
 	}
 
 	public List<String> getAllAsString(String query) {
 		List<String> result = new ArrayList<String>();
 		try {
-			List<Map<String, Object>> queryAll = pif.queryAll(query);
+			List<Map<String, Object>> queryAll = process.queryAll(query);
 			for (Map<String, Object> m : queryAll) {
 				result.add(m.get("Value").toString());
 			}
-		} catch (PrologInterfaceException e) {
+		} catch (PrologProcessException e) {
 			e.printStackTrace();
 		}
 		return result;

@@ -6,7 +6,7 @@ import java.util.Map;
 
 import javax.swing.table.AbstractTableModel;
 
-import org.cs3.prolog.common.QueryUtils;
+import org.cs3.prolog.connector.common.QueryUtils;
 
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologNumberRangeArgument;

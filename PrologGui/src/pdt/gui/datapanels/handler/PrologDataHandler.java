@@ -2,10 +2,9 @@ package pdt.gui.datapanels.handler;
 
 import java.io.File;
 
-import org.cs3.prolog.common.QueryUtils;
-import org.cs3.prolog.common.Util;
-import org.cs3.prolog.pif.PrologInterface;
-import org.cs3.prolog.pif.PrologInterfaceException;
+import org.cs3.prolog.connector.common.QueryUtils;
+import org.cs3.prolog.connector.process.PrologProcess;
+import org.cs3.prolog.connector.process.PrologProcessException;
 
 import pdt.gui.PrologDataVisualizer;
 import pdt.gui.data.IdListener;
@@ -28,7 +27,7 @@ public abstract class PrologDataHandler<PanelType extends DataPanel> implements 
 	protected static final String CHECK_FOR_VALUE = "check_for_existing_value";
 	protected static final String AUTO_COMPLETION = "auto_completion";
 
-	protected PrologInterface pif;
+	protected PrologProcess process;
 	private PrologDataVisualizer visualizer;
 	private PanelType panel;
 
@@ -47,7 +46,7 @@ public abstract class PrologDataHandler<PanelType extends DataPanel> implements 
 	}
 	
 	public PrologDataHandler(PrologConnection con, String name, File outputFile, boolean isMainPredicate, PrologGoal goal) {
-		this.pif = con.getPif();
+		this.process = con.getProcess();
 		this.outputFile = outputFile;
 		this.name = name;
 		this.args = goal.getArgs();
@@ -55,9 +54,9 @@ public abstract class PrologDataHandler<PanelType extends DataPanel> implements 
 		this.functor = goal.getFunctor();
 		this.isMainPredicate = isMainPredicate;
 		
-		String prologFilename = Util.prologFileName(outputFile);
+		String prologFilename = QueryUtils.prologFileName(outputFile);
 		String arity = Integer.toString(args.length);
-		outputQuery = QueryUtils.bT(PERSIST_DATA, functor, arity, Util.quoteAtomIfNeeded(prologFilename));
+		outputQuery = QueryUtils.bT(PERSIST_DATA, functor, arity, QueryUtils.quoteAtomIfNeeded(prologFilename));
 		argNamesWithBoundId = new Object[argNames.length];
 		for (int i=0; i<args.length; i++) {
 			argNamesWithBoundId[i] = argNames[i];
@@ -111,8 +110,8 @@ public abstract class PrologDataHandler<PanelType extends DataPanel> implements 
 	public void persistFacts() {
 		SimpleLogger.debug("outputQuery: " + outputQuery );
 		try {
-			pif.queryOnce(outputQuery);
-		} catch (PrologInterfaceException e) {
+			process.queryOnce(outputQuery);
+		} catch (PrologProcessException e) {
 			e.printStackTrace();
 		}
 	}
@@ -154,7 +153,7 @@ public abstract class PrologDataHandler<PanelType extends DataPanel> implements 
 		}
 	}
 	
-	public PrologInterface getPrologInterface() {
-		return pif;
+	public PrologProcess getPrologProcess() {
+		return process;
 	}
 }

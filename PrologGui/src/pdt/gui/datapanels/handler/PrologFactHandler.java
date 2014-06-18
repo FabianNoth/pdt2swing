@@ -15,8 +15,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 
-import org.cs3.prolog.common.QueryUtils;
-import org.cs3.prolog.pif.PrologInterfaceException;
+import org.cs3.prolog.connector.common.QueryUtils;
+import org.cs3.prolog.connector.process.PrologProcessException;
 import org.jasypt.util.text.BasicTextEncryptor;
 
 import pdt.gui.data.PrologConnection;
@@ -63,12 +63,12 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 	public void showData() {
 		SimpleLogger.debug(getQuery());
 		try {
-			result = pif.queryOnce(getQuery());
+			result = process.queryOnce(getQuery());
 			result.put("ID", currentId);
 			if (getEditPanel() != null) {
 				getEditPanel().setData(result);
 			}
-		} catch (PrologInterfaceException e) {
+		} catch (PrologProcessException e) {
 			e.printStackTrace();
 		}
 	}
@@ -102,8 +102,8 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		String goal = getGoalWithData(textFields, currentId);
 		
 		try {
-			pif.queryOnce(QueryUtils.bT(UPDATE_FACT, goal));
-		} catch (PrologInterfaceException e) {
+			process.queryOnce(QueryUtils.bT(UPDATE_FACT, goal));
+		} catch (PrologProcessException e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -120,13 +120,13 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 			if (always || checkRename((JTextField) comp) != null) {
 				try {
 					String newName = ((JTextField) comp).getText();
-					Map<String, Object> checkRes = pif.queryOnce(QueryUtils.bT("name_is_free", PrologUtils.quoteIfNecessary(newName)));
+					Map<String, Object> checkRes = process.queryOnce(QueryUtils.bT("name_is_free", PrologUtils.quoteIfNecessary(newName)));
 					if (checkRes == null) {
 						// query failed --> name is not free
 						JOptionPane.showMessageDialog(getEditPanel(), "Name \"" + newName + "\" existiert bereits.",  "Fehler", JOptionPane.ERROR_MESSAGE);
 						return true;
 					}
-				} catch (PrologInterfaceException e) {
+				} catch (PrologProcessException e) {
 					e.printStackTrace();
 				}
 			}
@@ -155,11 +155,11 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		String goal = getGoalWithData(textFields, "_");
 		String id = null;
 		try {
-			Map<String, Object> result = pif.queryOnce(QueryUtils.bT(ADD_FACT, goal, "ID"));
+			Map<String, Object> result = process.queryOnce(QueryUtils.bT(ADD_FACT, goal, "ID"));
 			if (result.get("ID") != null) {
 				id = result.get("ID").toString();
 			}
-		} catch (PrologInterfaceException e) {
+		} catch (PrologProcessException e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -177,7 +177,7 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		String goal = getSimpleGoal();
 
 		try {
-			pif.queryOnce(QueryUtils.bT(REMOVE_FACT, goal));
+			process.queryOnce(QueryUtils.bT(REMOVE_FACT, goal));
 			
 			// if there is a text file, remove it also
 			File dataDir = new File(outputFile.getParentFile(), getFunctor());
@@ -197,7 +197,7 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 				}
 			}
 			
-		} catch (PrologInterfaceException e) {
+		} catch (PrologProcessException e) {
 			e.printStackTrace();
 		}
 		

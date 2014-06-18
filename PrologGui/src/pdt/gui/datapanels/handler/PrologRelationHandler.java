@@ -7,9 +7,8 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
-import org.cs3.prolog.common.QueryUtils;
-import org.cs3.prolog.common.Util;
-import org.cs3.prolog.pif.PrologInterfaceException;
+import org.cs3.prolog.connector.common.QueryUtils;
+import org.cs3.prolog.connector.process.PrologProcessException;
 
 import pdt.gui.data.PrologConnection;
 import pdt.gui.datapanels.RelationPanel;
@@ -36,7 +35,7 @@ public class PrologRelationHandler extends PrologDataHandler<RelationPanel> {
 	public void updateAutoCompletion() {
 		autoCompletionList.clear();
 		try {
-			Map<String, Object> results = pif.queryOnce(QueryUtils.bT(AUTO_COMPLETION, functor, "Result"));
+			Map<String, Object> results = process.queryOnce(QueryUtils.bT(AUTO_COMPLETION, functor, "Result"));
 			Object o = results.get("Result");
 			if (o instanceof List<?>) {
 				List<?> dummyList = (List<?>) o;
@@ -45,7 +44,7 @@ public class PrologRelationHandler extends PrologDataHandler<RelationPanel> {
 				}
 			}
 			SimpleLogger.debug(autoCompletionList);
-		} catch (PrologInterfaceException e) {
+		} catch (PrologProcessException e) {
 			e.printStackTrace();
 		}
 	}
@@ -57,7 +56,7 @@ public class PrologRelationHandler extends PrologDataHandler<RelationPanel> {
 	@Override
 	public void showData() {
 		try {
-			List<Map<String, Object>> results = pif.queryAll(getQuery());
+			List<Map<String, Object>> results = process.queryAll(getQuery());
 			if (getEditPanel() != null) {
 				List<String> entries = new ArrayList<String>();
 				for (Map<String, Object> m : results) {
@@ -67,7 +66,7 @@ public class PrologRelationHandler extends PrologDataHandler<RelationPanel> {
 				
 				getEditPanel().setData(entries);
 			}
-		} catch (PrologInterfaceException e) {
+		} catch (PrologProcessException e) {
 			e.printStackTrace();
 		}
 	}
@@ -77,12 +76,12 @@ public class PrologRelationHandler extends PrologDataHandler<RelationPanel> {
 			return;
 		}
 		
-		String assertValue = Util.quoteAtomIfNeeded(newValue);
+		String assertValue = QueryUtils.quoteAtomIfNeeded(newValue);
 		
 		try {
 			boolean updateAutoCompletionFlag = false;
 			if (isAutoCompletion()) {
-				Map<String, Object> check = pif.queryOnce(QueryUtils.bT(CHECK_FOR_VALUE, getFunctor(), assertValue));
+				Map<String, Object> check = process.queryOnce(QueryUtils.bT(CHECK_FOR_VALUE, getFunctor(), assertValue));
 				if (check == null) {
 					int answer = JOptionPane.showConfirmDialog(getEditPanel(), "Eintrag mit dem Wert \"" + newValue + "\" existiert nicht. Soll er hinzugefügt werden?", "Neuen Eintrag hinzufügen", JOptionPane.YES_NO_OPTION);
 					if (answer == JOptionPane.NO_OPTION) {
@@ -96,8 +95,8 @@ public class PrologRelationHandler extends PrologDataHandler<RelationPanel> {
 			String assertQuery = QueryUtils.bT(getFunctor(), currentId, assertValue);
 			SimpleLogger.debug(assertQuery);
 			try {
-				pif.queryOnce(QueryUtils.bT(ADD_RELATION, assertQuery));
-			} catch (PrologInterfaceException e) {
+				process.queryOnce(QueryUtils.bT(ADD_RELATION, assertQuery));
+			} catch (PrologProcessException e) {
 				e.printStackTrace();
 			}
 			
@@ -109,7 +108,7 @@ public class PrologRelationHandler extends PrologDataHandler<RelationPanel> {
 			// update table
 			updateVisualizer();
 			
-		} catch (PrologInterfaceException e1) {
+		} catch (PrologProcessException e1) {
 			e1.printStackTrace();
 		}
 	}
@@ -119,11 +118,11 @@ public class PrologRelationHandler extends PrologDataHandler<RelationPanel> {
 			return;
 		}
 		
-		String retractQuery = QueryUtils.bT(getFunctor(), currentId, Util.quoteAtomIfNeeded(value));
+		String retractQuery = QueryUtils.bT(getFunctor(), currentId, QueryUtils.quoteAtomIfNeeded(value));
 		SimpleLogger.debug("retractQuery: " + retractQuery);
 		try {
-			pif.queryOnce(QueryUtils.bT(REMOVE_RELATION, retractQuery));
-		} catch (PrologInterfaceException e) {
+			process.queryOnce(QueryUtils.bT(REMOVE_RELATION, retractQuery));
+		} catch (PrologProcessException e) {
 			e.printStackTrace();
 		}
 		

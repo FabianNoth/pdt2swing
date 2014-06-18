@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerModel;
 
-import org.cs3.prolog.common.QueryUtils;
+import org.cs3.prolog.connector.common.QueryUtils;
 
 public class SpinnerWithCheckbox extends JPanel {
 

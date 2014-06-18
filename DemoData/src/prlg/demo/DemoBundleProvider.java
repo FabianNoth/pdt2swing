@@ -1,20 +1,20 @@
 package prlg.demo;
 
-import org.cs3.prolog.pif.PrologInterface;
+import org.cs3.prolog.connector.process.PrologProcess;
 
 import pdt.gui.QueryNode;
+import pdt.gui.data.BundleProvider;
 import pdt.gui.data.PrologConnection;
 import pdt.gui.data.PrologGuiBundle;
-import pdt.gui.data.BundleProvider;
 
 public class DemoBundleProvider extends BundleProvider {
 
-	private PrologInterface pif;
+	private PrologProcess process;
 	private PrologGuiBundle bundle1;
 	private PrologGuiBundle bundle2;
 
 	public DemoBundleProvider(PrologConnection con, PrologGuiBundle bundle1, PrologGuiBundle bundle2) {
-		this.pif = con.getPif();
+		this.process = con.getProcess();
 		this.bundle1 = bundle1;
 		this.bundle2 = bundle2;
 		addListener(bundle1);

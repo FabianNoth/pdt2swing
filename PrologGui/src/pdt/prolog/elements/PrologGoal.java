@@ -1,6 +1,6 @@
 package pdt.prolog.elements;
 
-import org.cs3.prolog.common.QueryUtils;
+import org.cs3.prolog.connector.common.QueryUtils;
 
 public class PrologGoal {
 
