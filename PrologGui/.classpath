@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="lib/commons-codec-1.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jasypt-1.9.2.jar" sourcepath="lib/jasypt-1.9.2-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.cs3.prolog.connector_3.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/markdown4j-2.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -11,22 +11,28 @@ import javax.swing.JOptionPane;
 import org.apache.commons.io.FileUtils;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.jasypt.util.text.BasicTextEncryptor;
+import org.markdown4j.Markdown4jProcessor;
 
 import pdt.gui.datapanels.TextFilePanel;
+import pdt.gui.datapanels.TextPreviewPanel;
 import pdt.gui.utils.SimpleLogger;
 
 public class PrologTextFileHandler extends PrologDataHandler<TextFilePanel> {
-
+	
 	private File file;
 	private File outputDir;
 	
 	private final Map<String, ActionListener> additionalActions = new TreeMap<String, ActionListener>();
 	private BasicTextEncryptor textEncryptor;
+	private TextPreviewPanel preview;
 	
-	protected PrologTextFileHandler(String name, File outputDir, BasicTextEncryptor textEncryptor) {
+	protected PrologTextFileHandler(String name, File outputDir, BasicTextEncryptor textEncryptor, boolean showPreview) {
 		super(name);
 		this.textEncryptor = textEncryptor;
 		this.outputDir = outputDir;
+		if (showPreview) {
+			this.preview = new TextPreviewPanel(this);
+		}
 	}
 	
 	@Override
@@ -46,9 +52,34 @@ public class PrologTextFileHandler extends PrologDataHandler<TextFilePanel> {
 					text = encryptedText;
 				}				
 			}
-			getEditPanel().setData(text);
+			setData(text);
 		} catch (IOException e) {
-			getEditPanel().setData("");
+			setData("");
+		}
+	}
+
+	public void updatePreview() {
+		if (preview != null) {
+			try {
+				String html = new Markdown4jProcessor().process(getEditPanel().getData());
+				preview.setData(html);
+			} catch (IOException e) {
+				preview.setData("Can not parse text!");
+				SimpleLogger.error(e.getMessage());
+			}
+		}
+	}
+	
+	private void setData(String data) {
+		getEditPanel().setData(data);
+		if (preview != null) {
+			try {
+				String html = new Markdown4jProcessor().process(data);
+				preview.setData(html);
+			} catch (IOException e) {
+				preview.setData("Can not parse text!");
+				SimpleLogger.error(e.getMessage());
+			}
 		}
 	}
 
@@ -96,4 +127,18 @@ public class PrologTextFileHandler extends PrologDataHandler<TextFilePanel> {
 	@Override
 	public void persistFacts() {}
 
+
+	public TextPreviewPanel getPreview() {
+		return preview;
+	}
+
+	@Override
+	public void clearData() {
+		super.clearData();
+		if (preview != null) {
+			preview.clearPanel();
+		}
+	}
+	
 }
+ 

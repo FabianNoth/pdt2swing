@@ -16,6 +16,7 @@ import pdt.gui.datapanels.handler.PrologTextFileHandler;
 public class TextFilePanel extends JPanel implements DataPanel {
 
 	private static final long serialVersionUID = 1L;
+
 	private JTextArea textArea;
 	private JButton btUpdate;
 	
@@ -78,6 +79,7 @@ public class TextFilePanel extends JPanel implements DataPanel {
 	public boolean changed() {
 		return(!textArea.getText().equals(dummyText));
 	}
+
 
 
 

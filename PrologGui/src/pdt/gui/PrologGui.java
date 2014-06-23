@@ -1,7 +1,6 @@
 package pdt.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -211,8 +210,8 @@ public class PrologGui implements PrologDataVisualizer {
 			
 			JPanel eastPanel = new JPanel();
 			eastPanel.setLayout(new BorderLayout());
-			eastPanel.setPreferredSize(new Dimension(300, 100));
-			eastPanel.setMinimumSize(new Dimension(300, 100));
+			eastPanel.setPreferredSize(bundle.getSize());
+			eastPanel.setMinimumSize(bundle.getSize());
 			contentPane.add(eastPanel, BorderLayout.EAST);
 			
 			List<PrologDataHandler<?>> factHandlers = bundle.getFactHandlers();
@@ -225,8 +224,16 @@ public class PrologGui implements PrologDataVisualizer {
 				eastPanel.add(tabbedPane, BorderLayout.CENTER);
 
 				for(int i=0; i<factHandlers.size(); i++) {
-					tabbedPane.addTab(factHandlers.get(i).getName(), null, getPanel(factHandlers.get(i)), null);
-					addToListeners(factHandlers.get(i));
+					PrologDataHandler<?> handler = factHandlers.get(i);
+					
+					tabbedPane.addTab(handler.getName(), null, getPanel(handler), null);
+					if (handler instanceof PrologTextFileHandler) {
+						PrologTextFileHandler textFileHandler = (PrologTextFileHandler) handler;
+						if (textFileHandler.getPreview() != null) {
+							tabbedPane.addTab("Preview", null, textFileHandler.getPreview(), null);
+						}
+					}
+					addToListeners(handler);
 				}
 			}
 			

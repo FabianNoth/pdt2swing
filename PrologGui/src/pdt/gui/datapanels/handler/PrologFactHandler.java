@@ -39,9 +39,9 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		super(con, name, outputFile, isMainPredicate, goal);
 	}
 
-	public PrologTextFileHandler createTextFileHandler(String title, BasicTextEncryptor textEncryptor) {
+	public PrologTextFileHandler createTextFileHandler(String title, BasicTextEncryptor textEncryptor, boolean showPreview) {
 		File textOutputDir = new File(outputFile.getParentFile(), getFunctor());
-		PrologTextFileHandler textData = new PrologTextFileHandler(title, textOutputDir, textEncryptor);
+		PrologTextFileHandler textData = new PrologTextFileHandler(title, textOutputDir, textEncryptor, showPreview);
 		return textData;
 	}
 	

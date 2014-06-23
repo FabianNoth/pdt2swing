@@ -147,7 +147,7 @@ public abstract class PrologDataHandler<PanelType extends DataPanel> implements 
 		return false;
 	}
 
-	public final void clearData() {
+	public void clearData() {
 		if (panel != null) {
 			panel.clearPanel();
 		}
