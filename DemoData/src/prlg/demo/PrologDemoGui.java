@@ -57,7 +57,7 @@ private PrologGuiBundle createSerienBundle(File dataDir, PrologConnection con) {
 		
 		PrologTableData tableData = new PrologTableData(con, tableGoal);
 		final PrologFactHandler seriesData = new PrologFactHandler(con, "Data", seriesFile, true, seriesGoal);
-		final PrologTextFileHandler textData = seriesData.createTextFileHandler("Zusammenfassung", null);
+		final PrologTextFileHandler textData = seriesData.createTextFileHandler("Zusammenfassung", null, false);
 		final PrologFactHandler ratingData = new PrologFactHandler(con, "Rating", ratingFile, false, ratingGoal);
 		final PrologRelationHandler tagData = new PrologRelationHandler(con, "Tags", tagFile, tagGoal, true);
 		
