@@ -53,8 +53,8 @@ public class RatingPanel extends JPanel implements DataPanel {
 		btUpdate.setEnabled(false);
 		btUpdate.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent evt) {
+				updateDummyValues();
 				prolog.updateFromPanel(ratingTableModel);
-		        updateDummyValues();
 			}
 		});
 
