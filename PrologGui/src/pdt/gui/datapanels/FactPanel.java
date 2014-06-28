@@ -5,6 +5,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -110,6 +112,14 @@ public class FactPanel extends JPanel implements DataPanel {
 				component.setEnabled(false);
 			}
 			
+			component.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyReleased(KeyEvent evt) {
+					if (evt.getKeyCode() == KeyEvent.VK_S && evt.isControlDown()) {
+						doUpdate();
+					}
+				}
+			});
 			GridBagConstraints gbc_component = new GridBagConstraints();
 			gbc_component.insets = new Insets(0, 0, 5, 0);
 			gbc_component.fill = GridBagConstraints.HORIZONTAL;
@@ -125,12 +135,7 @@ public class FactPanel extends JPanel implements DataPanel {
 		btUpdate.setEnabled(false);
 		btUpdate.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent evt) {
-				HashMap<String, String> dummyValuesBackup = new HashMap<>(dummyValues);
-				updateDummyValues();
-				if (!factHandler.updateFromPanel(textFields)) {
-					// reset dummy values
-					dummyValues = dummyValuesBackup;
-				}
+				doUpdate();
 			}
 		});
 		GridBagConstraints gbc_btUpdate = new GridBagConstraints();
@@ -322,6 +327,15 @@ public class FactPanel extends JPanel implements DataPanel {
 	
 	public PrologProcess getPrologProcess() {
 		return factHandler.getPrologProcess();
+	}
+
+	private void doUpdate() {
+		HashMap<String, String> dummyValuesBackup = new HashMap<>(dummyValues);
+		updateDummyValues();
+		if (!factHandler.updateFromPanel(textFields)) {
+			// reset dummy values
+			dummyValues = dummyValuesBackup;
+		}
 	}
 
 }
