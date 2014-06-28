@@ -20,7 +20,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
-import org.cs3.prolog.pif.PrologInterface;
+import org.cs3.prolog.connector.process.PrologProcess;
 
 import pdt.gui.datapanels.handler.PrologFactHandler;
 import pdt.prolog.elements.PrologArgument;
@@ -320,8 +320,8 @@ public class FactPanel extends JPanel implements DataPanel {
 		return false;
 	}
 	
-	public PrologInterface getPrologInterface() {
-		return factHandler.getPrologInterface();
+	public PrologProcess getPrologProcess() {
+		return factHandler.getPrologProcess();
 	}
 
 }

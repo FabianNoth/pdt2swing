@@ -3,8 +3,8 @@ package pdt.gui.datapanels.handler;
 import java.io.File;
 import java.util.Map;
 
-import org.cs3.prolog.common.QueryUtils;
-import org.cs3.prolog.pif.PrologInterfaceException;
+import org.cs3.prolog.connector.common.QueryUtils;
+import org.cs3.prolog.connector.process.PrologProcessException;
 
 import pdt.gui.data.PrologConnection;
 import pdt.gui.datapanels.RatingPanel;
@@ -24,12 +24,12 @@ public class PrologRatingHandler extends PrologDataHandler<RatingPanel> {
 	public void showData() {
 		SimpleLogger.debug(getQuery());
 		try {
-			result = pif.queryOnce(getQuery());
+			result = process.queryOnce(getQuery());
 			result.put("ID", currentId);
 			if (getEditPanel() != null) {
 				getEditPanel().setData(result);
 			}
-		} catch (PrologInterfaceException e) {
+		} catch (PrologProcessException e) {
 			e.printStackTrace();
 		}
 	}
@@ -45,10 +45,10 @@ public class PrologRatingHandler extends PrologDataHandler<RatingPanel> {
 		String goal = getGoalWithData(model, currentId);
 		
 		try {
-			pif.queryOnce(QueryUtils.bT(UPDATE_FACT, goal));
-//			pif.queryOnce("retractall(" + retractQuery + ")");
-//			pif.queryOnce("assert(" + assertQuery + ")");
-		} catch (PrologInterfaceException e) {
+			process.queryOnce(QueryUtils.bT(UPDATE_FACT, goal));
+//			process.queryOnce("retractall(" + retractQuery + ")");
+//			process.queryOnce("assert(" + assertQuery + ")");
+		} catch (PrologProcessException e) {
 			e.printStackTrace();
 		}
 		

@@ -6,8 +6,8 @@ import java.util.Map;
 
 import javax.swing.table.AbstractTableModel;
 
-import org.cs3.prolog.pif.PrologInterface;
-import org.cs3.prolog.pif.PrologInterfaceException;
+import org.cs3.prolog.connector.process.PrologProcess;
+import org.cs3.prolog.connector.process.PrologProcessException;
 
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologGoal;
@@ -21,7 +21,7 @@ public class PrologTableData extends AbstractTableModel {
 	private String[] variables;
 
 	private List<Map<String, Object>> data;
-	private PrologInterface pif;
+	private PrologProcess process;
 
 	private String query;
 
@@ -29,7 +29,7 @@ public class PrologTableData extends AbstractTableModel {
 	public PrologTableData(PrologConnection con, PrologGoal goal) {
 		this.goal = goal;
 		
-		pif = con.getPif();
+		process = con.getProcess();
 		
 		updateResultData();
 		
@@ -52,14 +52,14 @@ public class PrologTableData extends AbstractTableModel {
 		return query;
 	}
 	
-	public PrologInterface getPif() {
-		return pif;
+	public PrologProcess getProcess() {
+		return process;
 	}
 
 	public void updateResultData() {
 		try {
-			data = pif.queryAll(goal.getQuery());
-		} catch (PrologInterfaceException e) {
+			data = process.queryAll(goal.getQuery());
+		} catch (PrologProcessException e) {
 			e.printStackTrace();
 		}
 	}

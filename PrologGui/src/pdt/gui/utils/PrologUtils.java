@@ -5,7 +5,7 @@ import java.io.File;
 import javax.swing.JFrame;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.cs3.prolog.common.Util;
+import org.cs3.prolog.connector.common.QueryUtils;
 
 public class PrologUtils {
 
@@ -14,9 +14,8 @@ public class PrologUtils {
 			Integer.parseInt(atom);
 			return atom;
 		} catch (NumberFormatException e) {}
-		return Util.quoteAtomIfNeeded(atom.replace("\\", "/"));
+		return QueryUtils.quoteAtomIfNeeded(atom.replace("\\", "/"));
 	}
-	
 	
 	private static JFrame activeFrame;
 	

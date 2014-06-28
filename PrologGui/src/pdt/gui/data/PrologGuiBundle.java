@@ -26,9 +26,16 @@ public class PrologGuiBundle {
 
 	private Dimension imageDisplayDim = new Dimension(0, 0);
 	private Dimension imageSizeDim = new Dimension(0, 0);
-
+	
+	private Dimension bundleSize;
+	
 	public PrologGuiBundle(PrologTableData tableData, PrologDataHandler<?>... factHandlers) {
+		this(tableData, new Dimension(300, 100), factHandlers);
+	}
+	
+	public PrologGuiBundle(PrologTableData tableData, Dimension bundleSize, PrologDataHandler<?>... factHandlers) {
 		this.tableData = tableData;
+		this.bundleSize = bundleSize;
 		this.mainGoal = tableData.getGoal();
 		for(PrologDataHandler<?> fh : factHandlers) {
 			this.factHandlers.add(fh);
@@ -97,6 +104,10 @@ public class PrologGuiBundle {
 
 	public Dimension getImageSizeDimension() {
 		return imageSizeDim;
+	}
+
+	public Dimension getSize() {
+		return bundleSize;
 	}
 	
 }

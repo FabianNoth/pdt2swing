@@ -1,7 +1,8 @@
 package pdt.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -12,6 +13,9 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -176,6 +180,22 @@ public class PrologGui implements PrologDataVisualizer {
         // at the first start, it's no update from bundle
         updateFromBundleFlag = false;
         
+        // MenuBar
+
+        JMenuBar menuBar = new JMenuBar();
+        JMenu mnData = new JMenu("Daten");
+        menuBar.add(mnData);
+        JMenuItem mnPersist = new JMenuItem("Persist");
+        mnPersist.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				bundleProvider.persistFacts();
+			}
+		});
+        mnData.add(mnPersist);
+        
+        frame.setJMenuBar(menuBar);
+        
         //Display the window.
         frame.pack();
         frame.setVisible(true);
@@ -211,8 +231,8 @@ public class PrologGui implements PrologDataVisualizer {
 			
 			JPanel eastPanel = new JPanel();
 			eastPanel.setLayout(new BorderLayout());
-			eastPanel.setPreferredSize(new Dimension(300, 100));
-			eastPanel.setMinimumSize(new Dimension(300, 100));
+			eastPanel.setPreferredSize(bundle.getSize());
+			eastPanel.setMinimumSize(bundle.getSize());
 			contentPane.add(eastPanel, BorderLayout.EAST);
 			
 			List<PrologDataHandler<?>> factHandlers = bundle.getFactHandlers();
@@ -225,8 +245,16 @@ public class PrologGui implements PrologDataVisualizer {
 				eastPanel.add(tabbedPane, BorderLayout.CENTER);
 
 				for(int i=0; i<factHandlers.size(); i++) {
-					tabbedPane.addTab(factHandlers.get(i).getName(), null, getPanel(factHandlers.get(i)), null);
-					addToListeners(factHandlers.get(i));
+					PrologDataHandler<?> handler = factHandlers.get(i);
+					
+					tabbedPane.addTab(handler.getName(), null, getPanel(handler), null);
+					if (handler instanceof PrologTextFileHandler) {
+						PrologTextFileHandler textFileHandler = (PrologTextFileHandler) handler;
+						if (textFileHandler.getPreview() != null) {
+							tabbedPane.addTab("Preview", null, textFileHandler.getPreview(), null);
+						}
+					}
+					addToListeners(handler);
 				}
 			}
 			
