@@ -1,6 +1,8 @@
 package pdt.gui;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -11,6 +13,9 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -174,6 +179,22 @@ public class PrologGui implements PrologDataVisualizer {
         setBundle(bundleProvider.getDefault());
         // at the first start, it's no update from bundle
         updateFromBundleFlag = false;
+        
+        // MenuBar
+
+        JMenuBar menuBar = new JMenuBar();
+        JMenu mnData = new JMenu("Daten");
+        menuBar.add(mnData);
+        JMenuItem mnPersist = new JMenuItem("Persist");
+        mnPersist.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				bundleProvider.persistFacts();
+			}
+		});
+        mnData.add(mnPersist);
+        
+        frame.setJMenuBar(menuBar);
         
         //Display the window.
         frame.pack();
