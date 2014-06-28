@@ -1,0 +1,3 @@
+movie(1,'Titanic').
+movie(2,'Harry Potter').
+

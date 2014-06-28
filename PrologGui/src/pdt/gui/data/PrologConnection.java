@@ -26,22 +26,27 @@ public class PrologConnection {
 		try {
 			directory = new File(res.toURI()); 
 			process = Connector.newPrologProcess();
-			consultData(new File(directory, "gui_hooks.pl"));
+			process.setAdditionalStartupFile("\"%LOGTALKHOME%\\integration\\logtalk_swi.pl\"");
+//			process.start();
+//			process.setAdditionalStartupFile(System.getenv("LOGTALKHOME") + "/integration/logtalk_swi.pl");
+			process.consult(new File(directory, "gui_hooks.pl"));
+//			consultData(new File(directory, "gui_hooks.pl"));
 			if (loadFile != null) {
-				consultData(loadFile);
+				process.consult(loadFile);
+//				consultData(loadFile);
 			}
-		} catch (IOException | URISyntaxException e) {
+		} catch (IOException | URISyntaxException | PrologProcessException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public void consultData(File file) {
-		try {
-			process.consult(file);
-		} catch (PrologProcessException e) {
-			e.printStackTrace();
-		}
-	}
+//	public void consultData(File file) {
+//		try {
+//			process.consult(file);
+//		} catch (PrologProcessException e) {
+//			e.printStackTrace();
+//		}
+//	}
 	
 	public PrologProcess getProcess() {
 		return process;
