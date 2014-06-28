@@ -74,6 +74,9 @@ public class AdditionalImageHandler extends PrologDataHandler<AdditionalImagePan
 	}
 
 	private String imageName(String suffix) {
+		if (suffix == null) {
+			return currentId + ".jpg";
+		}
 		return currentId + "_" + suffix + ".jpg";
 	}
 
@@ -93,14 +96,21 @@ public class AdditionalImageHandler extends PrologDataHandler<AdditionalImagePan
 	@Override
 	public void actionPerformed(ActionEvent evt) {
 		
-		// show file input dialog (only jpg files)
-		int result = fileChooser.showOpenDialog(PrologUtils.getActiveFrame());
+		ImageElement imgElement = imageMap.get(evt.getActionCommand());
 		
-		if (result == JFileChooser.APPROVE_OPTION) {
-			File file = fileChooser.getSelectedFile();
-			
-			ImageElement imgElement = imageMap.get(evt.getActionCommand());
-			
+		File file = null;
+		if (imgElement.createFromDefaultPicture()) {
+			file = getImageFile(null);
+		} else {
+			// show file input dialog (only jpg files)
+			int result = fileChooser.showOpenDialog(PrologUtils.getActiveFrame());
+
+			if (result == JFileChooser.APPROVE_OPTION) {
+				file = fileChooser.getSelectedFile();
+			}
+		}
+		
+		if (file != null && file.exists()) {
 			boolean fixedSize = imgElement.getMaxHeight() > 0;	// this automatically means that maxWidth is also > 0
 
 			ImageSelectionDialog imgDialog = new ImageSelectionDialog();
