@@ -14,7 +14,8 @@
 init_model(Metamodel) :-
 	once(Metamodel::fact_type(_,_)),
 	retractall(current_model(_)),
-	assert(current_model(Metamodel)).
+	assert(current_model(Metamodel)),
+	Metamodel::check.
 
 add(Term, Result) :-
 	check_arguments(add, Term, Result),
@@ -47,7 +48,8 @@ delete(Term, Result) :-
 	).
 	
 update(Term, Result) :-
-	check_arguments(update, Term, Result),
+	Term =.. [_, Id | _],
+	check_arguments(update(Id), Term, Result),
 	% cut if argument checking went wrong 
 	Result \== success,
 	!.
@@ -77,22 +79,67 @@ check_arguments(Context, Term, Result) :-
 	length(ArgTypes, Arity),
 	
 	Term =.. [Functor | Args],
-	check_arguments_impl(Context, ArgTypes, Args, Result).
+	check_arguments_impl(Functor, Context, ArgTypes, Args, Result).
 	
-check_arguments_impl(_, [], [], 'success') :- !.
+check_arguments_impl(_, _, [], [], 'success') :- !.
 
-check_arguments_impl(Context, [(_,Type)|ArgTypes], [Arg|Args], Result) :-
-	(	check_type(Context, Type, Arg)
-	->	check_arguments_impl(Context, ArgTypes, Args, Result)
-	;	Result = error(Arg, 'is not', Type)
+
+check_arguments_impl(Functor, Context, [ArgType|ArgTypes], [Arg|Args], Result) :-
+%	ArgType = (Name, Type, Keywords),
+	check_argument(Functor, Context, ArgType, Arg, DummyResult),
+	(	DummyResult == 'success'
+	->	check_arguments_impl(Functor, Context, ArgTypes, Args, Result)
+	;	Result = DummyResult
 	).
 	
-check_type(add, id, Arg)	:- !, var(Arg).
-check_type(_, id, Arg)		:- !, integer(Arg).
-check_type(delete, _, _)	:- !.
-check_type(_, number, Arg)	:- !, number(Arg).
-check_type(_, atom, Arg) 	:- !, atom(Arg).
+check_argument(Functor, Context, (_, Type, _), Arg, Result) :-
+	\+(check_argument_type(Context, Type, Arg)),
+	Result = error(Functor, Arg, 'is not', Type),
+	!.
+	
+check_argument(Functor, Context, (Name, _, Keywords), Arg, Result) :-
+	lists:member(Key, Keywords),
+	current_model(Model),
+	\+(check_argument_keyword(Model, Functor, Context, Key, Name, Arg)),
+	keyword_error_msg(Functor, Key, Result),
+	!.
+%	Result = error('Violated constraint: ', Key),
 
+check_argument(_, _, _, _, 'success') :- !.	
+	
+keyword_error_msg(Functor, Key, error(Functor, 'Violated constraint: ', Key)).
+	
+	
+	
+check_argument_type(add, id, Arg)	:- !, var(Arg).
+check_argument_type(_, id, Arg)		:- !, integer(Arg).
+check_argument_type(delete, _, _)	:- !.
+check_argument_type(_, number, Arg)	:- !, number(Arg).
+check_argument_type(_, atom, Arg) 	:- !, atom(Arg).
+
+% main is just a flag, no checking required
+check_argument_keyword(_, _, _, main, _, _).
+	
+% no checking required for deleting
+check_argument_keyword(_, _, delete, unique, _, _).
+
+% added fact: unique value must not exist
+check_argument_keyword(Model, Functor, add, unique, Name, Arg) :-
+	% check if value is unique 
+	\+(Model::argument_value(Functor, _, Name, Arg)),
+	!.
+	
+% updated fact: unique value may only exist in the current fact
+check_argument_keyword(Model, Functor, update(_), unique, Name, Arg) :-
+	% true if value doesn't exist at all (renaming)
+	\+(Model::argument_value(Functor, _, Name, Arg)),
+	!.
+	
+check_argument_keyword(Model, Functor, update(Id), unique, Name, Arg) :-
+	% or if Id is the current Id
+	Model::argument_value(Functor, Id, Name, Arg),
+	!.
+	
 	
 get_store_for_term(Term, Store) :-
 	functor(Term, Functor, _),
