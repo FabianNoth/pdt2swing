@@ -12,9 +12,11 @@ fact_type(movie, [
 	(rating, number, [])
 ]).
 
-%relation_type(role, [
-%	(actor, actor),
-%	(movie, movie)
-%]).
+fact_type(role, [
+	(id, id, []),
+	(actor, actor, []),
+	(movie, movie, []),
+	(rolename, atom, [])
+]).
     
 :- end_object.
