@@ -83,7 +83,6 @@ check_arguments(Context, Term, Result) :-
 	
 check_arguments_impl(_, _, [], [], 'success') :- !.
 
-
 check_arguments_impl(Functor, Context, [ArgType|ArgTypes], [Arg|Args], Result) :-
 %	ArgType = (Name, Type, Keywords),
 	check_argument(Functor, Context, ArgType, Arg, DummyResult),
@@ -94,7 +93,8 @@ check_arguments_impl(Functor, Context, [ArgType|ArgTypes], [Arg|Args], Result) :
 	
 check_argument(Functor, Context, (_, Type, _), Arg, Result) :-
 	\+(check_argument_type(Context, Type, Arg)),
-	Result = error(Functor, Arg, 'is not', Type),
+	atomic_list_concat([Arg, ' is not of type: ', Type], ErrorMsg),
+	Result = error(Functor, ErrorMsg),
 	!.
 	
 check_argument(Functor, Context, (Name, _, Keywords), Arg, Result) :-
@@ -116,6 +116,14 @@ check_argument_type(_, id, Arg)		:- !, integer(Arg).
 check_argument_type(delete, _, _)	:- !.
 check_argument_type(_, number, Arg)	:- !, number(Arg).
 check_argument_type(_, atom, Arg) 	:- !, atom(Arg).
+
+check_argument_type(_, Type, Arg) 	:-
+	!,
+	current_model(Model),
+	Model::get_term(Type, Arg, Term),
+	atom_concat(Type,'_store',StoreName),
+	StoreName::Term.
+
 
 % main is just a flag, no checking required
 check_argument_keyword(_, _, _, main, _, _).
