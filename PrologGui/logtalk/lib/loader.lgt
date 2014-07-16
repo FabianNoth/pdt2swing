@@ -1,3 +1,3 @@
 :- initialization((
-	logtalk_load([meta_model, db_controller, db_store, store_utils])
+	logtalk_load([ db_controller, meta_model, db_store, store_utils])
 )).

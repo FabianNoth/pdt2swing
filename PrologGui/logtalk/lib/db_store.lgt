@@ -26,8 +26,12 @@ persist :-
 
 print_id :-
 	::current_id(Current),
+	!,
 	user:writeln(':- dynamic(current_id/1).'),
 	user:portray_clause(current_id(Current)).
+	
+% if there is no id (for relations) do noting
+print_id.
 	
 print_data :-
 	::get_term(Functor/Arity),

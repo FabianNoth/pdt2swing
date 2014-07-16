@@ -1,15 +1,23 @@
 :- object(db_controller).
 
+:- public(show/2).
+
 :- public(add/2).
 :- public(delete/2).
 :- public(update/2).
+
+:- public(persist/0).
 
 :- private(current_model/1).
 :- dynamic(current_model/1).
 
 :- public(init_model/1).
 
+% this needs to be public for checking of dummy relations in metamodel
+:- public(check_argument_type/3).
+
 :- private(unbind_term/2).
+:- discontiguous(add/2).
 
 init_model(Metamodel) :-
 	once(Metamodel::fact_type(_,_)),
@@ -17,6 +25,27 @@ init_model(Metamodel) :-
 	assert(current_model(Metamodel)),
 	Metamodel::check.
 
+show(Functor, Term) :-
+	nonvar(Functor),
+	current_model(Model),
+	Model::get_term(Functor, Term),
+	get_store_for_term(Term, Store),
+	Store::Term.
+
+show(Functor, Term) :-
+	var(Functor),
+	Term =.. [Functor|_],
+	show(Functor, Term).	
+	
+persist :-
+	current_model(Model),
+	Model::element(Name, _),
+	get_store_for_functor(Name, Store),
+	Store::persist,
+	fail.
+	
+persist.
+	
 add(Term, Result) :-
 	check_arguments(add, Term, Result),
 	% cut if argument checking went wrong 
@@ -26,10 +55,31 @@ add(Term, Result) :-
 add(Term, Result) :-
 	% if checking was okay, assert the fact
 	get_store_for_term(Term, Store),
-	Term =.. [_, Id | _],
+	Term =.. [Functor, Id |_],
+	current_model(Model),
+	Model::fact_type(Functor,_),
+	!,
+	% it's a fact type, so we need an id
 	Store::get_id(Id),
 	Store::assert(Term),
+	add_dummy_relations(Model, Functor, Id),
 	Result = success(Id).
+	
+add_dummy_relations(Model, Functor, Id) :-
+	Model::relation_dummy(Functor, Id, RelationTerm),
+	get_store_for_term(RelationTerm, Store),
+	Store::assert(RelationTerm),
+	fail.
+	
+add_dummy_relations(_, _, _).
+	
+add(Term, Result) :-
+	% it's not a fact type, so we need no id
+	get_store_for_term(Term, Store),
+	Store::assert(Term),
+	Result = success.
+	
+	
 
 delete(Term, Result) :-
 	unbind_term(Term, UnboundTerm),
@@ -45,7 +95,15 @@ delete(Term, Result) :-
 	->	(Store::retractall(UnboundTerm),
 		Result=success)
 	;	Result=warning('element didn\'t even exist')
-	).
+	),
+	current_model(Model),
+	UnboundTerm =.. [Functor, Id|_],
+	forall( Model::relations(Functor, Id, _, RelationTerm),
+			delete_relation(RelationTerm)).
+			
+delete_relation(Term) :-
+	get_store_for_term(Term, Store),
+	Store::retractall(Term).
 	
 update(Term, Result) :-
 	Term =.. [_, Id | _],
@@ -72,10 +130,18 @@ update(Term, Result) :-
 	Result=success.
 	
 check_arguments(Context, Term, Result) :-
+	(Context == add
+	; Context == update),
+	get_store_for_term(Term, Store),
+	Store::Term,
+	Result = error('Fact already exists'),
+	!.
+	
+check_arguments(Context, Term, Result) :-
 	functor(Term, Functor, Arity),
 	current_model(Model),
 	% check if Term is in current metamodel
-	Model::fact_type(Functor, ArgTypes),
+	Model::element(Functor, ArgTypes),
 	length(ArgTypes, Arity),
 	
 	Term =.. [Functor | Args],
@@ -93,7 +159,9 @@ check_arguments_impl(Functor, Context, [ArgType|ArgTypes], [Arg|Args], Result) :
 	
 check_argument(Functor, Context, (_, Type, _), Arg, Result) :-
 	\+(check_argument_type(Context, Type, Arg)),
-	atomic_list_concat([Arg, ' is not of type: ', Type], ErrorMsg),
+	term_to_atom(Type, TypeAtom),
+	term_to_atom(Arg, ArgAtom),
+	atomic_list_concat([ArgAtom, ' is not of type: ', TypeAtom], ErrorMsg),
 	Result = error(Functor, ErrorMsg),
 	!.
 	
@@ -116,6 +184,19 @@ check_argument_type(_, id, Arg)		:- !, integer(Arg).
 check_argument_type(delete, _, _)	:- !.
 check_argument_type(_, number, Arg)	:- !, number(Arg).
 check_argument_type(_, atom, Arg) 	:- !, atom(Arg).
+
+check_argument_type(_, number(From, To), Arg) :-
+	!,
+	number(Arg),
+	Arg >= From,
+	Arg =< To.
+	
+check_argument_type(_, atom(Type), Arg) :-
+	!,
+	atom(Arg),
+	current_model(Model),
+	Model::fixed_atom(Type, FixedAtoms),
+	lists:member(Arg, FixedAtoms).
 
 check_argument_type(_, Type, Arg) 	:-
 	!,
@@ -152,6 +233,9 @@ check_argument_keyword(Model, Functor, update(Id), unique, Name, Arg) :-
 get_store_for_term(Term, Store) :-
 	functor(Term, Functor, _),
 	% create store name
+	get_store_for_functor(Functor, Store).
+	
+get_store_for_functor(Functor, Store) :-
 	atom_concat(Functor, '_store', Store).
 	
 unbind_term(Term, UnboundTerm) :-
