@@ -1,16 +1,19 @@
 :- object(db_store).
 
+:- public(add/1).
+:- public(delete/1).
+
 :- public(persist/0).
 
 :- public(get_id/1).
 
 :- public(current_id/1).
-:- dynamic(current_id/1).
 
 :- public(get_term/1).
 
 % to be implementend by concrete store
 :- public(output_filename/1).
+:- public(module_name/1).
 
 :- private(print_data/0).
 :- private(print_id/0).
@@ -20,10 +23,16 @@ persist :-
 	user:logtalk_library_path(data_directory, Dir),
 	atom_concat(Dir, F, Path),
 	user:tell(Path),
+	print_module_head,
 	print_id,
 	print_data,
 	user:told.
 
+print_module_head :-
+	::get_term(Functor/_),
+	atomic_list_concat([':- module(', Functor, ', []).'], ModuleHead),
+	user:writeln(ModuleHead).
+	
 print_id :-
 	::current_id(Current),
 	!,
@@ -35,8 +44,11 @@ print_id.
 	
 print_data :-
 	::get_term(Functor/Arity),
+	::module_name(Module),
+	atomic_list_concat([':- dynamic(', Functor, '/', Arity, ').'], DynamicDecl),
+	user:writeln(DynamicDecl),
 	functor(Term, Functor, Arity),
-	::clause(Term, _),
+	Module:clause(Term, _),
 	user:portray_clause(Term),
 	fail.
 	
@@ -46,13 +58,24 @@ get_id(Id) :-
 	% if there is no current_id, set current to 0
 	( ::current_id(Current)
 	-> true
-	; Current = 0),  
+	; Current = 0),
 	% delete old entry
-	::retractall(current_id(_)),
+	::delete(current_id(_)),
 	% add entry with increased id
 	Id is Current + 1,
-	::assert(current_id(Id)).
+	::add(current_id(Id)).
 
 
+add(Term) :-
+	::module_name(Module),
+	Module:assert(Term).
+	
+delete(Term) :-
+	::module_name(Module),
+	Module:retractall(Term).
+	
+current_id(Id) :-
+	::module_name(Module),
+	Module:catch(current_id(Id), _, fail).
 	
 :- end_object.

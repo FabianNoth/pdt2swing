@@ -11,6 +11,7 @@
 :- public(argument_value_term/4).
 :- public(get_term/2).
 :- public(get_term/3).
+:- public(get_term_for_main/3).
 :- public(check/0).
 
 :- public(relations/4).
@@ -56,14 +57,16 @@ check :-
 	-> true
 	; writeln('ERROR: check_relation_dummies failed'), fail).
 	
+	
+check_relation_dummies :-
+	\+(::relation_dummy(_, id, _)).
+	
 check_relation_dummies :-
 	::relation_dummy(Type, id, RelationTerm),
 	RelationTerm =.. [RelationFunctor | Params],
 	::fact_type(Type, _),
 	::relation_type(RelationFunctor, Constraints),
 	check_relation_dummy_args(Params, Constraints).
-%	db_controller::check_arguments(add, RelationTerm, Result),
-%	writeln(Result).
 	
 check_relation_dummy_args([], []) :- !.
 check_relation_dummy_args([Param|Params], [(_, Type, _)|Constraints]) :-
@@ -115,6 +118,29 @@ get_term(Functor, Id, Term) :-
 	length(Tail, Le2),
 	Term =.. [Functor, Id | Tail].
 	
+%% get_term_for_main(Functor, Main, Term)
+%
+% gets a term where the main element is bound
+get_term_for_main(Functor, Main, Term) :-
+	::element(Functor, Args),
+	length(Args, Le),
+	length(Tail, Le),
+	main_element_index(Args, 1, MainIndex),
+	lists:nth1(MainIndex, Tail, Main),
+	Term =.. [Functor | Tail].
+
+main_element_index([], _, 1) :- !.
+main_element_index([(_, _, Keys)|_], Count, Index) :-
+	lists:member(main, Keys),
+	!,
+	Index = Count.
+	
+main_element_index([_|Tail], Count, Index) :-
+	CountInc is Count + 1,
+	main_element_index(Tail, CountInc, Index).
+	
+	
+
 %% argument_value(Functor, Id, Name, Value)
 %
 % gets the value of argument with name Name

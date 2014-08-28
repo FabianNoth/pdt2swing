@@ -61,14 +61,14 @@ add(Term, Result) :-
 	!,
 	% it's a fact type, so we need an id
 	Store::get_id(Id),
-	Store::assert(Term),
+	Store::add(Term),
 	add_dummy_relations(Model, Functor, Id),
 	Result = success(Id).
 	
 add_dummy_relations(Model, Functor, Id) :-
 	Model::relation_dummy(Functor, Id, RelationTerm),
 	get_store_for_term(RelationTerm, Store),
-	Store::assert(RelationTerm),
+	Store::add(RelationTerm),
 	fail.
 	
 add_dummy_relations(_, _, _).
@@ -76,7 +76,7 @@ add_dummy_relations(_, _, _).
 add(Term, Result) :-
 	% it's not a fact type, so we need no id
 	get_store_for_term(Term, Store),
-	Store::assert(Term),
+	Store::add(Term),
 	Result = success.
 	
 	
@@ -92,7 +92,7 @@ delete(Term, Result) :-
 	get_store_for_term(Term, Store),
 	unbind_term(Term, UnboundTerm),
 	(	Store::UnboundTerm
-	->	(Store::retractall(UnboundTerm),
+	->	(Store::delete(UnboundTerm),
 		Result=success)
 	;	Result=warning('element didn\'t even exist')
 	),
@@ -103,7 +103,7 @@ delete(Term, Result) :-
 			
 delete_relation(Term) :-
 	get_store_for_term(Term, Store),
-	Store::retractall(Term).
+	Store::delete(Term).
 	
 update(Term, Result) :-
 	Term =.. [_, Id | _],
@@ -125,8 +125,8 @@ update(Term, Result) :-
 	% arguments are correct, and element exists
 	unbind_term(Term, UnboundTerm),
 	get_store_for_term(Term, Store),
-	Store::retractall(UnboundTerm),
-	Store::assert(Term),
+	Store::delete(UnboundTerm),
+	Store::add(Term),
 	Result=success.
 	
 check_arguments(Context, Term, Result) :-
@@ -201,7 +201,7 @@ check_argument_type(_, atom(Type), Arg) :-
 check_argument_type(_, Type, Arg) 	:-
 	!,
 	current_model(Model),
-	Model::get_term(Type, Arg, Term),
+	Model::get_term_for_main(Type, Arg, Term),
 	atom_concat(Type,'_store',StoreName),
 	StoreName::Term.
 
