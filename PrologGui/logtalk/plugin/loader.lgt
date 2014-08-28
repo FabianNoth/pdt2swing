@@ -6,7 +6,6 @@
 	
 	% load controller
 	db_controller::init_model(moviedb_model),
-	
 	% create store objects from meta model
 	store_utils::create_data_stores(moviedb_model)
 )).

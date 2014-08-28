@@ -6,13 +6,13 @@
 %%%%%%%%%
 
 fact_type(actor, [
-	(id, id, []),
-	(name, atom, [unique, main])
+	(id, id, [main]),
+	(name, atom, [unique])
 ]).
 
 fact_type(movie, [
-	(id, id, []),
-	(name, atom, [unique, main]),
+	(id, id, [main]),
+	(name, atom, [unique]),
 	(genre, atom(genre), [])
 ]).
 
@@ -28,9 +28,9 @@ fact_type(tag, [
 	(name, atom, [])
 ]).
 
-%%%%%%%%%%%%%
-% relations %
-%%%%%%%%%%%%%
+%%%%%%%%%%%%%%
+%% relations %
+%%%%%%%%%%%%%%
 
 relation_type(movie_rating, [
 	(movie, movie, [unique]),
@@ -44,15 +44,15 @@ relation_type(tagged_movie, [
 ]).
 
 
-%%%%%%%%%%%%%%%
-% fixed atoms %
-%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%
+%% fixed atoms %
+%%%%%%%%%%%%%%%%
 
 fixed_atom(genre, ['', 'Action', 'Drama', 'Fantasy', 'Horror']).
 
-%%%%%%%%%%%%%%%%%%%%
-% relation dummies %
-%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%
+%% relation dummies %
+%%%%%%%%%%%%%%%%%%%%%
 
 relation_dummy(movie, Id, movie_rating(Id, 0, 0)).
 
