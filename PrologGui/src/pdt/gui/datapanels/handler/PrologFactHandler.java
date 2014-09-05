@@ -34,25 +34,33 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 	private Map<String, Object> result;
 	private String mainElementName;
 	private final Map<String, ActionListener> additionalActions = new LinkedHashMap<String, ActionListener>();
+	private File dataDirectory;
 	
-	public PrologFactHandler(PrologConnection con, String name, File outputFile, boolean isMainPredicate, PrologGoal goal) {
-		super(con, name, outputFile, isMainPredicate, goal);
+	public PrologFactHandler(PrologConnection con, String name, boolean isMainPredicate, PrologGoal goal, File dataDirectory) {
+		super(con, name, isMainPredicate, goal);
+		this.dataDirectory = dataDirectory;
 	}
 
 	public PrologTextFileHandler createTextFileHandler(String title, BasicTextEncryptor textEncryptor, boolean showPreview) {
-		File textOutputDir = new File(outputFile.getParentFile(), getFunctor());
-		PrologTextFileHandler textData = new PrologTextFileHandler(title, textOutputDir, textEncryptor, showPreview);
-		return textData;
+		if (dataDirectory != null && dataDirectory.isDirectory()) {
+			File textOutputDir = new File(dataDirectory, getFunctor());
+			PrologTextFileHandler textData = new PrologTextFileHandler(title, textOutputDir, textEncryptor, showPreview);
+			return textData;
+		}
+		return null;
 	}
 	
 	public AdditionalImageHandler createAdditionalImageHandler(String name, ImageElement... images) {
-		File imgDir = new File(outputFile.getParentFile(), getFunctor() + "/imgs");
-		AdditionalImageHandler handler = new AdditionalImageHandler(name, imgDir, images);
-		imagesToDelete = new HashSet<String>();
-		for (ImageElement img : images) {
-			imagesToDelete.add(img.getSuffix());
+		if (dataDirectory != null && dataDirectory.isDirectory()) {
+			File imgDir = new File(dataDirectory, getFunctor() + "_imgs");
+			AdditionalImageHandler handler = new AdditionalImageHandler(name, imgDir, images);
+			imagesToDelete = new HashSet<String>();
+			for (ImageElement img : images) {
+				imagesToDelete.add(img.getSuffix());
+			}
+			return handler;
 		}
-		return handler;
+		return null;
 	}
 
 	public void setMainElementName(String mainElementName) {
@@ -179,21 +187,23 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		try {
 			process.queryOnce(QueryUtils.bT(REMOVE_FACT, goal));
 			
-			// if there is a text file, remove it also
-			File dataDir = new File(outputFile.getParentFile(), getFunctor());
-			File textFile = new File(dataDir, currentId);
-			deleteImage(textFile);
-			
-			// same for image file
-			File imgDir = new File(dataDir, "imgs");
-			File subdir = new File(imgDir, PrologUtils.md5Prefix(currentId));
-			File imgFile = new File(subdir, currentId + ".jpg");
-			deleteImage(imgFile);
-			
-			if (imagesToDelete != null) {
-				for (String name : imagesToDelete) {
-					File imgFile2 = new File(subdir, currentId + "_" + name + ".jpg");
-					deleteImage(imgFile2);
+			if (dataDirectory != null && dataDirectory.isDirectory()) {
+				// if there is a text file, remove it also
+				File dataDir = new File(dataDirectory, getFunctor());
+				File textFile = new File(dataDir, currentId);
+				deleteImage(textFile);
+				
+				// same for image file
+				File imgDir = new File(dataDirectory, getFunctor() + "_imgs");
+				File subdir = new File(imgDir, PrologUtils.md5Prefix(currentId));
+				File imgFile = new File(subdir, currentId + ".jpg");
+				deleteImage(imgFile);
+				
+				if (imagesToDelete != null) {
+					for (String name : imagesToDelete) {
+						File imgFile2 = new File(subdir, currentId + "_" + name + ".jpg");
+						deleteImage(imgFile2);
+					}
 				}
 			}
 			

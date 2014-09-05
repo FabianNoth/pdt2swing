@@ -2,8 +2,6 @@ package pdt.gui.data;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,9 +20,10 @@ public class PrologConnection {
 	}
 	
 	public PrologConnection(File loadFile) {
-		URL res = ClassLoader.getSystemClassLoader().getResource("logtalk");
+//		URL res = ClassLoader.getSystemClassLoader().getResource("logtalk");
 		try {
-			directory = new File(res.toURI()); 
+//			directory = new File(res.toURI()); 
+			directory = new File("logtalk");
 			process = Connector.newPrologProcess();
 			process.setAdditionalStartupFile("\"%LOGTALKHOME%\\integration\\logtalk_swi.pl\"");
 			process.consult(new File(directory, "lib\\loader.lgt"));
@@ -32,7 +31,7 @@ public class PrologConnection {
 			if (loadFile != null) {
 				process.consult(loadFile);
 			}
-		} catch (IOException | URISyntaxException | PrologProcessException e) {
+		} catch (IOException | PrologProcessException e) {
 			e.printStackTrace();
 		}
 	}

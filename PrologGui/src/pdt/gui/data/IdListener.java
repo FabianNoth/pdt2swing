@@ -8,10 +8,10 @@ public interface IdListener {
 	 */
 	public void setId(String id);
 	
-	/**
-	 * Write facts to output file
-	 */
-	public void persistFacts();
+//	/**
+//	 * Write facts to output file
+//	 */
+//	public void persistFacts();
 	
 	/**
 	 * Check if something changed before overwrite the data

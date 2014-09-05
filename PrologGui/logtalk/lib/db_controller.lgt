@@ -8,7 +8,7 @@
 
 :- public(persist/0).
 
-:- private(current_model/1).
+:- public(current_model/1).
 :- dynamic(current_model/1).
 
 :- public(init_model/1).
@@ -184,8 +184,15 @@ check_argument_type(_, id, Arg)		:- !, integer(Arg).
 check_argument_type(delete, _, _)	:- !.
 check_argument_type(_, number, Arg)	:- !, number(Arg).
 check_argument_type(_, atom, Arg) 	:- !, atom(Arg).
+check_argument_type(_, boolean, Arg) 	:- !, (Arg == true ; Arg == false).
 
 check_argument_type(_, number(From, To), Arg) :-
+	!,
+	number(Arg),
+	Arg >= From,
+	Arg =< To.
+
+check_argument_type(_, unsure_number(From, To), Arg) :-
 	!,
 	number(Arg),
 	Arg >= From,

@@ -1,6 +1,5 @@
 package pdt.gui.datapanels.handler;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,12 +19,12 @@ public class PrologRelationHandler extends PrologDataHandler<RelationPanel> {
 	private final List<String> autoCompletionList = new ArrayList<String>();
 	private String functor;
 	
-	public PrologRelationHandler(PrologConnection con, String name, File outputFile, PrologGoal goal) {
-		this(con, name, outputFile, goal, false);
+	public PrologRelationHandler(PrologConnection con, String name, PrologGoal goal) {
+		this(con, name, goal, false);
 	}
 	
-	public PrologRelationHandler(PrologConnection con, String name, File outputFile, PrologGoal goal, boolean autoCompletion) {
-		super(con, name, outputFile, false, goal);
+	public PrologRelationHandler(PrologConnection con, String name, PrologGoal goal, boolean autoCompletion) {
+		super(con, name, false, goal);
 		this.functor = goal.getFunctor();
 		if (autoCompletion) {
 			updateAutoCompletion();

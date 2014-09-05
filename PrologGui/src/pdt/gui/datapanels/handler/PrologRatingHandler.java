@@ -1,6 +1,5 @@
 package pdt.gui.datapanels.handler;
 
-import java.io.File;
 import java.util.Map;
 
 import org.cs3.prolog.connector.common.QueryUtils;
@@ -15,9 +14,9 @@ import pdt.prolog.elements.PrologGoal;
 public class PrologRatingHandler extends PrologDataHandler<RatingPanel> {
 
 	private Map<String, Object> result;
-	
-	public PrologRatingHandler(PrologConnection con, String name, File outputFile, PrologGoal goal) {
-		super(con, name, outputFile, false, goal);
+
+	public PrologRatingHandler(PrologConnection con, String name, PrologGoal goal) {
+		super(con, name, false, goal);
 	}
 
 	@Override

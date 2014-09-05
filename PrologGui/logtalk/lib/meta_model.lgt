@@ -7,6 +7,8 @@
 :- public(relation_type/2).		% to be implemented by concrete metamodel
 :- public(fixed_atom/2).	% to be implemented by concrete metamodel
 :- public(relation_dummy/3).	% to be implemented by concrete metamodel
+:- public(bundle/2).	% to be implemented by concrete metamodel
+:- public(text_file/1).	% to be implemented by concrete metamodel
 :- public(argument_value/4).
 :- public(argument_value_term/4).
 :- public(get_term/2).

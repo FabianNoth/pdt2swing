@@ -1,16 +1,12 @@
 package pdt.gui.datapanels.handler;
 
-import java.io.File;
-
 import org.cs3.prolog.connector.common.QueryUtils;
 import org.cs3.prolog.connector.process.PrologProcess;
-import org.cs3.prolog.connector.process.PrologProcessException;
 
 import pdt.gui.PrologDataVisualizer;
 import pdt.gui.data.IdListener;
 import pdt.gui.data.PrologConnection;
 import pdt.gui.datapanels.DataPanel;
-import pdt.gui.utils.SimpleLogger;
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologGoal;
 
@@ -32,31 +28,32 @@ public abstract class PrologDataHandler<PanelType extends DataPanel> implements 
 	private PanelType panel;
 
 	private String name;
-	private String outputQuery;
+//	private String outputQuery;
 	private boolean isMainPredicate;
 	private String functor;
 	private PrologArgument[] args;
 	private String[] argNames;
 	private Object[] argNamesWithBoundId;
 	protected String currentId;
-	protected File outputFile;
+//	protected File outputFile;
 
 	public PrologDataHandler(String name) {
 		this.name = name;
 	}
 	
-	public PrologDataHandler(PrologConnection con, String name, File outputFile, boolean isMainPredicate, PrologGoal goal) {
+	public PrologDataHandler(PrologConnection con, String name, boolean isMainPredicate, PrologGoal goal) {
 		this.process = con.getProcess();
-		this.outputFile = outputFile;
+//		this.outputFile = outputFile;
 		this.name = name;
 		this.args = goal.getArgs();
 		this.argNames = goal.getArgNames();
 		this.functor = goal.getFunctor();
 		this.isMainPredicate = isMainPredicate;
 		
-		String prologFilename = QueryUtils.prologFileName(outputFile);
-		String arity = Integer.toString(args.length);
-		outputQuery = QueryUtils.bT(PERSIST_DATA, functor, arity, QueryUtils.quoteAtomIfNeeded(prologFilename));
+//		String prologFilename = QueryUtils.prologFileName(outputFile);
+//		String arity = Integer.toString(args.length);
+//		outputQuery = QueryUtils.bT(PERSIST_DATA, functor, arity, QueryUtils.quoteAtomIfNeeded(prologFilename));
+//		outputQuery = "::persist";
 		argNamesWithBoundId = new Object[argNames.length];
 		for (int i=0; i<args.length; i++) {
 			argNamesWithBoundId[i] = argNames[i];
@@ -106,15 +103,15 @@ public abstract class PrologDataHandler<PanelType extends DataPanel> implements 
 		this.visualizer = visualizer;
 	}
 	
-	@Override
-	public void persistFacts() {
-		SimpleLogger.debug("outputQuery: " + outputQuery );
-		try {
-			process.queryOnce(outputQuery);
-		} catch (PrologProcessException e) {
-			e.printStackTrace();
-		}
-	}
+//	@Override
+//	public void persistFacts() {
+//		SimpleLogger.debug("outputQuery: " + outputQuery );
+//		try {
+//			process.queryOnce(outputQuery);
+//		} catch (PrologProcessException e) {
+//			e.printStackTrace();
+//		}
+//	}
 	
 	public boolean isMainPredicate() {
 		return isMainPredicate;

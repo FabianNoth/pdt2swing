@@ -124,8 +124,8 @@ public class PrologTextFileHandler extends PrologDataHandler<TextFilePanel> {
 		return additionalActions;
 	}
 	
-	@Override
-	public void persistFacts() {}
+//	@Override
+//	public void persistFacts() {}
 
 
 	public TextPreviewPanel getPreview() {

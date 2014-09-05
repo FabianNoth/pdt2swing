@@ -1,6 +1,14 @@
 package pdt.prolog.elements;
 
+import java.util.List;
+
 import org.cs3.prolog.connector.common.QueryUtils;
+import org.cs3.prolog.connector.cterm.CAtom;
+import org.cs3.prolog.connector.cterm.CCompound;
+import org.cs3.prolog.connector.cterm.CInteger;
+import org.cs3.prolog.connector.cterm.CTerm;
+
+import pdt.gui.Queries;
 
 public class PrologGoal {
 
@@ -26,6 +34,56 @@ public class PrologGoal {
 		}
 	}
 	
+	public PrologGoal(String functor, List<CCompound> list, Queries queries) {
+		this.functor = functor;
+		this.args = new PrologArgument[list.size()];
+		argNames = new String[args.length];
+		for (int i=0; i<args.length; i++) {
+			
+			CCompound compound = list.get(i);
+			String name = compound.getArgument(0).getFunctorValue();
+			
+			CTerm typeArg = compound.getArgument(1);
+			
+			if (typeArg instanceof CAtom) {
+				String type = typeArg.getFunctorValue();
+				switch (type) {
+				case "id":
+					args[i] = PrologArgument.createId();
+					break;
+				case "atom":
+					args[i] = PrologArgument.createAtom(name);
+					break;
+				case "number":
+					args[i] = PrologArgument.createNumber(name);
+					break;
+				default:
+					args[i] = PrologArgument.createReference(name, type);
+					break;
+				}
+			} else if (typeArg instanceof CCompound) {
+				CCompound compType = (CCompound) typeArg;
+				switch (compType.getFunctorValue()) {
+				case "atom":
+					String[] values = queries.fixedAtomValues(compType.getArgument(0).getFunctorValue());
+					PrologArgument.createFixedAtom(name, values );
+					break;
+				case "number":
+					int limitMin = ((CInteger) compType.getArgument(0)).getIntValue();
+					int limitMax = ((CInteger) compType.getArgument(1)).getIntValue();
+					PrologArgument.createLimitedNumber(name, limitMin, limitMax);
+					break;
+				case "unsure_number":
+					int uLimitMin = ((CInteger) compType.getArgument(0)).getIntValue();
+					int uLimitMax = ((CInteger) compType.getArgument(1)).getIntValue();
+					PrologArgument.createLimitedNumber(name, uLimitMin, uLimitMax, true);
+					break;
+				}
+			}
+			argNames[i] = name;
+		}
+	}
+
 	public String getFunctor() {
 		return functor;
 	}

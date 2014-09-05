@@ -164,7 +164,7 @@ public class PrologGui implements PrologDataVisualizer {
         		if (!abort()) {
         			// state doesn't need to be saves
         			SimpleLogger.debug("persisting facts");
-        			bundleProvider.persistFacts();
+        			bundleProvider.persistFacts(con);
         			SimpleLogger.debug("done persisting facts\nshutting down");
         			System.exit(0);
         		}
@@ -189,7 +189,7 @@ public class PrologGui implements PrologDataVisualizer {
         mnPersist.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				bundleProvider.persistFacts();
+				bundleProvider.persistFacts(con);
 			}
 		});
         mnData.add(mnPersist);

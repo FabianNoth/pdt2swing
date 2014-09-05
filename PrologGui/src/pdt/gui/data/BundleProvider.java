@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 
 import org.apache.commons.io.FileUtils;
+import org.cs3.prolog.connector.process.PrologProcessException;
 import org.jasypt.util.password.StrongPasswordEncryptor;
 import org.jasypt.util.text.BasicTextEncryptor;
 
@@ -45,10 +46,15 @@ public abstract class BundleProvider {
 		listeners.clear();
 	}
 	
-	public void persistFacts() {
-		for(IdListener l : listeners) {
-			l.persistFacts();
+	public void persistFacts(PrologConnection con) {
+		try {
+			con.getProcess().queryOnce("db_controller::persist");
+		} catch (PrologProcessException e) {
+			e.printStackTrace();
 		}
+//		for(IdListener l : listeners) {
+//			l.persistFacts();
+//		}
 	}
 	
 	public void initTextEncryptor() throws IOException {
