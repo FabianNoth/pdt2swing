@@ -6,42 +6,51 @@
 %%%%%%%%%
 
 fact_type(actor, [
-	(id, id, [main]),
-	(name, atom, [unique])
+	arg(id, id, [main]),
+	arg(name, atom, [unique])
 ]).
 
 fact_type(movie, [
-	(id, id, [main]),
-	(name, atom, [unique]),
-	(genre, atom(genre), [])
+	arg(id, id, [main]),
+	arg(name, atom, [unique]),
+	arg(genre, atom(genre), [])
 ]).
 
 fact_type(role, [
-	(id, id, []),
-	(actor, actor, []),
-	(movie, movie, []),
-	(rolename, atom, [])
+	arg(id, id, [main]),
+	arg(actor, actor, []),
+	arg(movie, movie, []),
+	arg(rolename, atom, [])
 ]).
 
 fact_type(tag, [
-	(id, id, []),
-	(name, atom, [])
+	arg(id, id, [main]),
+	arg(name, atom, [])
 ]).
+
+%%%%%%%%%
+% table %
+%%%%%%%%%
+%table_display_type(actor, full).
+%table_display_type(movie, [id, name]).
+%table_display_type(role, full).
+%table_display_type(tag, full).
+
 
 %%%%%%%%%%%%%%
 %% relations %
 %%%%%%%%%%%%%%
 
 relation_type(movie_rating, [
-	(movie, movie, [unique]),
-	(rating, unsure_number(0, 10), []),
-	(funny, unsure_number(0, 10), []),
-	(action, unsure_number(0, 10), [])
+	arg(movie, movie, [unique]),
+	arg(rating, unsure_number(0, 10), []),
+	arg(funny, unsure_number(0, 10), []),
+	arg(action, unsure_number(0, 10), [])
 ]).
 
 relation_type(tagged_movie, [
-	(movie, movie, []),
-	(tag, tag, [])
+	arg(movie, movie, []),
+	arg(tag, tag, [])
 ]).
 
 
@@ -55,7 +64,7 @@ fixed_atom(genre, ['', 'Action', 'Drama', 'Fantasy', 'Horror']).
 %% relation dummies %
 %%%%%%%%%%%%%%%%%%%%%
 
-relation_dummy(movie, Id, movie_rating(Id, 0, 0)).
+relation_dummy(movie, Id, movie_rating(Id, u(0), u(0), u(0))).
 
 % bundles %
 bundle(actor, []).
