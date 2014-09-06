@@ -87,8 +87,30 @@ public class Queries {
 			e.printStackTrace();
 		}
 		return null;
-		
 	}
+	
+	public boolean isRatingRelation(String name) {
+		return isSpecificRelationType(name, "relation_rating_type");
+	}
+	
+	public boolean isManyRelation(String name) {
+		return isSpecificRelationType(name, "relation_many_type");
+	}
+	
+	public boolean isSingleRelation(String name) {
+		return isSpecificRelationType(name, "relation_single_type");
+	}
+	
+	public boolean isSpecificRelationType(String name, String type) {
+		String query = QueryUtils.bT(modelName + "::" + type, name, "_");
+		try {
+			return process.queryOnce(query) != null;
+		} catch (PrologProcessException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
 
 
 	public boolean hasTextFile(String factName) {

@@ -109,7 +109,7 @@ public class FactPanel extends JPanel implements DataPanel {
 				((JTextField) component).setColumns(10);
 			}
 			
-			if (arg.getType() == PrologArgument.ID) {
+			if (arg.getType() == PrologArgument.ID || arg.getName().equalsIgnoreCase("id")) {
 				component.setEnabled(false);
 			}
 			

@@ -7,7 +7,9 @@
 :- public(element_table_arg/2).
 :- public(auto_completion/2).
 :- public(fact_type/2).		% to be implemented by concrete metamodel
-:- public(relation_type/2).		% to be implemented by concrete metamodel
+:- public(relation_rating_type/2).	% to be implemented by concrete metamodel
+:- public(relation_many_type/2).	% to be implemented by concrete metamodel
+:- public(relation_single_type/2).	% to be implemented by concrete metamodel
 :- public(fixed_atom/2).	% to be implemented by concrete metamodel
 :- public(relation_dummy/3).	% to be implemented by concrete metamodel
 :- public(bundle/2).	% to be implemented by concrete metamodel
@@ -18,6 +20,7 @@
 :- public(get_term/3).
 :- public(get_term_for_main/3).
 :- public(check/0).
+:- public(relation_type/2).	
 
 :- public(relations/4).
 
@@ -27,6 +30,9 @@
 
 :- discontiguous(fact_type/2).
 :- discontiguous(relation_type/2).
+:- discontiguous(relation_rating_type/2).
+:- discontiguous(relation_many_type/2).
+:- discontiguous(relation_single_type/2).
 :- discontiguous(fixed_atom/2).
 
 %% fact_type(Functor, Args)
@@ -45,6 +51,16 @@ element(Name, Args) :-
 	
 element(Name, Args) :-
 	::relation_type(Name, Args).
+
+relation_type(Name, Args) :-
+	::relation_rating_type(Name, Args).
+	
+relation_type(Name, Args) :-
+	::relation_many_type(Name, Args).
+	
+relation_type(Name, Args) :-
+	::relation_single_type(Name, Args).
+	
 	
 element_simple_arg(Name, SimpleArg) :-
 	::element(Name, Args),

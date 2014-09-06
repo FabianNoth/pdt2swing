@@ -99,7 +99,6 @@ public class PrologRelationHandler extends PrologDataHandler<RelationPanel> {
 				e.printStackTrace();
 			}
 			
-
 			if (updateAutoCompletionFlag) {
 				updateAutoCompletion();
 			}

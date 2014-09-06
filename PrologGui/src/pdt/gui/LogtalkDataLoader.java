@@ -71,13 +71,14 @@ public class LogtalkDataLoader {
 				List<CCompound> relationArgList = queries.getArgs(relation);
 				// create goal for relation
 				PrologGoal relationGoal = new PrologGoal(relation, relationArgList, queries);
-				if (relation.endsWith("_rating")) {
-					// if relation ends with _rating, use the PrologRatingHandler
+				
+				if (queries.isRatingRelation(relation)) {
 					handlers.add(new PrologRatingHandler(connection, "Rating", relationGoal));
-				} else {
-					// otherwise use the PrologRelationHandler
-					handlers.add(new PrologRelationHandler(connection, relation, relationGoal, true));
-				}
+				} else if (queries.isManyRelation(relation)) {
+					handlers.add(new PrologRelationHandler(connection, relation, relationGoal));
+				}  else if (queries.isSingleRelation(relation)) {
+					handlers.add(new PrologFactHandler(connection, relation, false, relationGoal, null));
+				} 
 			}
 			
 			PrologDataHandler<?>[] handlersArray = handlers.toArray(new PrologDataHandler<?>[handlers.size()]);
