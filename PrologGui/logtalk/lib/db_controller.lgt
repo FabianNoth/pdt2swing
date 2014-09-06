@@ -1,6 +1,7 @@
 :- object(db_controller).
 
 :- public(show/2).
+:- public(auto_completion/2).
 
 :- public(add/2).
 :- public(delete/2).
@@ -157,7 +158,7 @@ check_arguments_impl(Functor, Context, [ArgType|ArgTypes], [Arg|Args], Result) :
 	;	Result = DummyResult
 	).
 	
-check_argument(Functor, Context, (_, Type, _), Arg, Result) :-
+check_argument(Functor, Context, arg(_, Type, _), Arg, Result) :-
 	\+(check_argument_type(Context, Type, Arg)),
 	term_to_atom(Type, TypeAtom),
 	term_to_atom(Arg, ArgAtom),
@@ -165,7 +166,7 @@ check_argument(Functor, Context, (_, Type, _), Arg, Result) :-
 	Result = error(Functor, ErrorMsg),
 	!.
 	
-check_argument(Functor, Context, (Name, _, Keywords), Arg, Result) :-
+check_argument(Functor, Context, arg(Name, _, Keywords), Arg, Result) :-
 	lists:member(Key, Keywords),
 	current_model(Model),
 	\+(check_argument_keyword(Model, Functor, Context, Key, Name, Arg)),
@@ -194,9 +195,11 @@ check_argument_type(_, number(From, To), Arg) :-
 
 check_argument_type(_, unsure_number(From, To), Arg) :-
 	!,
-	number(Arg),
-	Arg >= From,
-	Arg =< To.
+	Arg =.. [Functor, NumberArg],
+	(Functor == s ; Functor == u),
+	number(NumberArg),
+	NumberArg >= From,
+	NumberArg =< To.
 	
 check_argument_type(_, atom(Type), Arg) :-
 	!,
@@ -255,5 +258,8 @@ unbind_term(Term, UnboundTerm) :-
 	% create new Term
 	UnboundTerm =.. [Functor, Id | EmptyTail].
 
-	
+auto_completion(Functor, Results) :-
+	current_model(Model),
+	Model::auto_completion(Functor, Results).
+
 :- end_object.

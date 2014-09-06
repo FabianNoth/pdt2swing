@@ -53,9 +53,11 @@ public class LogtalkDataLoader {
 
 			// get args for bundle main fact
 			List<CCompound> mainArgs = queries.getArgs(factName);
+			List<CCompound> tableArgs = queries.getTableArgs(factName);
 			
 			// create main goal and prolog handler
 			PrologGoal mainGoal = new PrologGoal(factName, mainArgs, queries);
+			PrologGoal tableGoal = new PrologGoal(factName, tableArgs, queries);
 			PrologFactHandler factHandler = new PrologFactHandler(connection, "Data", true, mainGoal, queries.getDataDirectory());
 			handlers.add(factHandler);
 			if (queries.hasTextFile(factName)) {
@@ -80,7 +82,7 @@ public class LogtalkDataLoader {
 			
 			PrologDataHandler<?>[] handlersArray = handlers.toArray(new PrologDataHandler<?>[handlers.size()]);
 
-			PrologTableData tableData = new PrologTableData(connection, mainGoal);
+			PrologTableData tableData = new PrologTableData(connection, tableGoal);
 			bundleList.add(new PrologGuiBundle(factName, tableData, handlersArray));
 		}
 		

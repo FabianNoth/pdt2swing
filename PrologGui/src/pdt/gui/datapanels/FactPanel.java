@@ -79,6 +79,9 @@ public class FactPanel extends JPanel implements DataPanel {
 			add(label, gbc_label);
 			
 			PrologArgument arg = prolog.getArgumentWithName(s);
+			if (arg == null) {
+				System.out.println("null?");
+			}
 			
 			
 			JComponent component = null;

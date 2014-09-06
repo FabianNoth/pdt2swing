@@ -9,6 +9,7 @@ import org.cs3.prolog.connector.cterm.CInteger;
 import org.cs3.prolog.connector.cterm.CTerm;
 
 import pdt.gui.Queries;
+import pdt.gui.utils.SimpleLogger;
 
 public class PrologGoal {
 
@@ -17,6 +18,7 @@ public class PrologGoal {
 	protected String[] argNames;
 
 	public PrologGoal(String functor, PrologArgument... args) {
+		SimpleLogger.debug("Called PrologGoal constructor (String, PrologArgument...)");
 		this.functor = functor;
 		this.args = args;
 		argNames = new String[args.length];
@@ -26,6 +28,7 @@ public class PrologGoal {
 	}
 	
 	public PrologGoal(String functor, String... args) {
+		SimpleLogger.debug("Called PrologGoal constructor (String, String...)");
 		this.functor = functor;
 		this.argNames = args;
 		this.args = new PrologArgument[args.length];
@@ -35,13 +38,14 @@ public class PrologGoal {
 	}
 	
 	public PrologGoal(String functor, List<CCompound> list, Queries queries) {
+		SimpleLogger.debug("Called PrologGoal constructor (String, List<CCompound>, Queries)");
 		this.functor = functor;
 		this.args = new PrologArgument[list.size()];
 		argNames = new String[args.length];
 		for (int i=0; i<args.length; i++) {
 			
 			CCompound compound = list.get(i);
-			String name = compound.getArgument(0).getFunctorValue();
+			String name = firstCharUp(compound.getArgument(0).getFunctorValue());
 			
 			CTerm typeArg = compound.getArgument(1);
 			
@@ -66,22 +70,32 @@ public class PrologGoal {
 				switch (compType.getFunctorValue()) {
 				case "atom":
 					String[] values = queries.fixedAtomValues(compType.getArgument(0).getFunctorValue());
-					PrologArgument.createFixedAtom(name, values );
+					args[i] = PrologArgument.createFixedAtom(name, values );
 					break;
 				case "number":
 					int limitMin = ((CInteger) compType.getArgument(0)).getIntValue();
 					int limitMax = ((CInteger) compType.getArgument(1)).getIntValue();
-					PrologArgument.createLimitedNumber(name, limitMin, limitMax);
+					args[i] = PrologArgument.createLimitedNumber(name, limitMin, limitMax);
 					break;
 				case "unsure_number":
 					int uLimitMin = ((CInteger) compType.getArgument(0)).getIntValue();
 					int uLimitMax = ((CInteger) compType.getArgument(1)).getIntValue();
-					PrologArgument.createLimitedNumber(name, uLimitMin, uLimitMax, true);
+					args[i] = PrologArgument.createLimitedNumber(name, uLimitMin, uLimitMax, true);
 					break;
 				}
 			}
-			argNames[i] = name;
+			if (name.equalsIgnoreCase("id")) {
+				argNames[i] = "ID";
+			} else {
+				argNames[i] = name;
+			}
 		}
+	}
+	
+
+	private String firstCharUp(String s) {
+		String result = Character.toUpperCase(s.charAt(0)) + s.substring(1);
+		return result;
 	}
 
 	public String getFunctor() {
@@ -97,7 +111,8 @@ public class PrologGoal {
 	}
 
 	public String getQuery() {
-		return QueryUtils.bT(functor, (Object[]) argNames);
+		String term = QueryUtils.bT(functor, (Object[]) argNames);
+		return QueryUtils.bT("db_controller::show", "_", term);
 	}
 	
 }

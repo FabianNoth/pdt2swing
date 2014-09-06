@@ -3,6 +3,9 @@
 :- object(meta_model).
 
 :- public(element/2).
+:- public(element_simple_arg/2).
+:- public(element_table_arg/2).
+:- public(auto_completion/2).
 :- public(fact_type/2).		% to be implemented by concrete metamodel
 :- public(relation_type/2).		% to be implemented by concrete metamodel
 :- public(fixed_atom/2).	% to be implemented by concrete metamodel
@@ -43,11 +46,24 @@ element(Name, Args) :-
 element(Name, Args) :-
 	::relation_type(Name, Args).
 	
+element_simple_arg(Name, SimpleArg) :-
+	::element(Name, Args),
+	lists:member(arg(ArgName, ArgType, _), Args),
+	SimpleArg = arg(ArgName, ArgType).
+	
+element_table_arg(Name, TableArg) :-
+	::element(Name, Args),
+	lists:member(arg(ArgName, ArgType, Keywords), Args),
+	\+(lists:member(no_table, Keywords)),
+	TableArg = arg(ArgName, ArgType).
+	
+	
 relations(Type, Id, Relation, Term) :-
 	::fact_type(Type, _),
 	::relation_type(Relation, Args),
 	lists:member((Name,Type,_), Args),
 	argument_value_term(Relation, Name, Id, Term).
+	
 	
 %% check
 %
@@ -71,7 +87,7 @@ check_relation_dummies :-
 	check_relation_dummy_args(Params, Constraints).
 	
 check_relation_dummy_args([], []) :- !.
-check_relation_dummy_args([Param|Params], [(_, Type, _)|Constraints]) :-
+check_relation_dummy_args([Param|Params], [arg(_, Type, _)|Constraints]) :-
 	(Param == id
 	-> true
 	; db_controller::check_argument_type(add, Type, Param)),
@@ -83,20 +99,24 @@ check_args(Args) :-
 			check_arg(Arg)
 	).
 			
-check_arg((_Name, Type, _Keys)) :-
+check_arg(arg(_Name, Type, _Keys)) :-
 	lists:member(Type, [id, atom, number]), !.
 	
-check_arg((_Name, atom(Type), _Keys)) :-
+check_arg(arg(_Name, atom(Type), _Keys)) :-
 	::fixed_atom(Type,_), !.
 	
-check_arg((_Name, number(From, To), _Keys)) :-
+check_arg(arg(_Name, number(From, To), _Keys)) :-
+	number(From),
+	number(To), !.
+	
+check_arg(arg(_Name, unsure_number(From, To), _Keys)) :-
 	number(From),
 	number(To), !.
 
-check_arg((_Name, Type, _Keys)) :-
+check_arg(arg(_Name, Type, _Keys)) :-
 	::fact_type(Type, _), !.
 	
-check_arg((_Name, Type, _Keys)) :-
+check_arg(arg(_Name, Type, _Keys)) :-
 	format('Error: ~w is no valid Type~n', [Type]).
 	
 
@@ -132,7 +152,7 @@ get_term_for_main(Functor, Main, Term) :-
 	Term =.. [Functor | Tail].
 
 main_element_index([], _, 1) :- !.
-main_element_index([(_, _, Keys)|_], Count, Index) :-
+main_element_index([arg(_, _, Keys)|_], Count, Index) :-
 	lists:member(main, Keys),
 	!,
 	Index = Count.
@@ -148,7 +168,7 @@ main_element_index([_|Tail], Count, Index) :-
 % gets the value of argument with name Name
 argument_value(Functor, Id, Name, Value) :-
 	::element(Functor, Args),
-	lists:nth0(N, Args, (Name,_,_)),
+	lists:nth0(N, Args, arg(Name,_,_)),
 	::get_term(Functor, Term),
 	Term =.. [Functor | TermList],
 	lists:nth0(0, TermList, Id),
@@ -158,10 +178,21 @@ argument_value(Functor, Id, Name, Value) :-
 	
 argument_value_term(Functor, Name, Value, Term) :-
 	::element(Functor, Args),
-	lists:nth0(N, Args, (Name,_,_)),
+	lists:nth0(N, Args, arg(Name,_,_)),
 	::get_term(Functor, Term),
 	Term =.. [Functor | TermList],
 	lists:nth0(N, TermList, Value).
 	
+
+auto_completion(Functor, Results) :-
+	% default for auto_completion: use element with name: "name"
+	::element(Functor, _),
+	findall(Result, auto_completion_impl(Functor, Result), ResultList),
+	lists:sort(ResultList, Results).
+	
+auto_completion_impl(Functor, Result) :-
+%	::element(Functor, Args),
+	argument_value(Functor, _Id, name, Result),
+	Result \== ''.
 	
 :- end_object.

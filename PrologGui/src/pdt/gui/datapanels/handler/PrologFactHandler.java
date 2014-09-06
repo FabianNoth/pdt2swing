@@ -26,6 +26,7 @@ import pdt.gui.utils.PrologUtils;
 import pdt.gui.utils.SimpleLogger;
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologGoal;
+import pdt.prolog.elements.PrologTransactionResult;
 
 public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 
@@ -99,20 +100,19 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		if (currentId == null) {
 			return false;
 		}
-		
-		// check if name already exists (quick & dirty)
-		// TODO: improve (move to prolog side)
-		if (nameAlreadyExists(textFields, false)) {
-			return false;
-		}
-		
+
 		// get goal for assertion, use current id
 		String goal = getGoalWithData(textFields, currentId);
 		
-		try {
-			process.queryOnce(QueryUtils.bT(UPDATE_FACT, goal));
-		} catch (PrologProcessException e) {
-			e.printStackTrace();
+		PrologTransactionResult result = executeTransaction(UPDATE_FACT, goal);
+
+		if (result == null) {
+			// query failed
+			return false;
+		}
+		
+		if (result.isError()) {
+			JOptionPane.showMessageDialog(getEditPanel(), result.getDialogMessage(),  "Fehler beim Update", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		
@@ -121,72 +121,46 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		return true;
 	}
 
-	private boolean nameAlreadyExists(HashMap<String, JComponent> textFields, boolean always) {
-		JComponent comp = textFields.get("Name");
-		if (comp != null && comp instanceof JTextField) {
-//			String checkRename = checkRename((JTextField) comp);
-			if (always || checkRename((JTextField) comp) != null) {
-				try {
-					String newName = ((JTextField) comp).getText();
-					Map<String, Object> checkRes = process.queryOnce(QueryUtils.bT("name_is_free", PrologUtils.quoteIfNecessary(newName)));
-					if (checkRes == null) {
-						// query failed --> name is not free
-						JOptionPane.showMessageDialog(getEditPanel(), "Name \"" + newName + "\" existiert bereits.",  "Fehler", JOptionPane.ERROR_MESSAGE);
-						return true;
-					}
-				} catch (PrologProcessException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return false;
-	}
-
-	private String checkRename(JTextField tf) {
-		String newName = tf.getText();
-		String oldName = getElementByName("Name");
-		if (newName.equals(oldName)) {
-			return null;
-		} else {
-			return newName;
-		}
-	}
-
 	public boolean saveAsNew(HashMap<String, JComponent> textFields) {
-		// check if name already exists (quick & dirty)
-		// TODO: improve (move to prolog side)
-		if (nameAlreadyExists(textFields, true)) {
-			return false;
-		}
-
 		// get goal for assertion, use empty ID
-		String goal = getGoalWithData(textFields, "_");
+		String goal = getGoalWithData(textFields, "ID");
 		String id = null;
-		try {
-			Map<String, Object> result = process.queryOnce(QueryUtils.bT(ADD_FACT, goal, "ID"));
-			if (result.get("ID") != null) {
-				id = result.get("ID").toString();
-			}
-		} catch (PrologProcessException e) {
-			e.printStackTrace();
+		
+		PrologTransactionResult result = executeTransaction(ADD_FACT, goal);
+		
+		if (result == null) {
+			// query failed
 			return false;
 		}
 		
+		if (result.isSuccess()) {
+			id = result.getId();
+		} else if (result.isError()) {
+			JOptionPane.showMessageDialog(getEditPanel(), result.getDialogMessage(),  "Fehler beim Hinzufügen", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+
 		updateVisualizer(id);
 		updateRelationHandlers();
 		return true;
 	}
 	
-	public void delete() {
+
+	public boolean delete() {
 		if (currentId == null) {
-			return;
+			return false;
 		}
 		
 		String goal = getSimpleGoal();
-
-		try {
-			process.queryOnce(QueryUtils.bT(REMOVE_FACT, goal));
-			
+		
+		PrologTransactionResult result = executeTransaction(REMOVE_FACT, goal);
+		
+		if (result == null) {
+			// query failed
+			return false;
+		}
+		
+		if (result.isSuccess()) {
 			if (dataDirectory != null && dataDirectory.isDirectory()) {
 				// if there is a text file, remove it also
 				File dataDir = new File(dataDirectory, getFunctor());
@@ -206,12 +180,17 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 					}
 				}
 			}
-			
-		} catch (PrologProcessException e) {
-			e.printStackTrace();
+		} else if (result.isError()) {
+			// if it is an error: cancel
+			JOptionPane.showMessageDialog(getEditPanel(), result.getDialogMessage(),  "Fehler beim Löschen", JOptionPane.ERROR_MESSAGE);
+			return false;
+		} else if (result.isWarning()) {
+			// if it is a warning: go on
+			JOptionPane.showMessageDialog(getEditPanel(), result.getDialogMessage(),  "Problem beim Löschen", JOptionPane.WARNING_MESSAGE);
 		}
 		
 		updateVisualizer();
+		return true;
 	}
 
 	private void deleteImage(File imgFile) {
@@ -219,8 +198,6 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 			imgFile.delete();
 		}
 	}
-	
-
 	
 	private String getGoalWithData(HashMap<String, JComponent> textFields, String id) {
 		String[] argNames = getArgNames();
@@ -293,7 +270,7 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 
 	public PrologArgument getArgumentWithName(String name) {
 		for (int i=0; i<getArgs().length; i++) {
-			if (getArgs()[i].getName().equals(name)) {
+			if (getArgs()[i].getName().equalsIgnoreCase(name)) {
 				return getArgs()[i];
 			}
 		}

@@ -2,6 +2,8 @@ package pdt.gui.datapanels.handler;
 
 import java.util.Map;
 
+import javax.swing.JOptionPane;
+
 import org.cs3.prolog.connector.common.QueryUtils;
 import org.cs3.prolog.connector.process.PrologProcessException;
 
@@ -10,6 +12,7 @@ import pdt.gui.datapanels.RatingPanel;
 import pdt.gui.datapanels.RatingTableModel;
 import pdt.gui.utils.SimpleLogger;
 import pdt.prolog.elements.PrologGoal;
+import pdt.prolog.elements.PrologTransactionResult;
 
 public class PrologRatingHandler extends PrologDataHandler<RatingPanel> {
 
@@ -33,25 +36,28 @@ public class PrologRatingHandler extends PrologDataHandler<RatingPanel> {
 		}
 	}
 	
-	public void updateFromPanel(RatingTableModel model) {
+	public boolean updateFromPanel(RatingTableModel model) {
 		if (currentId == null) {
-			return;
+			return false;
 		}
 		
-		// build assert query
-//		String retractQuery = getRetractQuery();
 		// get goal for assertion, use current id
 		String goal = getGoalWithData(model, currentId);
+
+		PrologTransactionResult result = executeTransaction(UPDATE_FACT, goal);
 		
-		try {
-			process.queryOnce(QueryUtils.bT(UPDATE_FACT, goal));
-//			process.queryOnce("retractall(" + retractQuery + ")");
-//			process.queryOnce("assert(" + assertQuery + ")");
-		} catch (PrologProcessException e) {
-			e.printStackTrace();
+		if (result == null) {
+			// query failed
+			return false;
+		}
+		
+		if (result.isError()) {
+			JOptionPane.showMessageDialog(getEditPanel(), result.getDialogMessage(),  "Fehler beim Update", JOptionPane.ERROR_MESSAGE);
+			return false;
 		}
 		
 		updateVisualizer();
+		return true;
 	}
 	
 	private String getGoalWithData(RatingTableModel model, String id) {

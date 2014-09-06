@@ -90,20 +90,6 @@ public class Queries {
 		
 	}
 
-	public List<CCompound> getArgs(String factName) {
-		try {
-			String query = QueryUtils.bT(modelName + "::element", factName, ARGS);
-			List<?> list = (List<?>) process.queryOnce(PrologProcess.CTERMS, query).get(ARGS);
-			List<CCompound> compoundList = new ArrayList<CCompound>();
-			for (int i=0; i<list.size(); i++) {
-				compoundList.add((CCompound) list.get(i));
-			}
-			return compoundList;
-		} catch (PrologProcessException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 
 	public boolean hasTextFile(String factName) {
 		String query = QueryUtils.bT(modelName + "::text_file", factName);
@@ -125,6 +111,32 @@ public class Queries {
 			e.printStackTrace();
 		}
 
+		return null;
+	}
+
+	public List<CCompound> getArgs(String factName) {
+		return getArgs(factName, "element_simple_arg");
+	}
+
+	public List<CCompound> getTableArgs(String factName) {
+		return getArgs(factName, "element_table_arg");
+	}
+	
+	public List<CCompound> getArgs(String factName, String predicateName) {
+		try {
+			// we need this workaround since CTerms can't handle lists
+			String query = QueryUtils.bT(modelName + "::" + predicateName, factName, "Arg");
+			
+			List<Map<String, Object>> results = process.queryAll(PrologProcess.CTERMS, query);
+			List<CCompound> compoundList = new ArrayList<CCompound>(results.size());
+			
+			for (Map<String, Object> result : results) {
+				compoundList.add((CCompound) result.get("Arg"));
+			}
+			return compoundList;
+		} catch (PrologProcessException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 }

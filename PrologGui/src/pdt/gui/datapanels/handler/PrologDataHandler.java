@@ -1,7 +1,10 @@
 package pdt.gui.datapanels.handler;
 
+import java.util.Map;
+
 import org.cs3.prolog.connector.common.QueryUtils;
 import org.cs3.prolog.connector.process.PrologProcess;
+import org.cs3.prolog.connector.process.PrologProcessException;
 
 import pdt.gui.PrologDataVisualizer;
 import pdt.gui.data.IdListener;
@@ -9,19 +12,19 @@ import pdt.gui.data.PrologConnection;
 import pdt.gui.datapanels.DataPanel;
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologGoal;
+import pdt.prolog.elements.PrologTransactionResult;
 
 public abstract class PrologDataHandler<PanelType extends DataPanel> implements IdListener {
 	
-	protected static final String ADD_FACT = "add_fact";
+	protected static final String ADD_FACT = "db_controller::add";
 	protected static final String ADD_RELATION = "add_relation";
-	protected static final String REMOVE_FACT = "remove_fact";
+	protected static final String REMOVE_FACT = "db_controller::delete";
 	protected static final String REMOVE_RELATION = "remove_relation";
-	protected static final String UPDATE_FACT = "update_fact";
-	// DISCUSSION: there is no updating for relations
-	protected static final String PERSIST_DATA = "persist_data";
+	protected static final String UPDATE_FACT = "db_controller::update";
 	// CHECK_FOR_VALUE = check if value might be added as relation
 	protected static final String CHECK_FOR_VALUE = "check_for_existing_value";
-	protected static final String AUTO_COMPLETION = "auto_completion";
+	protected static final String AUTO_COMPLETION = "db_controller::auto_completion";
+	protected static final String RESULT = "Result";
 
 	protected PrologProcess process;
 	private PrologDataVisualizer visualizer;
@@ -70,7 +73,8 @@ public abstract class PrologDataHandler<PanelType extends DataPanel> implements 
 	
 	public String getQuery() {
 		argNamesWithBoundId[0] = currentId;
-		return QueryUtils.buildTerm(functor, argNamesWithBoundId);
+		String term = QueryUtils.buildTerm(functor, argNamesWithBoundId);
+		return QueryUtils.bT("db_controller::show", "_", term);
 	}
 	
 	public String getFunctor() {
@@ -152,5 +156,16 @@ public abstract class PrologDataHandler<PanelType extends DataPanel> implements 
 	
 	public PrologProcess getPrologProcess() {
 		return process;
+	}
+	
+	protected PrologTransactionResult executeTransaction(String command, String goal) {
+		PrologTransactionResult transactionResult = null;
+		try {
+			Map<String, Object> result = process.queryOnce(PrologProcess.CTERMS, QueryUtils.bT(command, goal, RESULT));
+			transactionResult = new PrologTransactionResult(result.get(RESULT));
+		} catch (PrologProcessException e) {
+			e.printStackTrace();
+		}
+		return transactionResult;
 	}
 }

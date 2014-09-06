@@ -9,6 +9,7 @@ import javax.swing.table.AbstractTableModel;
 import org.cs3.prolog.connector.process.PrologProcess;
 import org.cs3.prolog.connector.process.PrologProcessException;
 
+import pdt.gui.utils.SimpleLogger;
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologGoal;
 
@@ -22,9 +23,6 @@ public class PrologTableData extends AbstractTableModel {
 
 	private List<Map<String, Object>> data;
 	private PrologProcess process;
-
-	private String query;
-
 
 	public PrologTableData(PrologConnection con, PrologGoal goal) {
 		this.goal = goal;
@@ -48,17 +46,15 @@ public class PrologTableData extends AbstractTableModel {
 		}
 	}
 	
-	public String getQuery() {
-		return query;
-	}
-	
 	public PrologProcess getProcess() {
 		return process;
 	}
 
 	public void updateResultData() {
 		try {
+			SimpleLogger.debug("update result data with query: " + goal.getQuery());
 			data = process.queryAll(goal.getQuery());
+			System.out.println(data);
 		} catch (PrologProcessException e) {
 			e.printStackTrace();
 		}
@@ -117,7 +113,7 @@ public class PrologTableData extends AbstractTableModel {
 	public boolean equals(Object obj) {
 		if (obj instanceof PrologTableData) {
 			PrologTableData compData = (PrologTableData) obj;
-			return (getQuery().equals(compData.getQuery()));
+			return (getGoal().equals(compData.getGoal()));
 		}
 		return false;
 	}

@@ -14,8 +14,8 @@ create_data_store(Functor/Arity) :-
 	atom_concat(Dir, FileName, FullFilePath),
 	create_file_if_necessary(FullFilePath),
 	use_module(FullFilePath, []),	% <-- works
-	writeln(FullFilePath),
 	functor(MyTerm, Functor, Arity),
+%	db_controller::get_table_predicate(Functor, TableHead, TableBody),
 	create_object(	StoreName,
 					[extends(db_store)],
 					[public(Functor/Arity)],% use_module(FullFilePath, [])],		% <-- doesn't work
@@ -26,6 +26,7 @@ create_data_store(Functor/Arity) :-
 					module_name(Functor),
 %					((MyTerm :- Functor:MyTerm))
 					((MyTerm :- catch(Functor:MyTerm, _, fail)))
+%					((TableHead :- TableBody))
 %					((current_id(Id) :- Functor:current_id(Id)))
 %					((assertf(Term) :- Functor:assert(Term))),
 %					((retractallf(Term) :- Functor:retractall(Term))),
