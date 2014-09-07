@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.cs3.prolog.connector.Connector;
-import org.cs3.prolog.connector.common.QueryUtils;
 import org.cs3.prolog.connector.process.PrologProcess;
 import org.cs3.prolog.connector.process.PrologProcessException;
 

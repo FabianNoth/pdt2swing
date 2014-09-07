@@ -8,6 +8,7 @@
 :- public(update/2).
 
 :- public(persist/0).
+:- public(translate/4).
 
 :- public(current_model/1).
 :- dynamic(current_model/1).
@@ -32,11 +33,34 @@ show(Functor, Term) :-
 	Model::get_term(Functor, Term),
 	get_store_for_term(Term, Store),
 	Store::Term.
-
+	
 show(Functor, Term) :-
 	var(Functor),
 	Term =.. [Functor|_],
 	show(Functor, Term).	
+	
+translate(Functor, Key, Value, Translated) :-
+	current_model(Model),
+	Model::element(Functor, Args),
+	lists:member(arg(Key, Type, _), Args),
+	Model::argument_value(Type, Value, name, Translated).
+
+%	translate_term(Term, TranslatedTerm).
+%
+%translate_term(Term, Translated) :-
+%	Term =.. [Functor|Args],
+%	translate_args(Functor, Args, TranslatedArgs),
+%	Translated =.. [Functor|TranslatedArgs].
+%	
+%translate_args([], []) :- !.
+%translate_args([Arg|Tail], [Translated|TranslatedTail]) :-
+%	 
+%	translate_args(Tail, TranslatedTail).
+
+	
+
+	
+
 	
 persist :-
 	current_model(Model),

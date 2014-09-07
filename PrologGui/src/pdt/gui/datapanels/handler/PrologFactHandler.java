@@ -216,6 +216,7 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 				String text = null;
 				if (tf instanceof JTextField) {
 					text = ((JTextField) tf).getText();
+					text = translate(argNames[i], text, true);
 				} else if (tf instanceof JComboBox<?>) {
 					text = ((JComboBox<?>) tf).getSelectedItem().toString();
 				} else if (tf instanceof JSpinner) {
@@ -301,6 +302,31 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		for (PrologRelationHandler h : relationHandler) {
 			h.updateAutoCompletion();
 		}
+	}
+
+	public String translate(String key, String value) {
+		return translate(key, value, false);
+	}
+	
+	public String translate(String key, String value, boolean reverse) {
+		String translated = value;
+		String query = QueryUtils.bT("db_controller::translate", getFunctor(), key.toLowerCase(), PrologUtils.quoteIfNecessary(value), "Translated");
+		if (reverse) {
+			query = QueryUtils.bT("db_controller::translate", getFunctor(), key.toLowerCase(), "Translated", PrologUtils.quoteIfNecessary(value));
+		} else {
+			query = QueryUtils.bT("db_controller::translate", getFunctor(), key.toLowerCase(), PrologUtils.quoteIfNecessary(value), "Translated");
+		}
+		
+		SimpleLogger.debug("translate query: " + query);
+		try {
+			Map<String, Object> result = process.queryOnce(query);
+			if (result != null && result.get("Translated") != null) {
+				translated = result.get("Translated").toString();
+			}
+		} catch (PrologProcessException e) {
+			e.printStackTrace();
+		}
+		return translated;
 	}
 
 }

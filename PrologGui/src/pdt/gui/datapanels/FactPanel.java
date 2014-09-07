@@ -83,7 +83,6 @@ public class FactPanel extends JPanel implements DataPanel {
 				System.out.println("null?");
 			}
 			
-			
 			JComponent component = null;
 			
 			if (arg instanceof PrologNumberRangeArgument) {
@@ -221,14 +220,14 @@ public class FactPanel extends JPanel implements DataPanel {
 		if (result != null) {
 			for(String s : textFields.keySet()) {
 				String value = result.get(s).toString();
-				setSingleEntry(s, value);
-				dummyValues.put(s, value);
+				String settedValue = setSingleEntry(s, value);
+				dummyValues.put(s, settedValue);
 			}
 			updateButtons(true);
 		}
 	}
 	
-	public void setSingleEntry(String key, String value) {
+	public String setSingleEntry(String key, String value) {
 		JComponent tf = textFields.get(key);
 		String setValue = value;
 		if (setValue == null) {
@@ -236,6 +235,7 @@ public class FactPanel extends JPanel implements DataPanel {
 		}
 		
 		if (tf instanceof JTextField) {
+			setValue = factHandler.translate(key, value);
 			((JTextField) tf).setText(setValue);
 		} else if (tf instanceof JSpinner) {
 			((JSpinner) tf).setValue(Integer.parseInt(setValue));
@@ -252,6 +252,7 @@ public class FactPanel extends JPanel implements DataPanel {
 		} else if (tf instanceof JCheckBox) {
 			((JCheckBox) tf).setSelected(setValue.equalsIgnoreCase("true"));
 		}
+		return setValue;
 	}
 	
 	private void clearSingleEntry(String key) {

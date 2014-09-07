@@ -12,7 +12,7 @@ public class SimpleLogger {
 	public static final int LVL_WARNING = 3;
 	public static final int LVL_ERROR = 4;
 	
-	public static int logLevel = LVL_WARNING;
+	public static int logLevel = LVL_DEBUG;
 
 	public static void trace(Object message) {
 		log(message, LVL_TRACE);
