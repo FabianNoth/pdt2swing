@@ -7,3 +7,4 @@ actor_details(3, s(10), 0).
 actor_details(5, s(10), 0).
 actor_details(1, u(5), 0).
 actor_details(7, u(0), 0).
+actor_details(8, u(0), 0).
