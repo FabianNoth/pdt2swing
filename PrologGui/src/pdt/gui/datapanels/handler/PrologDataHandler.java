@@ -7,8 +7,9 @@ import org.cs3.prolog.connector.process.PrologProcess;
 import org.cs3.prolog.connector.process.PrologProcessException;
 
 import pdt.gui.PrologDataVisualizer;
+import pdt.gui.data.AutoCompletionProvider;
 import pdt.gui.data.IdListener;
-import pdt.gui.data.PrologConnection;
+import pdt.gui.data.PrologAdapter;
 import pdt.gui.datapanels.DataPanel;
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologGoal;
@@ -27,6 +28,7 @@ public abstract class PrologDataHandler<PanelType extends DataPanel> implements 
 	protected static final String RESULT = "Result";
 
 	protected PrologProcess process;
+	protected PrologAdapter adapter;
 	private PrologDataVisualizer visualizer;
 	private PanelType panel;
 
@@ -44,7 +46,8 @@ public abstract class PrologDataHandler<PanelType extends DataPanel> implements 
 		this.name = name;
 	}
 	
-	public PrologDataHandler(PrologConnection con, String name, boolean isMainPredicate, PrologGoal goal) {
+	public PrologDataHandler(PrologAdapter con, String name, boolean isMainPredicate, PrologGoal goal) {
+		this.adapter = con;
 		this.process = con.getProcess();
 //		this.outputFile = outputFile;
 		this.name = name;
@@ -168,4 +171,9 @@ public abstract class PrologDataHandler<PanelType extends DataPanel> implements 
 		}
 		return transactionResult;
 	}
+	
+	public AutoCompletionProvider getAutoCompletionProvider() {
+		return adapter.getAutoCompletionProvider();
+	}
+
 }

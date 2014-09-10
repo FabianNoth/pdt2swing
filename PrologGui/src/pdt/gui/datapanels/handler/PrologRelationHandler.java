@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 import org.cs3.prolog.connector.common.QueryUtils;
 import org.cs3.prolog.connector.process.PrologProcessException;
 
-import pdt.gui.data.PrologConnection;
+import pdt.gui.data.PrologAdapter;
 import pdt.gui.datapanels.RelationPanel;
 import pdt.gui.utils.SimpleLogger;
 import pdt.prolog.elements.PrologGoal;
@@ -19,11 +19,11 @@ public class PrologRelationHandler extends PrologDataHandler<RelationPanel> {
 	private final List<String> autoCompletionList = new ArrayList<String>();
 	private String functor;
 	
-	public PrologRelationHandler(PrologConnection con, String name, PrologGoal goal) {
+	public PrologRelationHandler(PrologAdapter con, String name, PrologGoal goal) {
 		this(con, name, goal, false);
 	}
 	
-	public PrologRelationHandler(PrologConnection con, String name, PrologGoal goal, boolean autoCompletion) {
+	public PrologRelationHandler(PrologAdapter con, String name, PrologGoal goal, boolean autoCompletion) {
 		super(con, name, false, goal);
 		this.functor = goal.getFunctor();
 		if (autoCompletion) {

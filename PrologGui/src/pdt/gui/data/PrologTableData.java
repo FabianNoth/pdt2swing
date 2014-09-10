@@ -24,7 +24,7 @@ public class PrologTableData extends AbstractTableModel {
 	private List<Map<String, Object>> data;
 	private PrologProcess process;
 
-	public PrologTableData(PrologConnection con, PrologGoal goal) {
+	public PrologTableData(PrologAdapter con, PrologGoal goal) {
 		this.goal = goal;
 		
 		process = con.getProcess();

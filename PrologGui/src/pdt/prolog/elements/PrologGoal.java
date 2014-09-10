@@ -8,7 +8,7 @@ import org.cs3.prolog.connector.cterm.CCompound;
 import org.cs3.prolog.connector.cterm.CInteger;
 import org.cs3.prolog.connector.cterm.CTerm;
 
-import pdt.gui.Queries;
+import pdt.gui.data.PrologAdapter;
 import pdt.gui.utils.SimpleLogger;
 
 public class PrologGoal {
@@ -37,7 +37,7 @@ public class PrologGoal {
 		}
 	}
 	
-	public PrologGoal(String functor, List<CCompound> list, Queries queries) {
+	public PrologGoal(String functor, List<CCompound> list, PrologAdapter adapter) {
 		SimpleLogger.debug("Called PrologGoal constructor (String, List<CCompound>, Queries)");
 		this.functor = functor;
 		this.args = new PrologArgument[list.size()];
@@ -69,7 +69,7 @@ public class PrologGoal {
 				CCompound compType = (CCompound) typeArg;
 				switch (compType.getFunctorValue()) {
 				case "atom":
-					String[] values = queries.fixedAtomValues(compType.getArgument(0).getFunctorValue());
+					String[] values = adapter.fixedAtomValues(compType.getArgument(0).getFunctorValue());
 					args[i] = PrologArgument.createFixedAtom(name, values );
 					break;
 				case "number":

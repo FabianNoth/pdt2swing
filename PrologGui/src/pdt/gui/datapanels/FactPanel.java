@@ -6,6 +6,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.DefaultComboBoxModel;
@@ -21,6 +22,7 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
 import org.cs3.prolog.connector.process.PrologProcess;
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import pdt.gui.datapanels.handler.PrologFactHandler;
 import pdt.prolog.elements.PrologArgument;
@@ -105,7 +107,12 @@ public class FactPanel extends JPanel implements DataPanel {
 				component = new JCheckBox();
 			} else {
 				component = new JTextField();
-				((JTextField) component).setColumns(10);
+				JTextField tf = (JTextField) component;
+				tf.setColumns(10);
+				List<String> completionList = prolog.getAutoCompletionProvider().getCompletionList(arg.getName());
+				if (completionList != null) {
+					AutoCompleteDecorator.decorate(tf, completionList, false);
+				}
 			}
 			
 			if (arg.getType() == PrologArgument.ID || arg.getName().equalsIgnoreCase("id")) {

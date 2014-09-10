@@ -46,7 +46,7 @@ public abstract class BundleProvider {
 		listeners.clear();
 	}
 	
-	public void persistFacts(PrologConnection con) {
+	public void persistFacts(PrologAdapter con) {
 		try {
 			con.getProcess().queryOnce("db_controller::persist");
 		} catch (PrologProcessException e) {

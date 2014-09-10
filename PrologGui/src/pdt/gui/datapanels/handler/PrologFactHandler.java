@@ -19,7 +19,7 @@ import org.cs3.prolog.connector.common.QueryUtils;
 import org.cs3.prolog.connector.process.PrologProcessException;
 import org.jasypt.util.text.BasicTextEncryptor;
 
-import pdt.gui.data.PrologConnection;
+import pdt.gui.data.PrologAdapter;
 import pdt.gui.datapanels.FactPanel;
 import pdt.gui.datapanels.SpinnerWithCheckbox;
 import pdt.gui.utils.PrologUtils;
@@ -37,7 +37,7 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 	private final Map<String, ActionListener> additionalActions = new LinkedHashMap<String, ActionListener>();
 	private File dataDirectory;
 	
-	public PrologFactHandler(PrologConnection con, String name, boolean isMainPredicate, PrologGoal goal, File dataDirectory) {
+	public PrologFactHandler(PrologAdapter con, String name, boolean isMainPredicate, PrologGoal goal, File dataDirectory) {
 		super(con, name, isMainPredicate, goal);
 		this.dataDirectory = dataDirectory;
 	}

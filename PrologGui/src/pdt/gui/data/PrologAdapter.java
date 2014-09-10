@@ -1,32 +1,70 @@
-package pdt.gui;
+package pdt.gui.data;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.cs3.prolog.connector.Connector;
 import org.cs3.prolog.connector.common.QueryUtils;
 import org.cs3.prolog.connector.cterm.CCompound;
 import org.cs3.prolog.connector.process.PrologProcess;
 import org.cs3.prolog.connector.process.PrologProcessException;
 
-public class Queries {
+import pdt.gui.utils.SimpleLogger;
+
+public class PrologAdapter {
 
 	public static final String ARGS = "Args";
 	public static final String NAME = "Name";
 	
+	private File directory; 
 	private PrologProcess process;
+	private AutoCompletionProvider autoCompletionProvider;
 	private String modelName;
-
-	public Queries(PrologProcess process) {
-		this.process = process;
+	
+	public PrologAdapter() {
+		this(null);
+	}
+	
+	public PrologAdapter(File loadFile) {
+//		URL res = ClassLoader.getSystemClassLoader().getResource("logtalk");
 		try {
+//			directory = new File(res.toURI()); 
+			directory = new File("logtalk");
+			process = Connector.newPrologProcess();
+			process.setAdditionalStartupFile("\"%LOGTALKHOME%\\integration\\logtalk_swi.pl\"");
+			process.consult(new File(directory, "lib\\loader.lgt"));
+//			process.consult(new File(directory, "gui_hooks.pl"));
+			if (loadFile != null) {
+				process.consult(loadFile);
+			}
 			Map<String, Object> result = process.queryOnce("db_controller::current_model(Model)");
 			modelName = result.get("Model").toString();
+		} catch (IOException | PrologProcessException e) {
+			e.printStackTrace();
+		}
+		autoCompletionProvider = new AutoCompletionProvider(this);
+	}
+
+	public PrologProcess getProcess() {
+		return process;
+	}
+
+	public List<String> getAllAsString(String query) {
+		List<String> result = new ArrayList<String>();
+		try {
+			List<Map<String, Object>> queryAll = process.queryAll(query);
+			for (Map<String, Object> m : queryAll) {
+				result.add(m.get("Value").toString());
+			}
 		} catch (PrologProcessException e) {
 			e.printStackTrace();
 		}
+		return result;
 	}
+	
 	
 	public String getModelName() {
 		return modelName;
@@ -161,4 +199,31 @@ public class Queries {
 		}
 		return null;
 	}
+
+	public List<String> getAutoCompletions(String factName) {
+		String query = QueryUtils.bT(modelName + "::auto_completion", factName, "Values");
+		try {
+			List<String> resultList = new ArrayList<>();
+			SimpleLogger.debug("get auto completions: " + query);
+			Map<String, Object> result = process.queryOnce(query);
+			if (result != null) {
+				Object o = result.get("Values");
+				if (o instanceof List<?>) {
+					List<?> l = (List<?>) o;
+					for (Object elem : l) {
+						resultList.add(elem.toString());
+					}
+					return resultList;
+				}
+			}
+		} catch (PrologProcessException e) {
+			SimpleLogger.error(e);
+		}
+		return null;
+	}
+
+	public AutoCompletionProvider getAutoCompletionProvider() {
+		return autoCompletionProvider;
+	}
+	
 }

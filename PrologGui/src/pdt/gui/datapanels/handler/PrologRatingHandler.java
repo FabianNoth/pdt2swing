@@ -7,7 +7,7 @@ import javax.swing.JOptionPane;
 import org.cs3.prolog.connector.common.QueryUtils;
 import org.cs3.prolog.connector.process.PrologProcessException;
 
-import pdt.gui.data.PrologConnection;
+import pdt.gui.data.PrologAdapter;
 import pdt.gui.datapanels.RatingPanel;
 import pdt.gui.datapanels.RatingTableModel;
 import pdt.gui.utils.SimpleLogger;
@@ -18,7 +18,7 @@ public class PrologRatingHandler extends PrologDataHandler<RatingPanel> {
 
 	private Map<String, Object> result;
 
-	public PrologRatingHandler(PrologConnection con, String name, PrologGoal goal) {
+	public PrologRatingHandler(PrologAdapter con, String name, PrologGoal goal) {
 		super(con, name, false, goal);
 	}
 
