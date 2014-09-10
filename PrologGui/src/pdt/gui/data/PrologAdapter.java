@@ -36,7 +36,6 @@ public class PrologAdapter {
 			process = Connector.newPrologProcess();
 			process.setAdditionalStartupFile("\"%LOGTALKHOME%\\integration\\logtalk_swi.pl\"");
 			process.consult(new File(directory, "lib\\loader.lgt"));
-//			process.consult(new File(directory, "gui_hooks.pl"));
 			if (loadFile != null) {
 				process.consult(loadFile);
 			}
