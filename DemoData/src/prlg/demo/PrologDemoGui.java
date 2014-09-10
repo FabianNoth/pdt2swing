@@ -3,7 +3,7 @@ package prlg.demo;
 import java.io.File;
 
 import pdt.gui.PrologGui;
-import pdt.gui.data.PrologConnection;
+import pdt.gui.data.PrologAdapter;
 import pdt.gui.data.PrologGuiBundle;
 import pdt.gui.data.PrologTableData;
 import pdt.gui.datapanels.handler.PrologFactHandler;
@@ -19,7 +19,7 @@ public class PrologDemoGui {
 		File loadFile = new File(dataDir, "load.pl");
 	
 		// Open Prolog connection with load file
-		PrologConnection con = new PrologConnection(loadFile);
+		PrologAdapter con = new PrologAdapter(loadFile);
 
 		PrologGuiBundle bundle1 = createSerienBundle(dataDir, con);
 		PrologGuiBundle bundle2 = createKategorieBundle(dataDir, con);
@@ -28,7 +28,7 @@ public class PrologDemoGui {
 
 	}
 
-private PrologGuiBundle createSerienBundle(File dataDir, PrologConnection con) {
+private PrologGuiBundle createSerienBundle(File dataDir, PrologAdapter con) {
 		
 		File seriesFile = new File(dataDir, "fsdb_serie.pl");
 		File ratingFile = new File(dataDir, "fsdb_serie_rating.pl");
@@ -65,7 +65,7 @@ private PrologGuiBundle createSerienBundle(File dataDir, PrologConnection con) {
 		return bundle;
 	}
 	
-private PrologGuiBundle createKategorieBundle(File dataDir, PrologConnection con) {
+private PrologGuiBundle createKategorieBundle(File dataDir, PrologAdapter con) {
 	
 	File catFile = new File(dataDir, "fsdb_category.pl");
 	
