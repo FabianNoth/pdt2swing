@@ -31,7 +31,6 @@ import pdt.prolog.elements.PrologTransactionResult;
 public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 
 	private Set<String> imagesToDelete;
-	private final Set<PrologRelationHandler> relationHandler = new HashSet<>();
 	private Map<String, Object> result;
 	private String mainElementName;
 	private final Map<String, ActionListener> additionalActions = new LinkedHashMap<String, ActionListener>();
@@ -282,51 +281,4 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		return currentId != null;
 	}
 	
-	public void addRelationHandler(PrologRelationHandler handler) {
-		if (handler == null) {
-			SimpleLogger.error("handler is null");
-		} else {
-			relationHandler.add(handler);
-		}
-	}
-	
-	public void removeRelationHandler(PrologRelationHandler handler) {
-		if (handler == null) {
-			SimpleLogger.error("handler is null");
-		} else {
-			relationHandler.remove(handler);
-		}
-	}
-	
-	public void updateRelationHandlers() {
-		for (PrologRelationHandler h : relationHandler) {
-			h.updateAutoCompletion();
-		}
-	}
-
-	public String translate(String key, String value) {
-		return translate(key, value, false);
-	}
-	
-	public String translate(String key, String value, boolean reverse) {
-		String translated = value;
-		String query = QueryUtils.bT("db_controller::translate", getFunctor(), key.toLowerCase(), PrologUtils.quoteIfNecessary(value), "Translated");
-		if (reverse) {
-			query = QueryUtils.bT("db_controller::translate", getFunctor(), key.toLowerCase(), "Translated", PrologUtils.quoteIfNecessary(value));
-		} else {
-			query = QueryUtils.bT("db_controller::translate", getFunctor(), key.toLowerCase(), PrologUtils.quoteIfNecessary(value), "Translated");
-		}
-		
-		SimpleLogger.debug("translate query: " + query);
-		try {
-			Map<String, Object> result = process.queryOnce(query);
-			if (result != null && result.get("Translated") != null) {
-				translated = result.get("Translated").toString();
-			}
-		} catch (PrologProcessException e) {
-			e.printStackTrace();
-		}
-		return translated;
-	}
-
 }

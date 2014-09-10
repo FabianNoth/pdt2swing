@@ -11,6 +11,8 @@ import pdt.gui.data.AutoCompletionProvider;
 import pdt.gui.data.IdListener;
 import pdt.gui.data.PrologAdapter;
 import pdt.gui.datapanels.DataPanel;
+import pdt.gui.utils.PrologUtils;
+import pdt.gui.utils.SimpleLogger;
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologGoal;
 import pdt.prolog.elements.PrologTransactionResult;
@@ -174,6 +176,31 @@ public abstract class PrologDataHandler<PanelType extends DataPanel> implements 
 	
 	public AutoCompletionProvider getAutoCompletionProvider() {
 		return adapter.getAutoCompletionProvider();
+	}
+	
+	public String translate(String key, String value) {
+		return translate(key, value, false);
+	}
+	
+	public String translate(String key, String value, boolean reverse) {
+		String translated = value;
+		String query = QueryUtils.bT("db_controller::translate", functor, key.toLowerCase(), PrologUtils.quoteIfNecessary(value), "Translated");
+		if (reverse) {
+			query = QueryUtils.bT("db_controller::translate", functor, key.toLowerCase(), "Translated", PrologUtils.quoteIfNecessary(value));
+		} else {
+			query = QueryUtils.bT("db_controller::translate", functor, key.toLowerCase(), PrologUtils.quoteIfNecessary(value), "Translated");
+		}
+		
+		SimpleLogger.debug("translate query: " + query);
+		try {
+			Map<String, Object> result = process.queryOnce(query);
+			if (result != null && result.get("Translated") != null) {
+				translated = result.get("Translated").toString();
+			}
+		} catch (PrologProcessException e) {
+			e.printStackTrace();
+		}
+		return translated;
 	}
 
 }

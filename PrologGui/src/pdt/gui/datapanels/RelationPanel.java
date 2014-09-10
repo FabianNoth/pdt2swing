@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
@@ -19,22 +18,22 @@ import javax.swing.JTextField;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import pdt.gui.datapanels.handler.PrologRelationHandler;
+import pdt.prolog.elements.PrologArgument;
+import pdt.prolog.elements.PrologReferenceType;
 
 public class RelationPanel extends JPanel implements DataPanel {
 
 	private static final long serialVersionUID = 1L;
 	private DefaultListModel<String> listModel;
-	private boolean useAutoCompletion;
-	private final List<String> autoCompletionList = new ArrayList<>();
 	private JTextField tfAdd;
 	private PrologRelationHandler prolog;
 	private JButton btAdd;
 	private JList<String> list;
+	private boolean keepValue = false;
 
 	public RelationPanel(final PrologRelationHandler prolog) {
 		this.prolog = prolog;
 		prolog.setEditPanel(this);
-		useAutoCompletion = prolog.isAutoCompletion();
 		
 		setLayout(new BorderLayout());
 		JPanel addPanel = new JPanel();
@@ -42,8 +41,12 @@ public class RelationPanel extends JPanel implements DataPanel {
 		add(addPanel, BorderLayout.NORTH);
 		tfAdd = new JTextField();
 		
-		if (useAutoCompletion) {
-			AutoCompleteDecorator.decorate(tfAdd, prolog.getAutoCompletionList(), false);
+		PrologArgument arg = prolog.getArgs()[prolog.getArgs().length-1];
+		if (arg instanceof PrologReferenceType) {
+			String refType = ((PrologReferenceType) arg).getRefType();
+			List<String> completionList = prolog.getAutoCompletionProvider().getCompletionList(refType);
+			AutoCompleteDecorator.decorate(tfAdd, completionList, false);
+			keepValue = true;
 		}
 		
 		ActionListener actionListener = new ActionListener() {
@@ -82,16 +85,13 @@ public class RelationPanel extends JPanel implements DataPanel {
 	}
 	
 	public void setData(List<String> entries) {
-		if (useAutoCompletion) {
-			autoCompletionList.clear();
-			autoCompletionList.addAll(prolog.getAutoCompletionList());
-//			AutoCompleteDecorator.decorate(tfAdd, prolog.getAutoCompletionList(), false);
-		} else {
+		if (!keepValue) {
 			tfAdd.setText("");
 		}
 		listModel.clear();
 		for (String s : entries) {
-			listModel.addElement(s);
+			String setValue = prolog.translate(s);
+			listModel.addElement(setValue);
 		}
 		updateButtons(true);
 	}
@@ -110,7 +110,7 @@ public class RelationPanel extends JPanel implements DataPanel {
 
 	@Override
 	public boolean changed() {
-		// relations are always added directly, so there are no unsafed states
+		// relations are always added directly, so there are no unsaved states
 		// (entry in the textfield is not important)
 		return false;
 	}

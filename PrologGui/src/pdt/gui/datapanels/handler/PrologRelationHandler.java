@@ -11,45 +11,19 @@ import org.cs3.prolog.connector.process.PrologProcessException;
 
 import pdt.gui.data.PrologAdapter;
 import pdt.gui.datapanels.RelationPanel;
+import pdt.gui.utils.PrologUtils;
 import pdt.gui.utils.SimpleLogger;
 import pdt.prolog.elements.PrologGoal;
+import pdt.prolog.elements.PrologTransactionResult;
 
 public class PrologRelationHandler extends PrologDataHandler<RelationPanel> {
 
-	private final List<String> autoCompletionList = new ArrayList<String>();
-	private String functor;
-	
 	public PrologRelationHandler(PrologAdapter con, String name, PrologGoal goal) {
 		this(con, name, goal, false);
 	}
 	
 	public PrologRelationHandler(PrologAdapter con, String name, PrologGoal goal, boolean autoCompletion) {
 		super(con, name, false, goal);
-		this.functor = goal.getFunctor();
-		if (autoCompletion) {
-			updateAutoCompletion();
-		}
-	}
-
-	public void updateAutoCompletion() {
-		autoCompletionList.clear();
-		try {
-			Map<String, Object> results = process.queryOnce(QueryUtils.bT(AUTO_COMPLETION, functor, "Result"));
-			Object o = results.get("Result");
-			if (o instanceof List<?>) {
-				List<?> dummyList = (List<?>) o;
-				for (Object entry : dummyList) {
-					autoCompletionList.add(entry.toString());
-				}
-			}
-			SimpleLogger.debug(autoCompletionList);
-		} catch (PrologProcessException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public boolean isAutoCompletion() {
-		return autoCompletionList != null;
 	}
 
 	@Override
@@ -70,47 +44,53 @@ public class PrologRelationHandler extends PrologDataHandler<RelationPanel> {
 		}
 	}
 	
-	public void addValue(String newValue) {
+	public boolean addValue(String newValue) {
 		if (currentId == null) {
-			return;
+			return false;
+		}
+
+		String assertValue = PrologUtils.quoteIfNecessary(translate(newValue, true));
+		String assertQuery = QueryUtils.bT(getFunctor(), currentId, assertValue);
+		SimpleLogger.debug("add relation: " + assertQuery);
+		
+		PrologTransactionResult result = executeTransaction(ADD_FACT, assertQuery);
+		if (result == null) {
+			// query failed
+			return false;
 		}
 		
-		String assertValue = QueryUtils.quoteAtomIfNeeded(newValue);
+		if (result.isError()) {
+			JOptionPane.showMessageDialog(getEditPanel(), result.getDialogMessage(),  "Fehler beim Hinzufügen", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
 		
-		try {
-			boolean updateAutoCompletionFlag = false;
-			if (isAutoCompletion()) {
-				Map<String, Object> check = process.queryOnce(QueryUtils.bT(CHECK_FOR_VALUE, getFunctor(), assertValue));
-				if (check == null) {
-					int answer = JOptionPane.showConfirmDialog(getEditPanel(), "Eintrag mit dem Wert \"" + newValue + "\" existiert nicht. Soll er hinzugefügt werden?", "Neuen Eintrag hinzufügen", JOptionPane.YES_NO_OPTION);
-					if (answer == JOptionPane.NO_OPTION) {
-						return;
-					} else if (answer == JOptionPane.YES_OPTION) {
-						updateAutoCompletionFlag = true;
-					}
-				}
-			}
-
-			String assertQuery = QueryUtils.bT(getFunctor(), currentId, assertValue);
-			SimpleLogger.debug(assertQuery);
-			try {
-				process.queryOnce(QueryUtils.bT(ADD_RELATION, assertQuery));
-			} catch (PrologProcessException e) {
-				e.printStackTrace();
-			}
-			
-			if (updateAutoCompletionFlag) {
-				updateAutoCompletion();
-			}
-			
+		
+//			boolean updateAutoCompletionFlag = false;
+//			if (isAutoCompletion()) {
+//				Map<String, Object> check = process.queryOnce(QueryUtils.bT(CHECK_FOR_VALUE, getFunctor(), assertValue));
+//				if (check == null) {
+//					int answer = JOptionPane.showConfirmDialog(getEditPanel(), "Eintrag mit dem Wert \"" + newValue + "\" existiert nicht. Soll er hinzugefügt werden?", "Neuen Eintrag hinzufügen", JOptionPane.YES_NO_OPTION);
+//					if (answer == JOptionPane.NO_OPTION) {
+//						return;
+//					} else if (answer == JOptionPane.YES_OPTION) {
+//						updateAutoCompletionFlag = true;
+//					}
+//				}
+//			}
+//
+//			try {
+//				process.queryOnce(QueryUtils.bT(ADD_RELATION, assertQuery));
+//			} catch (PrologProcessException e) {
+//				e.printStackTrace();
+//			}
+//			
 			// update table
 			updateVisualizer();
+			return true;
 			
-		} catch (PrologProcessException e1) {
-			e1.printStackTrace();
-		}
 	}
 	
+
 	public void removeValue(String value) {
 		if (currentId == null) {
 			return;
@@ -128,8 +108,14 @@ public class PrologRelationHandler extends PrologDataHandler<RelationPanel> {
 		updateVisualizer();
 	}
 
-	public List<String> getAutoCompletionList() {
-		return autoCompletionList;
+	public String translate(String value) {
+		String key = getArgNames()[getArity()-1];
+		return translate(key, value);
 	}
 	
+	private String translate(String newValue, boolean b) {
+		String key = getArgNames()[getArity()-1];
+		return translate(key, newValue, b);
+	}
+
 }
