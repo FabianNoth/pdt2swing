@@ -28,6 +28,7 @@ import pdt.gui.datapanels.handler.PrologFactHandler;
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologFixedAtom;
 import pdt.prolog.elements.PrologNumberRangeArgument;
+import pdt.prolog.elements.PrologReferenceType;
 
 public class FactPanel extends JPanel implements DataPanel {
 
@@ -109,9 +110,13 @@ public class FactPanel extends JPanel implements DataPanel {
 				component = new JTextField();
 				JTextField tf = (JTextField) component;
 				tf.setColumns(10);
-				List<String> completionList = prolog.getAutoCompletionProvider().getCompletionList(arg.getName());
-				if (completionList != null) {
-					AutoCompleteDecorator.decorate(tf, completionList, false);
+				
+				if (arg instanceof PrologReferenceType) {
+					String refType = ((PrologReferenceType) arg).getRefType();
+					List<String> completionList = prolog.getAutoCompletionProvider().getCompletionList(refType);
+					if (completionList != null) {
+						AutoCompleteDecorator.decorate(tf, completionList, false);
+					}
 				}
 			}
 			

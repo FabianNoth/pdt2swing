@@ -117,7 +117,7 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		}
 		
 		updateVisualizer();
-		updateRelationHandlers();
+		adapter.getAutoCompletionProvider().update(getFunctor());
 		return true;
 	}
 
@@ -141,7 +141,7 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		}
 
 		updateVisualizer(id);
-		updateRelationHandlers();
+		adapter.getAutoCompletionProvider().update(getFunctor());
 		return true;
 	}
 	
