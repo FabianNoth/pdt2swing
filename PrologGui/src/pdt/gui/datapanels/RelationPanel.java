@@ -90,8 +90,8 @@ public class RelationPanel extends JPanel implements DataPanel {
 		}
 		listModel.clear();
 		for (String s : entries) {
-			String setValue = prolog.translate(s);
-			listModel.addElement(setValue);
+//			String setValue = prolog.translate(s);
+			listModel.addElement(s);
 		}
 		updateButtons(true);
 	}

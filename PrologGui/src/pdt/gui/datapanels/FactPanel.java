@@ -247,7 +247,7 @@ public class FactPanel extends JPanel implements DataPanel {
 		}
 		
 		if (tf instanceof JTextField) {
-			setValue = factHandler.translate(key, value);
+			setValue = factHandler.getDisplayString(key, value);
 			((JTextField) tf).setText(setValue);
 		} else if (tf instanceof JSpinner) {
 			((JSpinner) tf).setValue(Integer.parseInt(setValue));

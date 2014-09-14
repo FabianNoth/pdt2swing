@@ -215,7 +215,7 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 				String text = null;
 				if (tf instanceof JTextField) {
 					text = ((JTextField) tf).getText();
-					text = translate(argNames[i], text, true);
+					text = getDataString(argNames[i], text);
 				} else if (tf instanceof JComboBox<?>) {
 					text = ((JComboBox<?>) tf).getSelectedItem().toString();
 				} else if (tf instanceof JSpinner) {

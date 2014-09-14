@@ -23,7 +23,7 @@ public class LogtalkDataLoader {
 	
 	public LogtalkDataLoader() {
 		
-		File pluginDir = new File("logtalk/plugin2");
+		File pluginDir = new File("logtalk/plugin");
 		File loadFile = new File(pluginDir, "loader.lgt");
 	
 		// Open Prolog connection with load file

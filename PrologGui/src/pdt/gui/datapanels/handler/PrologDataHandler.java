@@ -178,11 +178,16 @@ public abstract class PrologDataHandler<PanelType extends DataPanel> implements 
 		return adapter.getAutoCompletionProvider();
 	}
 	
-	public String translate(String key, String value) {
-		return translate(key, value, false);
+	
+	public String getDisplayString(String key, String value) {
+		return transformDisplayString(key, value, false);
 	}
 	
-	public String translate(String key, String value, boolean reverse) {
+	public String getDataString(String key, String value) {
+		return transformDisplayString(key, value, true);
+	}
+	
+	private String transformDisplayString(String key, String value, boolean reverse) {
 		String translated = value;
 		String query = QueryUtils.bT("db_controller::translate", functor, key.toLowerCase(), PrologUtils.quoteIfNecessary(value), "Translated");
 		if (reverse) {

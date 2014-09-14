@@ -34,7 +34,7 @@ public class PrologRelationHandler extends PrologDataHandler<RelationPanel> {
 				List<String> entries = new ArrayList<String>();
 				for (Map<String, Object> m : results) {
 					String entry = m.get(getArgNames()[1]).toString();
-					entries.add(entry);
+					entries.add(getDisplayString(entry));
 				}
 				
 				getEditPanel().setData(entries);
@@ -49,7 +49,7 @@ public class PrologRelationHandler extends PrologDataHandler<RelationPanel> {
 			return false;
 		}
 
-		String assertValue = PrologUtils.quoteIfNecessary(translate(newValue, true));
+		String assertValue = PrologUtils.quoteIfNecessary(getDataString(newValue));
 		String assertQuery = QueryUtils.bT(getFunctor(), currentId, assertValue);
 		SimpleLogger.debug("add relation: " + assertQuery);
 		
@@ -108,14 +108,14 @@ public class PrologRelationHandler extends PrologDataHandler<RelationPanel> {
 		updateVisualizer();
 	}
 
-	public String translate(String value) {
+	public String getDisplayString(String value) {
 		String key = getArgNames()[getArity()-1];
-		return translate(key, value);
+		return getDisplayString(key, value);
 	}
 	
-	private String translate(String newValue, boolean b) {
+	private String getDataString(String newValue) {
 		String key = getArgNames()[getArity()-1];
-		return translate(key, newValue, b);
+		return getDataString(key, newValue);
 	}
 
 }
