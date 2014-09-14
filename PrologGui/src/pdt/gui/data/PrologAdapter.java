@@ -3,6 +3,7 @@ package pdt.gui.data;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -177,8 +178,8 @@ public class PrologAdapter {
 		return getArgs(factName, "element_simple_arg");
 	}
 
-	public List<CCompound> getTableArgs(String factName) {
-		return getArgs(factName, "element_table_arg");
+	public List<CCompound> getDisplayArgs(String factName) {
+		return getArgs(factName, "element_display_arg");
 	}
 	
 	public List<CCompound> getArgs(String factName, String predicateName) {
@@ -223,6 +224,29 @@ public class PrologAdapter {
 
 	public AutoCompletionProvider getAutoCompletionProvider() {
 		return autoCompletionProvider;
+	}
+
+	public Map<String, List<String>> getFilter(String functor) {
+		String query = QueryUtils.bT(modelName + "::filter", functor, "Filter");
+		Map<String, List<String>> filters = new HashMap<String, List<String>>();
+		try {
+			List<Map<String, Object>> results = process.queryAll(PrologProcess.CTERMS, query);
+			for (Map<String, Object> result : results) {
+				Object o = result.get("Filter");
+				if (o instanceof CCompound) {
+					String type = ((CCompound) o).getArgument(0).getFunctorValue();
+					List<String> list = filters.get(type);
+					if (list == null) {
+						list = new ArrayList<String>();
+						filters.put(type, list);
+					}
+					list.add(o.toString());
+				}
+			}
+		} catch (PrologProcessException e) {
+			SimpleLogger.error(e);
+		}
+		return filters;
 	}
 	
 }

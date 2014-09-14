@@ -3,13 +3,17 @@
 :- object(meta_model).
 
 :- public(element/2).
+:- public(filter/2).
+:- public(argument_names/2).
+:- public(display_names/2).
 :- public(element_simple_arg/2).
-:- public(element_table_arg/2).
+:- public(element_display_arg/2).
 :- public(auto_completion/2).
 :- public(fact_type/2).		% to be implemented by concrete metamodel
 :- public(relation_rating_type/2).	% to be implemented by concrete metamodel
 :- public(relation_many_type/2).	% to be implemented by concrete metamodel
 :- public(relation_single_type/2).	% to be implemented by concrete metamodel
+:- public(display_type/3).		% to be implemented by concrete metamodel
 :- public(fixed_atom/2).	% to be implemented by concrete metamodel
 :- public(relation_dummy/3).	% to be implemented by concrete metamodel
 :- public(bundle/2).	% to be implemented by concrete metamodel
@@ -46,6 +50,61 @@
 % ]).
 %
 
+filter(Functor, Filter) :-
+	::display_type(Functor, _, default),
+	!,
+	::element(Functor, Args),
+	lists:member(arg(Name, Type, _), Args),
+	filter_impl(Type, Name, Filter).
+	
+filter_impl(atom, Name, Filter) :-
+	min_max_combo(Min, Max),
+	Filter = filter(Name, Min, Max).
+
+filter_impl(atom(AtomType), Name, Filter) :-
+	::fixed_atom(AtomType, Values),
+	lists:member(Value, Values),
+	Filter = filter(Name, Value).
+	
+min_max_combo('A', 'B').
+min_max_combo('B', 'C').
+min_max_combo('C', 'D').
+min_max_combo('D', 'E').
+min_max_combo('E', 'F').
+min_max_combo('F', 'G').
+min_max_combo('G', 'H').
+min_max_combo('H', 'I').
+min_max_combo('I', 'J').
+min_max_combo('J', 'K').
+min_max_combo('K', 'L').
+min_max_combo('L', 'M').
+min_max_combo('M', 'N').
+min_max_combo('N', 'O').
+min_max_combo('O', 'P').
+min_max_combo('P', 'Q').
+min_max_combo('Q', 'R').
+min_max_combo('R', 'S').
+min_max_combo('S', 'T').
+min_max_combo('T', 'U').
+min_max_combo('U', 'V').
+min_max_combo('V', 'W').
+min_max_combo('W', 'X').
+min_max_combo('X', 'Y').
+min_max_combo('Y', 'Z').
+min_max_combo('Z', 'ZZZZZZZZZ').
+
+argument_names(Functor, Names) :-
+	::element(Functor, Args),
+	findall(Name, lists:member(arg(Name, _, _), Args), Names).
+	
+display_names(Functor, Names) :-
+	::display_type(Functor, full, _),
+	!,
+	argument_names(Functor, Names).
+
+display_names(Functor, Names) :-
+	::display_type(Functor, Names, _).
+	
 element(Name, Args) :-
 	::fact_type(Name, Args).
 	
@@ -67,12 +126,17 @@ element_simple_arg(Name, SimpleArg) :-
 	lists:member(arg(ArgName, ArgType, _), Args),
 	SimpleArg = arg(ArgName, ArgType).
 	
-element_table_arg(Name, TableArg) :-
+element_display_arg(Name, DisplayArg) :-
+	::display_type(Name, full, _),
+	!,
+	element_simple_arg(Name, DisplayArg).
+
+element_display_arg(Name, DisplayArg) :-
+	::display_type(Name, ArgNames, _),
 	::element(Name, Args),
-	lists:member(arg(ArgName, ArgType, Keywords), Args),
-	\+(lists:member(no_table, Keywords)),
-	TableArg = arg(ArgName, ArgType).
-	
+	lists:member(ArgName, ArgNames),
+	lists:member(arg(ArgName, ArgType, _), Args),
+	DisplayArg = arg(ArgName, ArgType).
 	
 relations(Type, Id, Relation, Term) :-
 	::fact_type(Type, _),

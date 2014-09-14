@@ -3,9 +3,9 @@ package pdt.gui;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.cs3.prolog.connector.cterm.CCompound;
-import org.cs3.prolog.connector.process.PrologProcess;
 
 import pdt.gui.data.BundleProvider;
 import pdt.gui.data.PrologAdapter;
@@ -15,6 +15,7 @@ import pdt.gui.datapanels.handler.PrologDataHandler;
 import pdt.gui.datapanels.handler.PrologFactHandler;
 import pdt.gui.datapanels.handler.PrologRatingHandler;
 import pdt.gui.datapanels.handler.PrologRelationHandler;
+import pdt.prolog.elements.PrologDisplayGoal;
 import pdt.prolog.elements.PrologGoal;
 
 public class LogtalkDataLoader {
@@ -50,11 +51,11 @@ public class LogtalkDataLoader {
 
 			// get args for bundle main fact
 			List<CCompound> mainArgs = prolog.getArgs(factName);
-			List<CCompound> tableArgs = prolog.getTableArgs(factName);
+			List<CCompound> displayArgs = prolog.getDisplayArgs(factName);
 			
 			// create main goal and prolog handler
 			PrologGoal mainGoal = new PrologGoal(factName, mainArgs, prolog);
-			PrologGoal tableGoal = new PrologGoal(factName, tableArgs, prolog);
+			PrologGoal displayGoal = new PrologDisplayGoal(factName, displayArgs, prolog);
 			PrologFactHandler factHandler = new PrologFactHandler(prolog, "Data", true, mainGoal, prolog.getDataDirectory());
 			handlers.add(factHandler);
 			if (prolog.hasTextFile(factName)) {
@@ -80,7 +81,7 @@ public class LogtalkDataLoader {
 			
 			PrologDataHandler<?>[] handlersArray = handlers.toArray(new PrologDataHandler<?>[handlers.size()]);
 
-			PrologTableData tableData = new PrologTableData(prolog, tableGoal);
+			PrologTableData tableData = new PrologTableData(prolog, displayGoal);
 			bundleList.add(new PrologGuiBundle(factName, tableData, handlersArray));
 		}
 		
@@ -90,13 +91,12 @@ public class LogtalkDataLoader {
 	
 	private class DefaultBundleProvider extends BundleProvider {
 
-		@SuppressWarnings("unused")
-		private PrologProcess process;
+		private PrologAdapter prolog;
 		private List<PrologGuiBundle> bundles;
 		
 		
-		public DefaultBundleProvider(PrologAdapter connection, List<PrologGuiBundle> bundles) {
-			this.process = connection.getProcess();
+		public DefaultBundleProvider(PrologAdapter prolog, List<PrologGuiBundle> bundles) {
+			this.prolog = prolog;
 			this.bundles = bundles;
 			for(PrologGuiBundle b : bundles) {
 				addListener(b);
@@ -111,10 +111,25 @@ public class LogtalkDataLoader {
 			for(PrologGuiBundle b : bundles) {
 				QueryNode node = new QueryNode(b.getName(), b);
 				root.add(node);
-				
+				createFilters(node, b);
 			}
 			
 			return root;
+		}
+
+		private void createFilters(QueryNode node, PrologGuiBundle b) {
+			Map<String, List<String>> filters = prolog.getFilter(node.getGoal().getFunctor());
+			for(String typeName : filters.keySet()) {
+				QueryNode typeNode = new QueryNode(typeName, b, node.getGoal());
+				node.add(typeNode);
+				
+				for (String filter : filters.get(typeName)) {
+					PrologDisplayGoal goal = new PrologDisplayGoal(node.getGoal(), filter);
+					// TODO: names
+					typeNode.add(new QueryNode(filter, b, goal));
+				}
+				
+			}
 		}
 
 		@Override

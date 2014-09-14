@@ -15,6 +15,9 @@
 
 :- public(init_model/1).
 
+:- public(display/2).
+:- dynamic(display/2).
+
 % this needs to be public for checking of dummy relations in metamodel
 :- public(check_argument_type/3).
 
@@ -25,8 +28,82 @@ init_model(Metamodel) :-
 	once(Metamodel::fact_type(_,_)),
 	retractall(current_model(_)),
 	assert(current_model(Metamodel)),
-	Metamodel::check.
+	Metamodel::check,
+	init_display_terms(Metamodel).
+	
+init_display_terms(Metamodel) :-
+	
+	Metamodel::fact_type(Functor, _),
+	Metamodel::argument_names(Functor, InputValues),
+	Metamodel::display_names(Functor, DisplayValues),
+	
+	%fact_args(Functor, InputValues),
+%	display_args(Functor, DisplayValues),
+	matching(InputValues, DisplayValues, OutputArgs, DisplayArgs),
+	FullTerm =.. [Functor | OutputArgs],
+	DisplayTerm =.. [Functor | DisplayArgs],
+	retractall(display(DisplayTerm, Filter)),
+	assert((display(DisplayTerm, Filter) :- display_impl(FullTerm, Filter))),
+	fail.
+	
+init_display_terms(_) :- !.
 
+matching([], _, [], []) :- !.
+
+matching([InputArg | InputTail], Displayed, OutputArgs, DisplayArgs) :-
+	lists:member(InputArg, Displayed),
+	!,
+	matching(InputTail, Displayed, OutputTail, DisplayTail),
+	OutputArgs = [NewArg | OutputTail],
+	DisplayArgs = [NewArg | DisplayTail].
+	
+matching([_ | InputTail], Displayed, OutputArgs, DisplayArgs) :-
+	matching(InputTail, Displayed, OutputTail, DisplayTail),
+	OutputArgs = [_ | OutputTail],
+	DisplayArgs = DisplayTail.
+	
+
+display_impl(Goal, Filter) :-
+	show(_, Goal),
+	apply_filter(Goal, Filter).
+	
+apply_filter(_, Filter) :-
+	var(Filter),
+	!.
+	
+apply_filter(Goal, Filter) :-
+	Goal =.. [Functor | Args],
+	current_model(Metamodel),
+	Metamodel::argument_names(Functor, ArgNames),
+	apply_filter_impl(ArgNames, Args, Filter).
+	
+apply_filter_impl(_, [], _) :- !.
+
+apply_filter_impl([Name | _], [Arg | _], filter(FilterArg, Value)) :-
+	Name == FilterArg,
+	!,
+	Arg == Value.
+	
+apply_filter_impl([Name | _], [Arg | _], filter(FilterArg, ValueMin, ValueMax)) :-
+	Name == FilterArg,
+	number(ValueMin),
+	number(ValueMax),
+	!,
+	Arg >= ValueMin,
+	Arg < ValueMax.
+	
+apply_filter_impl([Name | _], [Arg | _], filter(FilterArg, ValueMin, ValueMax)) :-
+	Name == FilterArg,
+	!,
+	downcase_atom(Arg, ArgX),
+	downcase_atom(ValueMin, MinX),
+	downcase_atom(ValueMax, MaxX),
+	ArgX @>= MinX,
+	ArgX @< MaxX.
+
+apply_filter_impl([_ | TailNames], [_ | Tail], Filter) :-
+	apply_filter_impl(TailNames, Tail, Filter).
+	
 show(Functor, Term) :-
 	nonvar(Functor),
 	current_model(Model),
