@@ -28,10 +28,6 @@ fact_type(veranstaltung, [
 %%%%%%%%%
 % table %
 %%%%%%%%%
-%table_display_type(actor, full).
-%table_display_type(movie, [id, name]).
-%table_display_type(role, full).
-%table_display_type(tag, full).
 
 
 %%%%%%%%%%%%%%

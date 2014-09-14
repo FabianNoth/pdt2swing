@@ -31,11 +31,10 @@ fact_type(tag, [
 %%%%%%%%%
 % table %
 %%%%%%%%%
-%table_display_type(actor, full).
-%table_display_type(movie, [id, name]).
-%table_display_type(role, full).
-%table_display_type(tag, full).
-
+display_type(actor, full, default).
+display_type(movie, [id, name], default).
+display_type(role, full, default).
+display_type(tag, full, default).
 
 %%%%%%%%%%%%%%
 %% relations %
