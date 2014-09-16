@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.cs3.prolog.connector.common.Util;
 import org.cs3.prolog.connector.cterm.CCompound;
 
 import pdt.gui.data.BundleProvider;
@@ -15,8 +16,10 @@ import pdt.gui.datapanels.handler.PrologDataHandler;
 import pdt.gui.datapanels.handler.PrologFactHandler;
 import pdt.gui.datapanels.handler.PrologRatingHandler;
 import pdt.gui.datapanels.handler.PrologRelationHandler;
+import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologDisplayGoal;
 import pdt.prolog.elements.PrologGoal;
+import pdt.prolog.elements.PrologReferenceType;
 
 public class LogtalkDataLoader {
 	
@@ -118,15 +121,27 @@ public class LogtalkDataLoader {
 		}
 
 		private void createFilters(QueryNode node, PrologGuiBundle b) {
-			Map<String, List<String>> filters = prolog.getFilter(node.getGoal().getFunctor());
+			Map<String, List<CCompound>> filters = prolog.getFilter(node.getGoal().getFunctor());
 			for(String typeName : filters.keySet()) {
 				QueryNode typeNode = new QueryNode(typeName, b, node.getGoal());
 				node.add(typeNode);
 				
-				for (String filter : filters.get(typeName)) {
-					PrologDisplayGoal goal = new PrologDisplayGoal(node.getGoal(), filter);
-					// TODO: names
-					typeNode.add(new QueryNode(filter, b, goal));
+				for (CCompound filter : filters.get(typeName)) {
+					PrologDisplayGoal goal = new PrologDisplayGoal(node.getGoal(), filter.toString());
+					
+					PrologArgument argument = goal.getArgument(typeName);
+					String filterName = filter.getArgument(1).getFunctorImage();
+					
+					if (argument instanceof PrologReferenceType) {
+						filterName = prolog.getElementName(((PrologReferenceType) argument).getRefType(), Util.unquoteAtom(filterName));
+					}
+					filterName = Util.unquoteAtom(filterName);
+					if (filterName.isEmpty()) {
+						filterName = "(empty)";
+					}
+					if (goal.isTrue(prolog)) {
+						typeNode.add(new QueryNode(filterName, b, goal));
+					}
 				}
 				
 			}

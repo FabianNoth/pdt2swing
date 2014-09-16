@@ -61,9 +61,6 @@ public class PrologGoal {
 				case "number":
 					args[i] = PrologArgument.createNumber(name);
 					break;
-				default:
-					args[i] = PrologArgument.createReference(name, type);
-					break;
 				}
 			} else if (typeArg instanceof CCompound) {
 				CCompound compType = (CCompound) typeArg;
@@ -81,6 +78,9 @@ public class PrologGoal {
 					int uLimitMin = ((CInteger) compType.getArgument(0)).getIntValue();
 					int uLimitMax = ((CInteger) compType.getArgument(1)).getIntValue();
 					args[i] = PrologArgument.createLimitedNumber(name, uLimitMin, uLimitMax, true);
+					break;
+				case "ref":
+					args[i] = PrologArgument.createReference(name, compType.getArgument(0).getFunctorImage());
 					break;
 				}
 			}
@@ -109,10 +109,25 @@ public class PrologGoal {
 	public String[] getArgNames() {
 		return argNames;
 	}
+	
+	public PrologArgument getArgument(String name) {
+		for (int i = 0; i < args.length; i++) {
+			if (args[i].getName().equalsIgnoreCase(name)) {
+				return args[i];
+			}
+		}
+		return null;
+	}
 
 	public String getQuery() {
 		String term = QueryUtils.bT(functor, (Object[]) argNames);
 		return QueryUtils.bT("db_controller::show", "_", term);
+	}
+	
+	
+	@Override
+	public String toString() {
+		return getQuery();
 	}
 	
 }

@@ -61,11 +61,37 @@ matching([_ | InputTail], Displayed, OutputArgs, DisplayArgs) :-
 	matching(InputTail, Displayed, OutputTail, DisplayTail),
 	OutputArgs = [_ | OutputTail],
 	DisplayArgs = DisplayTail.
-	
 
 display_impl(Goal, Filter) :-
-	show(_, Goal),
-	apply_filter(Goal, Filter).
+	Goal =.. [Functor | Args],
+	
+	show(Functor, ImplGoal),
+	ImplGoal =.. [Functor | ImplArgs],
+	apply_filter(ImplGoal, Filter),
+	translate_args(Functor, ImplArgs, Args).
+	
+translate_args(Functor, ImplArgs, Args) :-
+	findall(Translated,
+			( lists:nth1(Pos, ImplArgs, A),
+			  translate_nth(Functor, Pos, A, Translated)
+			),
+			Args).
+	
+translate_nth(Functor, Pos, Value, Translated) :-
+	current_model(Model),
+	Model::element(Functor, Args),
+	lists:nth1(Pos, Args, arg(Key, ref(Type), _)),
+	Key \== id,
+	Model::argument_value(Type, Value, name, Translated),
+	!.
+
+translate_nth(_, _, Value, Value).
+	
+translate(Functor, Key, Value, Translated) :-
+	current_model(Model),
+	Model::element(Functor, Args),
+	lists:member(arg(Key, Type, _), Args),
+	Model::argument_value(Type, Value, name, Translated).
 	
 apply_filter(_, Filter) :-
 	var(Filter),
@@ -115,29 +141,6 @@ show(Functor, Term) :-
 	var(Functor),
 	Term =.. [Functor|_],
 	show(Functor, Term).	
-	
-translate(Functor, Key, Value, Translated) :-
-	current_model(Model),
-	Model::element(Functor, Args),
-	lists:member(arg(Key, Type, _), Args),
-	Model::argument_value(Type, Value, name, Translated).
-
-%	translate_term(Term, TranslatedTerm).
-%
-%translate_term(Term, Translated) :-
-%	Term =.. [Functor|Args],
-%	translate_args(Functor, Args, TranslatedArgs),
-%	Translated =.. [Functor|TranslatedArgs].
-%	
-%translate_args([], []) :- !.
-%translate_args([Arg|Tail], [Translated|TranslatedTail]) :-
-%	 
-%	translate_args(Tail, TranslatedTail).
-
-	
-
-	
-
 	
 persist :-
 	current_model(Model),
@@ -309,7 +312,7 @@ check_argument_type(_, atom(Type), Arg) :-
 	Model::fixed_atom(Type, FixedAtoms),
 	lists:member(Arg, FixedAtoms).
 
-check_argument_type(_, Type, Arg) 	:-
+check_argument_type(_, ref(Type), Arg) 	:-
 	!,
 	current_model(Model),
 	Model::get_term_for_main(Type, Arg, Term),

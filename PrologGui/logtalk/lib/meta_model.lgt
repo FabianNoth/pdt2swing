@@ -57,6 +57,13 @@ filter(Functor, Filter) :-
 	lists:member(arg(Name, Type, _), Args),
 	filter_impl(Type, Name, Filter).
 	
+filter(Functor, Filter) :-
+	::display_type(Functor, _, Names),
+	::element(Functor, Args),
+	lists:member(arg(Name, Type, _), Args),
+	lists:member(Name, Names),
+	filter_impl(Type, Name, Filter).
+	
 filter_impl(atom, Name, Filter) :-
 	min_max_combo(Min, Max),
 	Filter = filter(Name, Min, Max).
@@ -65,6 +72,12 @@ filter_impl(atom(AtomType), Name, Filter) :-
 	::fixed_atom(AtomType, Values),
 	lists:member(Value, Values),
 	Filter = filter(Name, Value).
+
+filter_impl(ref(RefType), FilterName, Filter) :-
+	findall((Name, Value), ::argument_value(RefType, Value, name, Name), IDs),
+	lists:sort(IDs, Sorted),
+	lists:member((_, Value), Sorted),
+	Filter = filter(FilterName, Value).
 	
 min_max_combo('A', 'B').
 min_max_combo('B', 'C').
@@ -193,7 +206,7 @@ check_arg(arg(_Name, unsure_number(From, To), _Keys)) :-
 	number(From),
 	number(To), !.
 
-check_arg(arg(_Name, Type, _Keys)) :-
+check_arg(arg(_Name, ref(Type), _Keys)) :-
 	::fact_type(Type, _), !.
 	
 check_arg(arg(_Name, Type, _Keys)) :-

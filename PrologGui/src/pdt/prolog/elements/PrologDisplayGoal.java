@@ -1,6 +1,7 @@
 package pdt.prolog.elements;
 
 import java.util.List;
+import java.util.Map;
 
 import org.cs3.prolog.connector.common.QueryUtils;
 import org.cs3.prolog.connector.cterm.CCompound;
@@ -25,11 +26,16 @@ public class PrologDisplayGoal extends PrologGoal {
 		super(goal.getFunctor(), goal.getArgs());
 		this.filter = filter;
 	}
-		
 
 	public String getQuery() {
 		String term = QueryUtils.bT(getFunctor(), (Object[]) argNames);
 		return QueryUtils.bT("db_controller::display", term, filter);
+	}
+
+	public boolean isTrue(PrologAdapter prolog) {
+		String query = QueryUtils.bT("once", getQuery());
+		Map<String, Object> result = prolog.queryOnce(query);
+		return result != null;
 	}
 	
 }

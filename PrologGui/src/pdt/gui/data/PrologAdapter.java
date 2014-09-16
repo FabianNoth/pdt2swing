@@ -48,6 +48,42 @@ public class PrologAdapter {
 		autoCompletionProvider = new AutoCompletionProvider(this);
 	}
 
+	public Map<String, Object> queryOnce(String... predicates) {
+		try {
+			return process.queryOnce(predicates);
+		} catch (PrologProcessException e) {
+			SimpleLogger.error(e);
+		}
+		return null;
+	}
+	
+	public List<Map<String, Object>> queryAll(String... predicates) {
+		try {
+			return process.queryAll(predicates);
+		} catch (PrologProcessException e) {
+			SimpleLogger.error(e);
+		}
+		return null;
+	}
+	
+	public Map<String, Object> queryOnceCTerms(String... predicates) {
+		try {
+			return process.queryOnce(PrologProcess.CTERMS, predicates);
+		} catch (PrologProcessException e) {
+			SimpleLogger.error(e);
+		}
+		return null;
+	}
+	
+	public List<Map<String, Object>> queryAllCTerms(String... predicates) {
+		try {
+			return process.queryAll(PrologProcess.CTERMS, predicates);
+		} catch (PrologProcessException e) {
+			SimpleLogger.error(e);
+		}
+		return null;
+	}
+	
 	public PrologProcess getProcess() {
 		return process;
 	}
@@ -226,27 +262,39 @@ public class PrologAdapter {
 		return autoCompletionProvider;
 	}
 
-	public Map<String, List<String>> getFilter(String functor) {
+	public Map<String, List<CCompound>> getFilter(String functor) {
 		String query = QueryUtils.bT(modelName + "::filter", functor, "Filter");
-		Map<String, List<String>> filters = new HashMap<String, List<String>>();
+		Map<String, List<CCompound>> filters = new HashMap<>();
 		try {
 			List<Map<String, Object>> results = process.queryAll(PrologProcess.CTERMS, query);
 			for (Map<String, Object> result : results) {
 				Object o = result.get("Filter");
 				if (o instanceof CCompound) {
-					String type = ((CCompound) o).getArgument(0).getFunctorValue();
-					List<String> list = filters.get(type);
+					CCompound comp = (CCompound) o;
+					String type = comp.getArgument(0).getFunctorValue();
+					List<CCompound> list = filters.get(type);
 					if (list == null) {
-						list = new ArrayList<String>();
+						list = new ArrayList<CCompound>();
 						filters.put(type, list);
 					}
-					list.add(o.toString());
+					list.add(comp);
 				}
 			}
 		} catch (PrologProcessException e) {
 			SimpleLogger.error(e);
 		}
 		return filters;
+	}
+
+	public String getElementName(String type, String id) {
+		String query = QueryUtils.bT(modelName + "::argument_value", type, id, "name", "Value");
+		try {
+			Map<String, Object> result = process.queryOnce(query);
+			return result.get("Value").toString();
+		} catch (PrologProcessException e) {
+			SimpleLogger.error(e);
+		}
+		return null;
 	}
 	
 }
