@@ -21,7 +21,7 @@ fact_type(veranstaltung, [
 	arg(id, id, [main]),
 	arg(name, atom, [unique]),
 	arg(type, atom(veranstaltungstyp), []),
-	arg(dozent, dozent, [])
+	arg(dozent, ref(dozent), [])
 ]).
 
 
@@ -35,8 +35,8 @@ fact_type(veranstaltung, [
 %%%%%%%%%%%%%%
 
 relation_many_type(teilnehmer, [
-	arg(id, veranstaltung, []),
-	arg(student, student, [])
+	arg(id, ref(veranstaltung), []),
+	arg(student, ref(student), [])
 ]).
 
 

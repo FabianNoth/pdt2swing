@@ -6,25 +6,25 @@
 %%%%%%%%%
 
 fact_type(actor, [
-	arg(id, id, [main]),
+	arg(id,   id, [main]),
 	arg(name, atom, [unique])
 ]).
 
 fact_type(movie, [
-	arg(id, id, [main]),
-	arg(name, atom, [unique]),
+	arg(id,    id, [main]),
+	arg(name,  atom, [unique]),
 	arg(genre, atom(genre), [])
 ]).
 
 fact_type(role, [
-	arg(id, id, [main]),
-	arg(actor, actor, []),
-	arg(movie, movie, []),
+	arg(id,       id, [main]),
+	arg(actor,    ref(actor), []),
+	arg(movie,    ref(movie), []),
 	arg(rolename, atom, [])
 ]).
 
 fact_type(tag, [
-	arg(id, id, [main]),
+	arg(id,   id, [main]),
 	arg(name, atom, [])
 ]).
 
@@ -33,27 +33,27 @@ fact_type(tag, [
 %%%%%%%%%
 display_type(actor, full, default).
 display_type(movie, [id, name], default).
-display_type(role, full, default).
-display_type(tag, full, default).
+display_type(role,  full, default).
+display_type(tag,   full, default).
 
 %%%%%%%%%%%%%%
 %% relations %
 %%%%%%%%%%%%%%
 
 relation_rating_type(movie_rating, [
-	arg(id, movie, [unique]),
+	arg(id, ref(movie), [unique]),
 	arg(rating, unsure_number(0, 10), []),
 	arg(funny, unsure_number(0, 10), []),
 	arg(action, unsure_number(0, 10), [])
 ]).
 
 relation_many_type(tagged_movie, [
-	arg(id, movie, []),
-	arg(tag, tag, [])
+	arg(id, ref(movie), []),
+	arg(tag, ref(tag), [])
 ]).
 
 relation_single_type(actor_details, [
-	arg(id, actor, []),
+	arg(id, ref(actor), []),
 	arg(awesomeness, unsure_number(0,10), []),
 	arg(birthday, number, [])
 ]).
