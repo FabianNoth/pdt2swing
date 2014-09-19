@@ -47,11 +47,6 @@ public class PrologArgument {
 		return new PrologReferenceType(name, type);
 	}
 	
-	public static PrologArgument createPrologArgument(String input) {
-		// TODO: implement or delete
-		return null;
-	}
-	
 	// constructor
 	
 	protected PrologArgument(String name, int type) {
