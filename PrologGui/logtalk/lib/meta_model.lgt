@@ -16,6 +16,7 @@
 :- public(display_type/3).		% to be implemented by concrete metamodel
 :- public(fixed_atom/2).	% to be implemented by concrete metamodel
 :- public(relation_dummy/3).	% to be implemented by concrete metamodel
+:- public(relation_dummy_default/3).
 :- public(bundle/2).	% to be implemented by concrete metamodel
 :- public(text_file/1).	% to be implemented by concrete metamodel
 :- public(argument_value/4).
@@ -133,7 +134,37 @@ relation_type(Name, Args) :-
 relation_type(Name, Args) :-
 	::relation_single_type(Name, Args).
 	
+relation_dummy_default(Functor, Id, RelationTerm) :-
+	(::relation_rating_type(RelationType, [arg(id, ref(Functor), _)|Tail])
+	;
+	::relation_single_type(RelationType, [arg(id, ref(Functor), _)|Tail])
+	),
 	
+	\+(( ::relation_dummy(Functor, _, ExistingTerm),
+	    ExistingTerm =.. [RelationType | _] )),
+	
+	create_dummy_values(Tail, Values),
+	RelationTerm =.. [RelationType, Id | Values].
+	
+create_dummy_values([], []) :- !.
+
+create_dummy_values([arg(_, Type, _)|ArgTail], [Value|ValueTail]) :- 
+	create_dummy_values(ArgTail, ValueTail),
+	dummy_value(Type, Value).
+	
+dummy_value(number, 0) :- !.
+dummy_value(atom, '') :- !.
+dummy_value(boolean, false) :- !.
+dummy_value(number(Min,_), Min) :- !.
+dummy_value(unsure_number(Min,_), u(Min)) :- !.
+dummy_value(atom(Type), Head) :- 
+	::fixed_atom(Type, [Head | _]).
+	
+dummy_value(ref(Type), Dummy) :-
+	% TODO: dirty
+	once(argument_value(Type, Dummy, id, Dummy)).
+	
+
 element_simple_arg(Name, SimpleArg) :-
 	::element(Name, Args),
 	lists:member(arg(ArgName, ArgType, _), Args),
@@ -166,8 +197,17 @@ check :-
 			check_args(Args)),
 	( check_relation_dummies
 	-> true
-	; writeln('ERROR: check_relation_dummies failed'), fail).
+	; writeln('ERROR: check_relation_dummies failed'), fail),
 	
+	( bad_ratings
+	-> writeln('ERROR: check_ratings failed (only unsure_number allowed)'), fail
+	; true).
+	
+	
+bad_ratings :-
+	::relation_rating_type(_, [_|Args]),
+	lists:member(arg(_, Type, _), Args),
+	Type \= unsure_number(_,_).
 	
 check_relation_dummies :-
 	\+(::relation_dummy(_, id, _)).

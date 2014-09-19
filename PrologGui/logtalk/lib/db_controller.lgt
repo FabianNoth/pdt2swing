@@ -171,7 +171,9 @@ add(Term, Result) :-
 	Result = success(Id).
 	
 add_dummy_relations(Model, Functor, Id) :-
-	Model::relation_dummy(Functor, Id, RelationTerm),
+	(Model::relation_dummy(Functor, Id, RelationTerm)
+	;
+	Model::relation_dummy_default(Functor, Id, RelationTerm)),
 	get_store_for_term(RelationTerm, Store),
 	Store::add(RelationTerm),
 	fail.
