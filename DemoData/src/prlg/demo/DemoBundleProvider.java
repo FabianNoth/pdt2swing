@@ -4,7 +4,7 @@ import org.cs3.prolog.connector.process.PrologProcess;
 
 import pdt.gui.QueryNode;
 import pdt.gui.data.BundleProvider;
-import pdt.gui.data.PrologConnection;
+import pdt.gui.data.PrologAdapter;
 import pdt.gui.data.PrologGuiBundle;
 
 public class DemoBundleProvider extends BundleProvider {
@@ -13,7 +13,7 @@ public class DemoBundleProvider extends BundleProvider {
 	private PrologGuiBundle bundle1;
 	private PrologGuiBundle bundle2;
 
-	public DemoBundleProvider(PrologConnection con, PrologGuiBundle bundle1, PrologGuiBundle bundle2) {
+	public DemoBundleProvider(PrologAdapter con, PrologGuiBundle bundle1, PrologGuiBundle bundle2) {
 		this.process = con.getProcess();
 		this.bundle1 = bundle1;
 		this.bundle2 = bundle2;

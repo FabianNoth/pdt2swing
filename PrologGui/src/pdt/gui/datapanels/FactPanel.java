@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.DefaultComboBoxModel;
@@ -23,11 +24,13 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
 import org.cs3.prolog.connector.process.PrologProcess;
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import pdt.gui.datapanels.handler.PrologFactHandler;
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologFixedAtom;
 import pdt.prolog.elements.PrologNumberRangeArgument;
+import pdt.prolog.elements.PrologReferenceType;
 
 public class FactPanel extends JPanel implements DataPanel {
 
@@ -81,7 +84,9 @@ public class FactPanel extends JPanel implements DataPanel {
 			add(label, gbc_label);
 			
 			PrologArgument arg = prolog.getArgumentWithName(s);
-			
+			if (arg == null) {
+				System.out.println("null?");
+			}
 			
 			JComponent component = null;
 			
@@ -105,10 +110,19 @@ public class FactPanel extends JPanel implements DataPanel {
 				component = new JCheckBox();
 			} else {
 				component = new JTextField();
-				((JTextField) component).setColumns(10);
+				JTextField tf = (JTextField) component;
+				tf.setColumns(10);
+				
+				if (arg instanceof PrologReferenceType) {
+					String refType = ((PrologReferenceType) arg).getRefType();
+					List<String> completionList = prolog.getAutoCompletionProvider().getCompletionList(refType);
+					if (completionList != null) {
+						AutoCompleteDecorator.decorate(tf, completionList, false);
+					}
+				}
 			}
 			
-			if (arg.getType() == PrologArgument.ID) {
+			if (arg.getType() == PrologArgument.ID || arg.getName().equalsIgnoreCase("id")) {
 				component.setEnabled(false);
 			}
 			
@@ -223,14 +237,14 @@ public class FactPanel extends JPanel implements DataPanel {
 		if (result != null) {
 			for(String s : textFields.keySet()) {
 				String value = result.get(s).toString();
-				setSingleEntry(s, value);
-				dummyValues.put(s, value);
+				String settedValue = setSingleEntry(s, value);
+				dummyValues.put(s, settedValue);
 			}
 			updateButtons(true);
 		}
 	}
 	
-	public void setSingleEntry(String key, String value) {
+	public String setSingleEntry(String key, String value) {
 		JComponent tf = textFields.get(key);
 		String setValue = value;
 		if (setValue == null) {
@@ -238,6 +252,7 @@ public class FactPanel extends JPanel implements DataPanel {
 		}
 		
 		if (tf instanceof JTextField) {
+			setValue = factHandler.getDisplayString(key, value);
 			((JTextField) tf).setText(setValue);
 		} else if (tf instanceof JSpinner) {
 			((JSpinner) tf).setValue(Integer.parseInt(setValue));
@@ -254,6 +269,7 @@ public class FactPanel extends JPanel implements DataPanel {
 		} else if (tf instanceof JCheckBox) {
 			((JCheckBox) tf).setSelected(setValue.equalsIgnoreCase("true"));
 		}
+		return setValue;
 	}
 	
 	private void clearSingleEntry(String key) {

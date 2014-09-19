@@ -8,6 +8,7 @@ public class PrologArgument {
 	public static final int NUMBER = 3;
 	public static final int BOOLEAN = 4;
 	public static final int NUMBER_LIMIT = 5;
+	public static final int REFERENCE = 6;
 	
 	private String name;
 	private int type;
@@ -37,9 +38,18 @@ public class PrologArgument {
 	public static PrologArgument createLimitedNumber(String name, int limitMin, int limitMax, boolean canBeUnsure) {
 		return new PrologNumberRangeArgument(name, limitMin, limitMax, canBeUnsure);
 	}
-	
-	public static PrologFixedAtom createFixedAtom(String name, String... values) {
+
+	public static PrologArgument createFixedAtom(String name, String... values) {
 		return new PrologFixedAtom(name, values);
+	}
+	
+	public static PrologArgument createReference(String name, String type) {
+		return new PrologReferenceType(name, type);
+	}
+	
+	public static PrologArgument createPrologArgument(String input) {
+		// TODO: implement or delete
+		return null;
 	}
 	
 	// constructor

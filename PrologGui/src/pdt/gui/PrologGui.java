@@ -25,7 +25,7 @@ import javax.swing.border.EmptyBorder;
 
 import pdt.gui.data.BundleProvider;
 import pdt.gui.data.IdListener;
-import pdt.gui.data.PrologConnection;
+import pdt.gui.data.PrologAdapter;
 import pdt.gui.data.PrologGuiBundle;
 import pdt.gui.datapanels.AdditionalImagePanel;
 import pdt.gui.datapanels.FactPanel;
@@ -48,7 +48,7 @@ public class PrologGui implements PrologDataVisualizer {
 	private static final int BACKUP_FILTER = 5;
 	private final Set<IdListener> activeListeners = new HashSet<IdListener>();
 	private PrologTablePanel tablePanel;
-	private PrologConnection con;
+	private PrologAdapter con;
 	private JFrame frame;
 	private QuerySelectionPanel querySelectionPanel;
 	
@@ -60,14 +60,14 @@ public class PrologGui implements PrologDataVisualizer {
 	private boolean updateFromBundleFlag = false;
 	private BundleProvider bundleProvider;
 	
-	public PrologGui(PrologConnection con, BundleProvider bundleProvider) {
+	public PrologGui(PrologAdapter con, BundleProvider bundleProvider) {
 		this.con = con;
 		this.bundleProvider = bundleProvider;
 		
         createAndShowGUI();
 	}
 	
-	public PrologGui(PrologConnection con, BundleProvider bundleProvider, File baseDir, File backupDir) {
+	public PrologGui(PrologAdapter con, BundleProvider bundleProvider, File baseDir, File backupDir) {
 		this(con, bundleProvider);
 		updateBackupFolder(baseDir, backupDir);
 	}
@@ -164,7 +164,7 @@ public class PrologGui implements PrologDataVisualizer {
         		if (!abort()) {
         			// state doesn't need to be saves
         			SimpleLogger.debug("persisting facts");
-        			bundleProvider.persistFacts();
+        			bundleProvider.persistFacts(con);
         			SimpleLogger.debug("done persisting facts\nshutting down");
         			System.exit(0);
         		}
@@ -189,7 +189,7 @@ public class PrologGui implements PrologDataVisualizer {
         mnPersist.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				bundleProvider.persistFacts();
+				bundleProvider.persistFacts(con);
 			}
 		});
         mnData.add(mnPersist);
@@ -294,7 +294,7 @@ public class PrologGui implements PrologDataVisualizer {
 	}
 
 	@Override
-	public PrologConnection getPrologConnection() {
+	public PrologAdapter getPrologConnection() {
 		return con;
 	}
 

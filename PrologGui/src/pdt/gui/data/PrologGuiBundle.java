@@ -23,18 +23,20 @@ public class PrologGuiBundle {
 	private boolean containsImagePanel = false;
 	private boolean defaultImageUpload = false;
 	private ActionListener imgActionListener;
+	private String name;
 
 	private Dimension imageDisplayDim = new Dimension(0, 0);
 	private Dimension imageSizeDim = new Dimension(0, 0);
 	
 	private Dimension bundleSize;
 	
-	public PrologGuiBundle(PrologTableData tableData, PrologDataHandler<?>... factHandlers) {
-		this(tableData, new Dimension(300, 100), factHandlers);
+	public PrologGuiBundle(String name, PrologTableData tableData, PrologDataHandler<?>... factHandlers) {
+		this(name, tableData, new Dimension(300, 100), factHandlers);
 	}
 	
-	public PrologGuiBundle(PrologTableData tableData, Dimension bundleSize, PrologDataHandler<?>... factHandlers) {
+	public PrologGuiBundle(String name, PrologTableData tableData, Dimension bundleSize, PrologDataHandler<?>... factHandlers) {
 		this.tableData = tableData;
+		this.name = name;
 		this.bundleSize = bundleSize;
 		this.mainGoal = tableData.getGoal();
 		for(PrologDataHandler<?> fh : factHandlers) {
@@ -108,6 +110,10 @@ public class PrologGuiBundle {
 
 	public Dimension getSize() {
 		return bundleSize;
+	}
+	
+	public String getName() {
+		return name;
 	}
 	
 }

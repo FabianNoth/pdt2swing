@@ -19,40 +19,48 @@ import org.cs3.prolog.connector.common.QueryUtils;
 import org.cs3.prolog.connector.process.PrologProcessException;
 import org.jasypt.util.text.BasicTextEncryptor;
 
-import pdt.gui.data.PrologConnection;
+import pdt.gui.data.PrologAdapter;
 import pdt.gui.datapanels.FactPanel;
 import pdt.gui.datapanels.SpinnerWithCheckbox;
 import pdt.gui.utils.PrologUtils;
 import pdt.gui.utils.SimpleLogger;
 import pdt.prolog.elements.PrologArgument;
 import pdt.prolog.elements.PrologGoal;
+import pdt.prolog.elements.PrologTransactionResult;
 
 public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 
 	private Set<String> imagesToDelete;
-	private final Set<PrologRelationHandler> relationHandler = new HashSet<>();
 	private Map<String, Object> result;
 	private String mainElementName;
 	private final Map<String, ActionListener> additionalActions = new LinkedHashMap<String, ActionListener>();
+	private File dataDirectory;
 	
-	public PrologFactHandler(PrologConnection con, String name, File outputFile, boolean isMainPredicate, PrologGoal goal) {
-		super(con, name, outputFile, isMainPredicate, goal);
+	public PrologFactHandler(PrologAdapter con, String name, boolean isMainPredicate, PrologGoal goal, File dataDirectory) {
+		super(con, name, isMainPredicate, goal);
+		this.dataDirectory = dataDirectory;
 	}
 
 	public PrologTextFileHandler createTextFileHandler(String title, BasicTextEncryptor textEncryptor, boolean showPreview) {
-		File textOutputDir = new File(outputFile.getParentFile(), getFunctor());
-		PrologTextFileHandler textData = new PrologTextFileHandler(title, textOutputDir, textEncryptor, showPreview);
-		return textData;
+		if (dataDirectory != null && dataDirectory.isDirectory()) {
+			File textOutputDir = new File(dataDirectory, getFunctor());
+			PrologTextFileHandler textData = new PrologTextFileHandler(title, textOutputDir, textEncryptor, showPreview);
+			return textData;
+		}
+		return null;
 	}
 	
 	public AdditionalImageHandler createAdditionalImageHandler(String name, ImageElement... images) {
-		File imgDir = new File(outputFile.getParentFile(), getFunctor() + "/imgs");
-		AdditionalImageHandler handler = new AdditionalImageHandler(name, imgDir, images);
-		imagesToDelete = new HashSet<String>();
-		for (ImageElement img : images) {
-			imagesToDelete.add(img.getSuffix());
+		if (dataDirectory != null && dataDirectory.isDirectory()) {
+			File imgDir = new File(dataDirectory, getFunctor() + "_imgs");
+			AdditionalImageHandler handler = new AdditionalImageHandler(name, imgDir, images);
+			imagesToDelete = new HashSet<String>();
+			for (ImageElement img : images) {
+				imagesToDelete.add(img.getSuffix());
+			}
+			return handler;
 		}
-		return handler;
+		return null;
 	}
 
 	public void setMainElementName(String mainElementName) {
@@ -91,117 +99,97 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		if (currentId == null) {
 			return false;
 		}
-		
-		// check if name already exists (quick & dirty)
-		// TODO: improve (move to prolog side)
-		if (nameAlreadyExists(textFields, false)) {
-			return false;
-		}
-		
+
 		// get goal for assertion, use current id
 		String goal = getGoalWithData(textFields, currentId);
 		
-		try {
-			process.queryOnce(QueryUtils.bT(UPDATE_FACT, goal));
-		} catch (PrologProcessException e) {
-			e.printStackTrace();
+		PrologTransactionResult result = executeTransaction(UPDATE_FACT, goal);
+
+		if (result == null) {
+			// query failed
+			return false;
+		}
+		
+		if (result.isError()) {
+			JOptionPane.showMessageDialog(getEditPanel(), result.getDialogMessage(),  "Fehler beim Update", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		
 		updateVisualizer();
-		updateRelationHandlers();
+		adapter.getAutoCompletionProvider().update(getFunctor());
 		return true;
-	}
-
-	private boolean nameAlreadyExists(HashMap<String, JComponent> textFields, boolean always) {
-		JComponent comp = textFields.get("Name");
-		if (comp != null && comp instanceof JTextField) {
-//			String checkRename = checkRename((JTextField) comp);
-			if (always || checkRename((JTextField) comp) != null) {
-				try {
-					String newName = ((JTextField) comp).getText();
-					Map<String, Object> checkRes = process.queryOnce(QueryUtils.bT("name_is_free", PrologUtils.quoteIfNecessary(newName)));
-					if (checkRes == null) {
-						// query failed --> name is not free
-						JOptionPane.showMessageDialog(getEditPanel(), "Name \"" + newName + "\" existiert bereits.",  "Fehler", JOptionPane.ERROR_MESSAGE);
-						return true;
-					}
-				} catch (PrologProcessException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return false;
-	}
-
-	private String checkRename(JTextField tf) {
-		String newName = tf.getText();
-		String oldName = getElementByName("Name");
-		if (newName.equals(oldName)) {
-			return null;
-		} else {
-			return newName;
-		}
 	}
 
 	public boolean saveAsNew(HashMap<String, JComponent> textFields) {
-		// check if name already exists (quick & dirty)
-		// TODO: improve (move to prolog side)
-		if (nameAlreadyExists(textFields, true)) {
-			return false;
-		}
-
 		// get goal for assertion, use empty ID
-		String goal = getGoalWithData(textFields, "_");
+		String goal = getGoalWithData(textFields, "ID");
 		String id = null;
-		try {
-			Map<String, Object> result = process.queryOnce(QueryUtils.bT(ADD_FACT, goal, "ID"));
-			if (result.get("ID") != null) {
-				id = result.get("ID").toString();
-			}
-		} catch (PrologProcessException e) {
-			e.printStackTrace();
+		
+		PrologTransactionResult result = executeTransaction(ADD_FACT, goal);
+		
+		if (result == null) {
+			// query failed
 			return false;
 		}
 		
+		if (result.isSuccess()) {
+			id = result.getId();
+		} else if (result.isError()) {
+			JOptionPane.showMessageDialog(getEditPanel(), result.getDialogMessage(),  "Fehler beim Hinzufügen", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+
 		updateVisualizer(id);
-		updateRelationHandlers();
+		adapter.getAutoCompletionProvider().update(getFunctor());
 		return true;
 	}
 	
-	public void delete() {
+
+	public boolean delete() {
 		if (currentId == null) {
-			return;
+			return false;
 		}
 		
 		String goal = getSimpleGoal();
-
-		try {
-			process.queryOnce(QueryUtils.bT(REMOVE_FACT, goal));
-			
-			// if there is a text file, remove it also
-			File dataDir = new File(outputFile.getParentFile(), getFunctor());
-			File textFile = new File(dataDir, currentId);
-			deleteImage(textFile);
-			
-			// same for image file
-			File imgDir = new File(dataDir, "imgs");
-			File subdir = new File(imgDir, PrologUtils.md5Prefix(currentId));
-			File imgFile = new File(subdir, currentId + ".jpg");
-			deleteImage(imgFile);
-			
-			if (imagesToDelete != null) {
-				for (String name : imagesToDelete) {
-					File imgFile2 = new File(subdir, currentId + "_" + name + ".jpg");
-					deleteImage(imgFile2);
+		
+		PrologTransactionResult result = executeTransaction(REMOVE_FACT, goal);
+		
+		if (result == null) {
+			// query failed
+			return false;
+		}
+		
+		if (result.isSuccess()) {
+			if (dataDirectory != null && dataDirectory.isDirectory()) {
+				// if there is a text file, remove it also
+				File dataDir = new File(dataDirectory, getFunctor());
+				File textFile = new File(dataDir, currentId);
+				deleteImage(textFile);
+				
+				// same for image file
+				File imgDir = new File(dataDirectory, getFunctor() + "_imgs");
+				File subdir = new File(imgDir, PrologUtils.md5Prefix(currentId));
+				File imgFile = new File(subdir, currentId + ".jpg");
+				deleteImage(imgFile);
+				
+				if (imagesToDelete != null) {
+					for (String name : imagesToDelete) {
+						File imgFile2 = new File(subdir, currentId + "_" + name + ".jpg");
+						deleteImage(imgFile2);
+					}
 				}
 			}
-			
-		} catch (PrologProcessException e) {
-			e.printStackTrace();
+		} else if (result.isError()) {
+			// if it is an error: cancel
+			JOptionPane.showMessageDialog(getEditPanel(), result.getDialogMessage(),  "Fehler beim Löschen", JOptionPane.ERROR_MESSAGE);
+			return false;
+		} else if (result.isWarning()) {
+			// if it is a warning: go on
+			JOptionPane.showMessageDialog(getEditPanel(), result.getDialogMessage(),  "Problem beim Löschen", JOptionPane.WARNING_MESSAGE);
 		}
 		
 		updateVisualizer();
+		return true;
 	}
 
 	private void deleteImage(File imgFile) {
@@ -209,8 +197,6 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 			imgFile.delete();
 		}
 	}
-	
-
 	
 	private String getGoalWithData(HashMap<String, JComponent> textFields, String id) {
 		String[] argNames = getArgNames();
@@ -229,6 +215,7 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 				String text = null;
 				if (tf instanceof JTextField) {
 					text = ((JTextField) tf).getText();
+					text = getDataString(argNames[i], text);
 				} else if (tf instanceof JComboBox<?>) {
 					text = ((JComboBox<?>) tf).getSelectedItem().toString();
 				} else if (tf instanceof JSpinner) {
@@ -283,7 +270,7 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 
 	public PrologArgument getArgumentWithName(String name) {
 		for (int i=0; i<getArgs().length; i++) {
-			if (getArgs()[i].getName().equals(name)) {
+			if (getArgs()[i].getName().equalsIgnoreCase(name)) {
 				return getArgs()[i];
 			}
 		}
@@ -294,26 +281,4 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		return currentId != null;
 	}
 	
-	public void addRelationHandler(PrologRelationHandler handler) {
-		if (handler == null) {
-			SimpleLogger.error("handler is null");
-		} else {
-			relationHandler.add(handler);
-		}
-	}
-	
-	public void removeRelationHandler(PrologRelationHandler handler) {
-		if (handler == null) {
-			SimpleLogger.error("handler is null");
-		} else {
-			relationHandler.remove(handler);
-		}
-	}
-	
-	public void updateRelationHandlers() {
-		for (PrologRelationHandler h : relationHandler) {
-			h.updateAutoCompletion();
-		}
-	}
-
 }

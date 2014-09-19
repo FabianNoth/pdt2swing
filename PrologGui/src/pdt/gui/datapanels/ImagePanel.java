@@ -192,8 +192,8 @@ public class ImagePanel extends JPanel implements IdListener {
 		}
 	}
 
-	@Override
-	public void persistFacts() {}
+//	@Override
+//	public void persistFacts() {}
 
 	@Override
 	public boolean changed() {

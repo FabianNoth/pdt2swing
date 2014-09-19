@@ -85,8 +85,8 @@ public class AdditionalImageHandler extends PrologDataHandler<AdditionalImagePan
 		return new File(subdir, imageName(suffix));
 	}
 	
-	@Override
-	public void persistFacts() {}
+//	@Override
+//	public void persistFacts() {}
 	
 	public List<ImageElement> getImages() {
 		return images;
