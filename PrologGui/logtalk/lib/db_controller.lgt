@@ -77,6 +77,8 @@ translate_args(Functor, ImplArgs, Args) :-
 			),
 			Args).
 	
+translate_nth(_, _, 0, '') :- !.
+
 translate_nth(Functor, Pos, Value, Translated) :-
 	current_model(Model),
 	Model::element(Functor, Args),
@@ -86,6 +88,8 @@ translate_nth(Functor, Pos, Value, Translated) :-
 	!.
 
 translate_nth(_, _, Value, Value).
+	
+translate(_, _, 0, '') :- !.
 	
 translate(Functor, Key, Value, Translated) :-
 	current_model(Model),
@@ -314,6 +318,9 @@ check_argument_type(_, atom(Type), Arg) :-
 	Model::fixed_atom(Type, FixedAtoms),
 	lists:member(Arg, FixedAtoms).
 
+
+check_argument_type(_, ref(_), 0) 	:- !.
+	
 check_argument_type(_, ref(Type), Arg) 	:-
 	!,
 	current_model(Model),
