@@ -1,5 +1,5 @@
 :- initialization((
-	assert(user:logtalk_library_path(data_directory,'z:/queetee/pdt2swing/PrologGui/logtalk/plugin2/data/')),
+	assert(user:logtalk_library_path(data_directory,'c:/Users/Finko/git/pdt2swing/PrologGui/logtalk/plugin/data/')),
 	% load meta model
 	logtalk_load([uni_demo]),
 	
