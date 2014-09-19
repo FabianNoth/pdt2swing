@@ -90,7 +90,7 @@ translate_nth(_, _, Value, Value).
 translate(Functor, Key, Value, Translated) :-
 	current_model(Model),
 	Model::element(Functor, Args),
-	lists:member(arg(Key, Type, _), Args),
+	lists:member(arg(Key, ref(Type), _), Args),
 	Model::argument_value(Type, Value, name, Translated).
 	
 apply_filter(_, Filter) :-
