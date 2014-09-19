@@ -31,6 +31,8 @@ public class PrologTablePanel extends JPanel {
 	        prologTableModel = prologData;
 			table = new JTable(prologTableModel);
 
+			table.setAutoCreateRowSorter(true);
+
 	        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 	        ListSelectionModel selectionModel = table.getSelectionModel();
@@ -98,7 +100,7 @@ public class PrologTablePanel extends JPanel {
 	public String getSelectedId() {
 		int row = table.getSelectedRow();
 		if (row > -1) {
-			Object value = table.getModel().getValueAt(row, 0);
+			Object value = table.getModel().getValueAt(table.convertRowIndexToModel(row), 0);
 			return value.toString();
 		}
 		return null;
@@ -113,7 +115,8 @@ public class PrologTablePanel extends JPanel {
 		
 		int row = prologTableModel.getPositionOfId(id);
 		if (row > -1) {
-			table.setRowSelectionInterval(row, row);
+			int viewRow = table.convertRowIndexToView(row);
+			table.setRowSelectionInterval(viewRow, viewRow);
 		}
 	}
 
