@@ -159,10 +159,7 @@ dummy_value(number(Min,_), Min) :- !.
 dummy_value(unsure_number(Min,_), u(Min)) :- !.
 dummy_value(atom(Type), Head) :- 
 	::fixed_atom(Type, [Head | _]).
-	
-dummy_value(ref(Type), Dummy) :-
-	% TODO: dirty
-	once(argument_value(Type, Dummy, id, Dummy)).
+dummy_value(ref(_), 0).
 	
 
 element_simple_arg(Name, SimpleArg) :-
