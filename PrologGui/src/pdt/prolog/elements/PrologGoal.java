@@ -61,6 +61,9 @@ public class PrologGoal {
 				case "number":
 					args[i] = PrologArgument.createNumber(name);
 					break;
+				case "date":
+					args[i] = PrologArgument.createDate(name);
+					break;
 				}
 			} else if (typeArg instanceof CCompound) {
 				CCompound compType = (CCompound) typeArg;

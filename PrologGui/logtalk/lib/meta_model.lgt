@@ -230,7 +230,7 @@ check_args(Args) :-
 	).
 			
 check_arg(arg(_Name, Type, _Keys)) :-
-	lists:member(Type, [id, atom, number]), !.
+	lists:member(Type, [id, atom, number, date]), !.
 	
 check_arg(arg(_Name, atom(Type), _Keys)) :-
 	::fixed_atom(Type,_), !.

@@ -206,7 +206,7 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 		for (int i=1; i<argNames.length; i++) {
 			JComponent tf = textFields.get(argNames[i]);
 			if (tf == null) {
-				if (getArgs()[i-1].getType() == PrologArgument.NUMBER) {
+				if (getArgs()[i-1].getType() == PrologArgument.NUMBER || getArgs()[i-1].getType() == PrologArgument.DATE) {
 					assertArgs[i] = "0";
 				} else {
 					assertArgs[i] = "''";
@@ -230,7 +230,7 @@ public class PrologFactHandler extends PrologDataHandler<FactPanel> {
 					}
 				}
 				if (text.isEmpty()) {
-					if (getArgs()[i].getType() == PrologArgument.NUMBER) {
+					if (getArgs()[i].getType() == PrologArgument.NUMBER || getArgs()[i].getType() == PrologArgument.DATE) {
 						assertArgs[i] = "0";
 					} else {
 						assertArgs[i] = "''";

@@ -11,7 +11,7 @@ public class PrologUtils {
 
 	public static String quoteIfNecessary(String atom) {
 		try {
-			Integer.parseInt(atom);
+			Integer.parseInt(atom.replaceAll("-", ""));
 			return atom;
 		} catch (NumberFormatException e) {}
 		return QueryUtils.quoteAtomIfNeeded(atom.replace("\\", "/"));

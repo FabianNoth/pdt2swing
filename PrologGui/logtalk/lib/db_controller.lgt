@@ -77,25 +77,81 @@ translate_args(Functor, ImplArgs, Args) :-
 			),
 			Args).
 	
-translate_nth(_, _, 0, '') :- !.
-
 translate_nth(Functor, Pos, Value, Translated) :-
 	current_model(Model),
 	Model::element(Functor, Args),
 	lists:nth1(Pos, Args, arg(Key, ref(Type), _)),
 	Key \== id,
-	Model::argument_value(Type, Value, name, Translated),
+	((Value == 0 ; Translated == '')
+	-> Value = 0, Translated = ''
+	; Model::argument_value(Type, Value, name, Translated)),
 	!.
-
-translate_nth(_, _, Value, Value).
 	
-translate(_, _, 0, '') :- !.
+translate_nth(Functor, Pos, Value, Translated) :-
+	current_model(Model),
+	Model::element(Functor, Args),
+	lists:nth1(Pos, Args, arg(Key, date, Keywords)),
+	Key \== id,
+	(lists:member(age, Keywords)
+	-> get_age(Value, Translated)
+	; translate_date(Value, Translated)),
+	!.
+	
+translate_nth(_, _, Value, Value).
+
+:- public(get_age/2).
+:- public(today/1).
+
+get_age(Value, Translated) :-
+	today(Today),
+	Translated is (Today - Value) div 10000.
+	
+today(Today) :-
+	get_time(Time),
+	stamp_date_time(Time, Date, local),
+	format_time(atom(Atom), '%Y%m%d', Date, posix),
+	term_to_atom(Today, Atom).
+	
 	
 translate(Functor, Key, Value, Translated) :-
 	current_model(Model),
 	Model::element(Functor, Args),
 	lists:member(arg(Key, ref(Type), _), Args),
-	Model::argument_value(Type, Value, name, Translated).
+	((Value == 0 ; Translated == '')
+	-> Value = 0, Translated = ''
+	; Model::argument_value(Type, Value, name, Translated)).
+	
+translate(Functor, Key, Value, Translated) :-
+	current_model(Model),
+	Model::element(Functor, Args),
+	(lists:member(arg(Key, date, _), Args)
+	;
+	lists:member(arg(Key, date_age, _), Args)),
+	translate_date(Value, Translated).
+	
+translate_date(Value, Translated) :-
+	Value == 0,
+	!,
+	Translated = 0.
+	
+translate_date(Value, Translated) :-
+	nonvar(Value),
+	!,
+	Year is Value div 10000,
+	Month is Value mod 10000 div 100,
+	Day is Value mod 100,
+	term_to_atom(Year-Month-Day, Translated).
+%	Translated = termYear-Month-Day.
+	% Value = 19850101
+	% Translated = 1985-01-01
+	
+translate_date(Value, Translated) :-
+	nonvar(Translated),
+	!,
+	Translated = Year-Month-Day,
+	Value is Year * 10000 + Month * 100 + Day.
+
+	
 	
 apply_filter(_, Filter) :-
 	var(Filter),
@@ -294,8 +350,29 @@ check_argument_type(add, id, Arg)	:- !, var(Arg).
 check_argument_type(_, id, Arg)		:- !, integer(Arg).
 check_argument_type(delete, _, _)	:- !.
 check_argument_type(_, number, Arg)	:- !, number(Arg).
+check_argument_type(_, date, Arg)	:- !, number(Arg).
 check_argument_type(_, atom, Arg) 	:- !, atom(Arg).
 check_argument_type(_, boolean, Arg) 	:- !, (Arg == true ; Arg == false).
+
+%check_argument_type(_, date, 0) 	:-	!.
+%check_argument_type(_, date, Year-Month-Day) 	:-
+%	!,
+%	number(Year),
+%	Year < 10000,
+%	number(Month),
+%	Month =< 12,
+%	number(Day),
+%	Day =< 31.
+%	
+%check_argument_type(_, date_age, 0) 	:-	!.
+%check_argument_type(_, date_age, Year-Month-Day) 	:-
+%	!,
+%	number(Year),
+%	Year < 10000,
+%	number(Month),
+%	Month =< 12,
+%	number(Day),
+%	Day =< 31.
 
 check_argument_type(_, number(From, To), Arg) :-
 	!,

@@ -9,6 +9,7 @@ public class PrologArgument {
 	public static final int BOOLEAN = 4;
 	public static final int NUMBER_LIMIT = 5;
 	public static final int REFERENCE = 6;
+	public static final int DATE = 7;
 	
 	private String name;
 	private int type;
@@ -45,6 +46,10 @@ public class PrologArgument {
 	
 	public static PrologArgument createReference(String name, String type) {
 		return new PrologReferenceType(name, type);
+	}
+	
+	public static PrologArgument createDate(String name) {
+		return new PrologArgument(name, DATE);
 	}
 	
 	// constructor
