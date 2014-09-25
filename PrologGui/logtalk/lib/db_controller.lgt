@@ -94,17 +94,20 @@ translate_nth(Functor, Pos, Value, Translated) :-
 	Key \== id,
 	(lists:member(age, Keywords)
 	-> get_age(Value, Translated)
-	; translate_date(Value, Translated)),
+	; (lists:member(age_exactly, Keywords)
+	-> get_age_exactly(Value, Translated)
+	; translate_date(Value, Translated))),
 	!.
 	
 translate_nth(_, _, Value, Value).
 
-:- public(get_age/2).
-:- public(today/1).
-
 get_age(Value, Translated) :-
 	today(Today),
 	Translated is (Today - Value) div 10000.
+	
+get_age_exactly(Value, Translated) :-
+	today(Today),
+	Translated is (Today - Value) / 10000.
 	
 today(Today) :-
 	get_time(Time),
